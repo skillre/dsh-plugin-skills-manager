@@ -41,6 +41,8 @@
 3. 从 Release 下载 [`skillre-dsh-plugin-skills-manager-0.1.3.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.1.3/skillre-dsh-plugin-skills-manager-0.1.3.tgz)，输入它的**完整绝对路径**，查看信任提示并自行确认安装。
 4. 启用后，从左侧栏「**技能 / Skills**」进入。
 
+> **常见安装错误：不要把本仓库的 GitHub URL 粘贴到「添加插件」。** DSH 会把 `https://github.com/...` 当作 Git 依赖交给 pnpm 构建；本仓库不提交构建产物，且 DSH 的供应链策略禁止未列入 `allowBuilds` 的构建脚本，会报 `ERR_PNPM_GIT_DEP_PREPARE_NOT_ALLOWED`。请下载 Release 资产后粘贴它的**本地绝对路径**（或使用文件选择器选择本地 `.tgz`）。
+
 最终安装由用户发起。不要输入尚未发布的 npm 包名、原始 GitHub 地址或源码目录；源码链接不是本轮验证的安装渠道。
 
 ## 使用

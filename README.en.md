@@ -41,6 +41,8 @@ The source lives at [github.com/skillre/dsh-plugin-skills-manager](https://githu
 3. Review the trust notice and initiate installation yourself.
 4. Enable it and open **Skills** in the sidebar.
 
+> **Common install error: do not paste this repository's GitHub URL into Add plugin.** DSH treats `https://github.com/...` as a Git dependency and asks pnpm to build it; this repository does not commit build output, and DSH's supply-chain policy blocks package build scripts that are not in `allowBuilds`, producing `ERR_PNPM_GIT_DEP_PREPARE_NOT_ALLOWED`. Download the Release asset and paste its **absolute local path** instead (or pick the local `.tgz` in the file selector).
+
 Final installation belongs to the user. Development does not leave an installation in the user's daily profile. Do not use an unpublished npm spec, raw Git URL or source directory: source links are not a verified delivery channel.
 
 ## Usage and scope
