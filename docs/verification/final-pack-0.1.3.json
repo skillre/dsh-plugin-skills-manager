@@ -4,11 +4,11 @@
   "exitCode": 0,
   "version": "0.1.3",
   "filename": "skillre-dsh-plugin-skills-manager-0.1.3.tgz",
-  "size": 78186,
-  "unpackedSize": 342673,
+  "size": 78235,
+  "unpackedSize": 343225,
   "entryCount": 37,
-  "integrity": "sha512-3SAmtaVmhiuR+94guoWoQeYd8tY+zQe3LAQYPEAZN7tylZcMzAdg3iNF4s8tt+xQRnJjQ9X6yBIjydzxV3l9fQ==",
-  "digest": "3SAmtaVmhiuR+94guoWoQeYd8tY+zQe3LAQYPEAZN7tylZcMzAdg3iNF4s8tt+xQRnJjQ9X6yBIjydzxV3l9fQ==",
+  "integrity": "sha512-6YyCTZ0NrkM8SCwI6oC1ZMksZb/WJxG7K3AkuOMpNe3dd+KBgqXqhgLLgrD4EdpCCIMkUJrZ9jvru3k5HcDOgA==",
+  "digest": "6YyCTZ0NrkM8SCwI6oC1ZMksZb/WJxG7K3AkuOMpNe3dd+KBgqXqhgLLgrD4EdpCCIMkUJrZ9jvru3k5HcDOgA==",
   "files": [
     {
       "path": "LICENSE",
@@ -17,12 +17,12 @@
     },
     {
       "path": "README.en.md",
-      "size": 16088,
+      "size": 16393,
       "mode": 420
     },
     {
       "path": "README.md",
-      "size": 15951,
+      "size": 16198,
       "mode": 420
     },
     {

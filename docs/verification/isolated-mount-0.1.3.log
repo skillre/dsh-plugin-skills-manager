@@ -2,7 +2,7 @@
 $ dsh --version
 0.2.1-rc.5
 
-$ dsh --profile skills-manager-test-f9351fe6 --from-default-profile web --dump-config
+$ dsh --profile skills-manager-test-160f959e --from-default-profile web --dump-config
 # == @deepseek-ai/dsh-base
 - id: tool-plugin-manager
   name: '@deepseek-ai/dsh-plugin-manager/tools'
@@ -1235,7 +1235,7 @@ $ dsh --profile skills-manager-test-f9351fe6 --from-default-profile web --dump-c
         name: '@deepseek-ai/dsh-plugin-market/tools'
         disabled: !!js '!ctx.get(''profileContext'')'
 
-$ dsh --profile skills-manager-test-f9351fe6 --help
+$ dsh --profile skills-manager-test-160f959e --help
 Usage: dsh --profile web [options]
 
 Serve the DeepSeek Harness browser UI.
@@ -1269,24 +1269,26 @@ Examples:
                                              serve HTTPS with an existing certificate and key
 
 
-$ dsh plugin --profile skills-manager-test-f9351fe6 add /Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/skillre-dsh-plugin-skills-manager-0.1.3.tgz --ignore-scripts --store-dir /private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-F569Rr/pnpm-store
+$ dsh plugin --profile skills-manager-test-160f959e add /Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/skillre-dsh-plugin-skills-manager-0.1.3.tgz --ignore-scripts --store-dir /private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-9Xbsmm/pnpm-store
 Progress: resolved 0, reused 1, downloaded 0, added 0
 [WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
 Packages: +6
 ++++++
 Packages are cloned from the content-addressable store to the virtual store.
-  Content-addressable store is at: /private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-F569Rr/pnpm-store/v11
+  Content-addressable store is at: /private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-9Xbsmm/pnpm-store/v11
   Virtual store is at:             node_modules/.pnpm
 Progress: resolved 6, reused 1, downloaded 1, added 2
+Progress: resolved 6, reused 1, downloaded 3, added 4
+[WARN] Tarball download average speed 16 KiB/s (size 26 KiB) is below 50 KiB/s: https://registry.npmjs.org/@deepseek-ai/schemastery/-/schemastery-3.18.5.tgz (GET)
 Progress: resolved 6, reused 1, downloaded 4, added 5
 Progress: resolved 6, reused 1, downloaded 5, added 6, done
 
 dependencies:
 + @skillre/dsh-plugin-skills-manager 0.1.3
 
-Done in 3s using pnpm v11.28.5
+Done in 4.2s using pnpm v11.28.5
 
-$ dsh --profile skills-manager-test-f9351fe6 --dump-config
+$ dsh --profile skills-manager-test-160f959e --dump-config
 # == @deepseek-ai/dsh-base
 - id: tool-plugin-manager
   name: '@deepseek-ai/dsh-plugin-manager/tools'
@@ -2524,12 +2526,12 @@ $ dsh --profile skills-manager-test-f9351fe6 --dump-config
   config: {}
 
 $ bounded startup
-dsh web: http://127.0.0.1:54697/?token=[redacted]
+dsh web: http://127.0.0.1:64558/?token=[redacted]
 
 $ bounded startup with installed plugin after restart
-dsh web: http://127.0.0.1:54707/?token=[redacted]
+dsh web: http://127.0.0.1:64565/?token=[redacted]
 
-$ dsh plugin --profile skills-manager-test-f9351fe6 remove @skillre/dsh-plugin-skills-manager --config.ignore-scripts=true --config.store-dir=/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-F569Rr/pnpm-store
+$ dsh plugin --profile skills-manager-test-160f959e remove @skillre/dsh-plugin-skills-manager --config.ignore-scripts=true --config.store-dir=/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-9Xbsmm/pnpm-store
 ? Verifying lockfile against supply-chain policies (6 entries)...
 ✓ Lockfile passes supply-chain policies (6 entries in 1.6s)
 Already up to date
@@ -2539,7 +2541,7 @@ dependencies:
 
 Done in 1.9s using pnpm v11.28.5
 
-$ dsh --profile skills-manager-test-f9351fe6 --dump-config
+$ dsh --profile skills-manager-test-160f959e --dump-config
 # == @deepseek-ai/dsh-base
 - id: tool-plugin-manager
   name: '@deepseek-ai/dsh-plugin-manager/tools'
@@ -3773,12 +3775,12 @@ $ dsh --profile skills-manager-test-f9351fe6 --dump-config
         disabled: !!js '!ctx.get(''profileContext'')'
 
 $ bounded startup after uninstall
-dsh web: http://127.0.0.1:54732/?token=[redacted]
+dsh web: http://127.0.0.1:64590/?token=[redacted]
 
 $ observed dsh --version
 0.2.1-rc.5
 
-$ observed dsh --profile skills-manager-test-f9351fe6 --from-default-profile web --dump-config
+$ observed dsh --profile skills-manager-test-160f959e --from-default-profile web --dump-config
 # == @deepseek-ai/dsh-base
 - id: tool-plugin-manager
   name: '@deepseek-ai/dsh-plugin-manager/tools'
@@ -5011,7 +5013,7 @@ $ observed dsh --profile skills-manager-test-f9351fe6 --from-default-profile web
         name: '@deepseek-ai/dsh-plugin-market/tools'
         disabled: !!js '!ctx.get(''profileContext'')'
 
-$ observed dsh --profile skills-manager-test-f9351fe6 --help
+$ observed dsh --profile skills-manager-test-160f959e --help
 Usage: dsh --profile web [options]
 
 Serve the DeepSeek Harness browser UI.
@@ -5045,24 +5047,26 @@ Examples:
                                              serve HTTPS with an existing certificate and key
 
 
-$ observed dsh plugin --profile skills-manager-test-f9351fe6 add /Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/skillre-dsh-plugin-skills-manager-0.1.3.tgz --ignore-scripts --store-dir /private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-F569Rr/pnpm-store
+$ observed dsh plugin --profile skills-manager-test-160f959e add /Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/skillre-dsh-plugin-skills-manager-0.1.3.tgz --ignore-scripts --store-dir /private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-9Xbsmm/pnpm-store
 Progress: resolved 0, reused 1, downloaded 0, added 0
 [WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
 Packages: +6
 ++++++
 Packages are cloned from the content-addressable store to the virtual store.
-  Content-addressable store is at: /private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-F569Rr/pnpm-store/v11
+  Content-addressable store is at: /private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-9Xbsmm/pnpm-store/v11
   Virtual store is at:             node_modules/.pnpm
 Progress: resolved 6, reused 1, downloaded 1, added 2
+Progress: resolved 6, reused 1, downloaded 3, added 4
+[WARN] Tarball download average speed 16 KiB/s (size 26 KiB) is below 50 KiB/s: https://registry.npmjs.org/@deepseek-ai/schemastery/-/schemastery-3.18.5.tgz (GET)
 Progress: resolved 6, reused 1, downloaded 4, added 5
 Progress: resolved 6, reused 1, downloaded 5, added 6, done
 
 dependencies:
 + @skillre/dsh-plugin-skills-manager 0.1.3
 
-Done in 3s using pnpm v11.28.5
+Done in 4.2s using pnpm v11.28.5
 
-$ observed dsh --profile skills-manager-test-f9351fe6 --dump-config
+$ observed dsh --profile skills-manager-test-160f959e --dump-config
 # == @deepseek-ai/dsh-base
 - id: tool-plugin-manager
   name: '@deepseek-ai/dsh-plugin-manager/tools'
@@ -6299,13 +6303,13 @@ $ observed dsh --profile skills-manager-test-f9351fe6 --dump-config
   name: '@skillre/dsh-plugin-skills-manager'
   config: {}
 
-$ observed dsh --profile skills-manager-test-f9351fe6 --port 0 --no-open
-dsh web: http://127.0.0.1:54697/?token=[redacted]
+$ observed dsh --profile skills-manager-test-160f959e --port 0 --no-open
+dsh web: http://127.0.0.1:64558/?token=[redacted]
 
-$ observed dsh --profile skills-manager-test-f9351fe6 --port 0 --no-open
-dsh web: http://127.0.0.1:54707/?token=[redacted]
+$ observed dsh --profile skills-manager-test-160f959e --port 0 --no-open
+dsh web: http://127.0.0.1:64565/?token=[redacted]
 
-$ observed dsh plugin --profile skills-manager-test-f9351fe6 remove @skillre/dsh-plugin-skills-manager --config.ignore-scripts=true --config.store-dir=/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-F569Rr/pnpm-store
+$ observed dsh plugin --profile skills-manager-test-160f959e remove @skillre/dsh-plugin-skills-manager --config.ignore-scripts=true --config.store-dir=/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-9Xbsmm/pnpm-store
 ? Verifying lockfile against supply-chain policies (6 entries)...
 ✓ Lockfile passes supply-chain policies (6 entries in 1.6s)
 Already up to date
@@ -6315,7 +6319,7 @@ dependencies:
 
 Done in 1.9s using pnpm v11.28.5
 
-$ observed dsh --profile skills-manager-test-f9351fe6 --dump-config
+$ observed dsh --profile skills-manager-test-160f959e --dump-config
 # == @deepseek-ai/dsh-base
 - id: tool-plugin-manager
   name: '@deepseek-ai/dsh-plugin-manager/tools'
@@ -7548,5 +7552,5 @@ $ observed dsh --profile skills-manager-test-f9351fe6 --dump-config
         name: '@deepseek-ai/dsh-plugin-market/tools'
         disabled: !!js '!ctx.get(''profileContext'')'
 
-$ observed dsh --profile skills-manager-test-f9351fe6 --port 0 --no-open
-dsh web: http://127.0.0.1:54732/?token=[redacted]
+$ observed dsh --profile skills-manager-test-160f959e --port 0 --no-open
+dsh web: http://127.0.0.1:64590/?token=[redacted]

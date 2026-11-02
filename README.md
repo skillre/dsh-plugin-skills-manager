@@ -34,14 +34,14 @@
 
 ## 用户安装
 
-本轮交付为本地构建的 `.tgz`，**尚未发布 npm，也未推送 GitHub**。当前 DSH 管理器支持绝对 tarball 路径。
+源码托管在 [github.com/skillre/dsh-plugin-skills-manager](https://github.com/skillre/dsh-plugin-skills-manager)，安装包通过该仓库的 [GitHub Release v0.1.3](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.1.3) 提供；**尚未发布 npm**。当前 DSH 管理器支持绝对 tarball 路径。
 
 1. 打开 DSH 左侧 **Plugins / 插件**。
 2. 选择 **Add plugin / 添加插件**。
-3. 输入交付的 [`skillre-dsh-plugin-skills-manager-0.1.3.tgz`](<skillre-dsh-plugin-skills-manager-0.1.3.tgz>) 的**完整绝对路径**，查看信任提示并自行确认安装。
+3. 从 Release 下载 [`skillre-dsh-plugin-skills-manager-0.1.3.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.1.3/skillre-dsh-plugin-skills-manager-0.1.3.tgz)，输入它的**完整绝对路径**，查看信任提示并自行确认安装。
 4. 启用后，从左侧栏「**技能 / Skills**」进入。
 
-最终安装由用户发起。本轮不代装到日常 profile。不要输入尚未发布的 npm 包名、原始 GitHub 地址或源码目录；源码链接不是本轮验证的安装渠道。
+最终安装由用户发起。不要输入尚未发布的 npm 包名、原始 GitHub 地址或源码目录；源码链接不是本轮验证的安装渠道。
 
 ## 使用
 

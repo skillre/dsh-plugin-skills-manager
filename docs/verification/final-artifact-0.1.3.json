@@ -5,13 +5,19 @@
   "dsh": "0.2.1-rc.5",
   "verifiedAt": "2026-11-02",
   "result": "passed",
+  "publication": {
+    "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
+    "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.1.3",
+    "asset": "https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.1.3/skillre-dsh-plugin-skills-manager-0.1.3.tgz",
+    "npmPublished": false
+  },
   "artifact": {
     "path": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/skillre-dsh-plugin-skills-manager-0.1.3.tgz",
-    "sha256": "38b775d1eb1ed5dea6468dc08467f5098d7f655047050bd3574f5ba3d041617c",
-    "sha1": "c96a9e24f28b8862eab1c2b0c75af0360dcdbeda",
-    "integrity": "sha512-3SAmtaVmhiuR+94guoWoQeYd8tY+zQe3LAQYPEAZN7tylZcMzAdg3iNF4s8tt+xQRnJjQ9X6yBIjydzxV3l9fQ==",
-    "sizeBytes": 78186,
-    "unpackedBytes": 342673,
+    "sha256": "debdafe9db522df7908f62d4e6c19abccb9759a746b720f4ba40493f42c72c98",
+    "sha1": "ded146e9f74ebf71d3c02958b3a731707eeae783",
+    "integrity": "sha512-6YyCTZ0NrkM8SCwI6oC1ZMksZb/WJxG7K3AkuOMpNe3dd+KBgqXqhgLLgrD4EdpCCIMkUJrZ9jvru3k5HcDOgA==",
+    "sizeBytes": 78235,
+    "unpackedBytes": 343225,
     "entryCount": 37,
     "filename": "skillre-dsh-plugin-skills-manager-0.1.3.tgz"
   },
@@ -70,13 +76,13 @@
       },
       {
         "path": "README.en.md",
-        "bytes": 16088,
-        "sha256": "cca1be46cd94951a68fe579d94052c11d45aa96ff0f2e432a11d36e08c11a108"
+        "bytes": 16393,
+        "sha256": "b2f474844a9972f335408eb521d4e976373dd64e70fc6f29967e4459c6c48103"
       },
       {
         "path": "README.md",
-        "bytes": 15951,
-        "sha256": "caf6e6e8309467a4bb81e84fc67dcc208e46bea82c6d9041313a30d67ed0bd4b"
+        "bytes": 16198,
+        "sha256": "93ea494a517f29e69aec3425e3edf30e67e8ea12b98e5937569752100366a75f"
       },
       {
         "path": "UNINSTALL.md",
@@ -253,6 +259,7 @@
   "notes": [
     "Exact artifact and packed payload are external evidence; no tarball hash is embedded inside the package it describes.",
     "The final packed tarball was mounted in an owned temporary non-Desktop profile with real Gateway settings/describe and welcome llm/listConfigurableProviders before, during a real Host restart and after uninstall; every packed file was byte-compared.",
-    "Owned processes closed and every recorded group was ESRCH before canonical owner/UID-root removal and explicit ENOENT. The user's daily profile, Desktop restart, and real Web/Electron visual acceptance remain user-owned and unverified."
+    "Owned processes closed and every recorded group was ESRCH before canonical owner/UID-root removal and explicit ENOENT. The user's daily profile, Desktop restart, and real Web/Electron visual acceptance remain user-owned and unverified.",
+    "The GitHub Release asset was uploaded from this exact verified tarball; the SHA256 in the release body matches this record."
   ]
 }

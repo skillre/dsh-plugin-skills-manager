@@ -34,10 +34,10 @@ For an existing installation, first disable or uninstall 0.1.0 in **Plugins**, c
 
 ## User installation
 
-This delivery is a built local `.tgz`, **not an npm publication or a pushed Git repository**. The current DSH Plugins manager accepts absolute tarball paths.
+The source lives at [github.com/skillre/dsh-plugin-skills-manager](https://github.com/skillre/dsh-plugin-skills-manager); the installable package is provided by that repository's [GitHub Release v0.1.3](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.1.3). It is **not published to npm**. The current DSH Plugins manager accepts absolute tarball paths.
 
 1. Open **Plugins → Add plugin** in DSH.
-2. Enter the **full absolute path** of the delivered [`skillre-dsh-plugin-skills-manager-0.1.3.tgz`](<skillre-dsh-plugin-skills-manager-0.1.3.tgz>).
+2. Download [`skillre-dsh-plugin-skills-manager-0.1.3.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.1.3/skillre-dsh-plugin-skills-manager-0.1.3.tgz) from the Release and enter its **full absolute path**.
 3. Review the trust notice and initiate installation yourself.
 4. Enable it and open **Skills** in the sidebar.
 

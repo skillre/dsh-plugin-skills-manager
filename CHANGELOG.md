@@ -9,8 +9,9 @@
 - File-level update diff (`diff`): compare local files with the remote revision/archive before confirming an update; the update dialog shows added/removed/changed/unchanged files.
 - Wider install sources: local `.tar.gz`/`.tgz`/`.zip` archives (strict in-memory parsing, never executed) and well-known HTTPS catalogs (digest-verified archive install from `well-known-inspect`), plus cross-root `restore-to` for backups.
 - Add management regression tests (batch, purge, permanent removal, move, local install, well-known install, restore-to, diff). Upgrade from 0.1.2 in place; 0.1.0 remains withdrawn.
+- Publish the source repository and the verified tarball as GitHub Release `v0.1.3`; README now links the Release asset. Dependabot version updates are disabled for this repository.
 
-No npm publication, remote push, user-profile change or real Web/Electron visual/restart acceptance is included.
+No npm publication or user-profile change is included; the GitHub source repository and the GitHub Release asset are published. Real Web/Electron visual/restart acceptance remains user-owned.
 
 ## 0.1.2 — well-known provenance and clearer check summaries (local build)
 
@@ -21,7 +22,7 @@ No npm publication, remote push, user-profile change or real Web/Electron visual
 - Add archive-extraction, well-known check/update/error, digest-mismatch, rename and origin-label regressions (7 new tests).
 - Upgrade from 0.1.1 in place; 0.1.0 remains withdrawn and is not a rollback target.
 
-No npm publication, remote push, user-profile change or real Web/Electron visual/restart acceptance is included.
+No npm publication or user-profile change is included; the GitHub source repository and the GitHub Release asset are published. Real Web/Electron visual/restart acceptance remains user-owned.
 
 ## 0.1.1 — API Gateway coexistence fix (local build)
 
@@ -32,7 +33,7 @@ No npm publication, remote push, user-profile change or real Web/Electron visual
 - Keep the skill/filesystem/GitHub business core unchanged; Client source adjustments are type-only Host/Client realm separation.
 - Withdraw 0.1.0 as an installation/rollback target after its Desktop startup failure. Preserve the historical tarball as evidence, never overwrite it.
 
-No npm publication, remote push, user-profile change or real Web/Electron visual/restart acceptance is included.
+No npm publication or user-profile change is included; the GitHub source repository and the GitHub Release asset are published. Real Web/Electron visual/restart acceptance remains user-owned.
 
 ## 0.1.0 — initial local build (withdrawn; unsafe to install)
 

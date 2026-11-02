@@ -6,45 +6,21 @@
   "result": "passed",
   "artifact": {
     "filename": "skillre-dsh-plugin-skills-manager-0.1.3.tgz",
-    "sha256": "38b775d1eb1ed5dea6468dc08467f5098d7f655047050bd3574f5ba3d041617c",
-    "sizeBytes": 78186,
+    "sha256": "debdafe9db522df7908f62d4e6c19abccb9759a746b720f4ba40493f42c72c98",
+    "sizeBytes": 78235,
     "entryCount": 37
   },
+  "publication": {
+    "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
+    "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.1.3"
+  },
   "filesChanged": [
-    "src/types.ts",
-    "src/config.ts",
-    "src/fs-store.ts",
-    "src/archive.ts",
-    "src/zip.ts",
-    "src/manager.ts",
-    "src/index.ts",
-    "src/client/messages.ts",
-    "src/client/index.tsx",
-    "src/client/components.tsx",
-    "src/client/dialogs.tsx",
-    "tests/helpers.ts",
-    "tests/management.spec.ts",
-    "tests/wellknown.spec.ts",
-    "package.json",
-    "CHANGELOG.md",
-    "compatibility.json",
-    ".changeset/skills-manager-management.md",
     "README.md",
     "README.en.md",
-    "docs/architecture.md",
-    "lib/archive.js",
-    "lib/archive.d.ts",
-    "lib/zip.js",
-    "lib/zip.d.ts",
-    "lib/manager.js",
-    "lib/manager.d.ts",
-    "lib/types.js",
-    "lib/types.d.ts",
-    "lib/fs-store.js",
-    "lib/fs-store.d.ts",
-    "lib/client.js",
-    "lib/index.js",
-    "lib/index.d.ts",
+    "CHANGELOG.md",
+    ".github/dependabot.yml (removed)",
+    "package.json",
+    "lib/",
     "docs/verification/check-0.1.3.log",
     "docs/verification/pre-final-mount-0.1.3-gateway.json",
     "docs/verification/pre-final-mount-0.1.3-gateway.log",
@@ -64,31 +40,20 @@
     {
       "command": "DSH_TEST_REPORT_BASENAME=pre-final-mount-0.1.3-gateway node scripts/verify-isolated.mjs <tarball>",
       "exitCode": 0,
-      "detail": "19 checks passed, 37 packed files byte-compared, real Gateway+Host restart+uninstall, cleanup verified"
+      "detail": "19 checks passed on the Release tarball"
     },
     {
       "command": "DSH_TEST_REPORT_BASENAME=isolated-mount-0.1.3 node scripts/verify-isolated.mjs <tarball>",
       "exitCode": 0,
-      "detail": "exact final artifact: 19 checks passed, tarball unchanged, cleanup verified"
+      "detail": "exact final Release asset: 19 checks passed, tarball unchanged, cleanup verified"
     }
   ],
-  "implemented": [
-    "Bulk update across all checked skills with per-item updated/skipped/failed results, backups and explicit overwrite policy.",
-    "Backup size/file counts, single-backup purge and keep-newest-N cleanup.",
-    "Move/rename across writable roots and within a root without overwriting.",
-    "Explicit permanent removal without a retained backup.",
-    "File-level diff preview for updates.",
-    "Local .tar.gz/.tgz/.zip archive install, well-known catalog install, and cross-root restore-to."
-  ],
   "risks": [
-    "Real Web/Electron visual and interaction acceptance remains not verified (user-deferred); the user must restart Desktop with 0.1.3.",
+    "Real Web/Electron visual and interaction acceptance remains not verified (user-deferred).",
     "Packed mount test does not contact public well-known catalogs or public GitHub repositories; those paths are covered by local tests with fake fetchers.",
-    "Cross-filesystem move uses the copy+backup path; a crash between target publish and source removal can leave both copies (never data loss), which the UI reports as a recovery-required state only if rollback fails.",
-    "Backups can be permanently deleted by the user; nothing is auto-purged by default.",
-    "No npm publication, Git push, tag or user-profile change was made; repository files remain untracked in git."
+    "The GitHub Release is the only published artifact; npm is not published and raw Git installation is not supported."
   ],
   "followUps": [
-    "User installs the 0.1.3 tarball in Plugins and restarts Desktop; verify batch update, backup cleanup, move/rename and diff in the real UI.",
-    "After real UI acceptance, consider publishing and market listing through the separate user-owned release flow."
+    "User installs the Release tarball in Plugins and restarts Desktop for real UI acceptance."
   ]
 }

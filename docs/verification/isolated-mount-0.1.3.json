@@ -5,7 +5,7 @@
   "installedPackage": {
     "name": "@skillre/dsh-plugin-skills-manager",
     "version": "0.1.3",
-    "manifestPath": "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-F569Rr/home/profiles/skills-manager-test-f9351fe6/node_modules/@skillre/dsh-plugin-skills-manager/package.json"
+    "manifestPath": "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-9Xbsmm/home/profiles/skills-manager-test-160f959e/node_modules/@skillre/dsh-plugin-skills-manager/package.json"
   },
   "packedPayload": [
     {
@@ -15,13 +15,13 @@
     },
     {
       "path": "README.en.md",
-      "bytes": 16088,
-      "sha256": "cca1be46cd94951a68fe579d94052c11d45aa96ff0f2e432a11d36e08c11a108"
+      "bytes": 16393,
+      "sha256": "b2f474844a9972f335408eb521d4e976373dd64e70fc6f29967e4459c6c48103"
     },
     {
       "path": "README.md",
-      "bytes": 15951,
-      "sha256": "caf6e6e8309467a4bb81e84fc67dcc208e46bea82c6d9041313a30d67ed0bd4b"
+      "bytes": 16198,
+      "sha256": "93ea494a517f29e69aec3425e3edf30e67e8ea12b98e5937569752100366a75f"
     },
     {
       "path": "UNINSTALL.md",
@@ -270,16 +270,16 @@
   ],
   "cleanupVerified": true,
   "cleanup": {
-    "ownedRoot": "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-F569Rr",
-    "owner": "f9351fe6-7053-49c6-8f13-a55b5c9c7315",
-    "profile": "skills-manager-test-f9351fe6",
+    "ownedRoot": "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-9Xbsmm",
+    "owner": "160f959e-31cd-4d4a-82af-3c63db0e43d3",
+    "profile": "skills-manager-test-160f959e",
     "userProfileTouched": false,
     "processesStopped": true,
     "rootRemoved": true
   },
   "processes": [
     {
-      "pid": 28914,
+      "pid": 34458,
       "args": [
         "--version"
       ],
@@ -292,10 +292,10 @@
       "groupAbsent": true
     },
     {
-      "pid": 28928,
+      "pid": 34471,
       "args": [
         "--profile",
-        "skills-manager-test-f9351fe6",
+        "skills-manager-test-160f959e",
         "--from-default-profile",
         "web",
         "--dump-config"
@@ -309,10 +309,10 @@
       "groupAbsent": true
     },
     {
-      "pid": 28942,
+      "pid": 34484,
       "args": [
         "--profile",
-        "skills-manager-test-f9351fe6",
+        "skills-manager-test-160f959e",
         "--help"
       ],
       "stopped": true,
@@ -324,16 +324,16 @@
       "groupAbsent": true
     },
     {
-      "pid": 28960,
+      "pid": 34497,
       "args": [
         "plugin",
         "--profile",
-        "skills-manager-test-f9351fe6",
+        "skills-manager-test-160f959e",
         "add",
         "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/skillre-dsh-plugin-skills-manager-0.1.3.tgz",
         "--ignore-scripts",
         "--store-dir",
-        "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-F569Rr/pnpm-store"
+        "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-9Xbsmm/pnpm-store"
       ],
       "stopped": true,
       "closed": {
@@ -344,10 +344,10 @@
       "groupAbsent": true
     },
     {
-      "pid": 28982,
+      "pid": 34525,
       "args": [
         "--profile",
-        "skills-manager-test-f9351fe6",
+        "skills-manager-test-160f959e",
         "--dump-config"
       ],
       "stopped": true,
@@ -359,10 +359,10 @@
       "groupAbsent": true
     },
     {
-      "pid": 28995,
+      "pid": 34538,
       "args": [
         "--profile",
-        "skills-manager-test-f9351fe6",
+        "skills-manager-test-160f959e",
         "--port",
         "0",
         "--no-open"
@@ -381,10 +381,10 @@
       "groupAbsent": true
     },
     {
-      "pid": 29012,
+      "pid": 34552,
       "args": [
         "--profile",
-        "skills-manager-test-f9351fe6",
+        "skills-manager-test-160f959e",
         "--port",
         "0",
         "--no-open"
@@ -403,15 +403,15 @@
       "groupAbsent": true
     },
     {
-      "pid": 29028,
+      "pid": 34567,
       "args": [
         "plugin",
         "--profile",
-        "skills-manager-test-f9351fe6",
+        "skills-manager-test-160f959e",
         "remove",
         "@skillre/dsh-plugin-skills-manager",
         "--config.ignore-scripts=true",
-        "--config.store-dir=/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-F569Rr/pnpm-store"
+        "--config.store-dir=/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-9Xbsmm/pnpm-store"
       ],
       "stopped": true,
       "closed": {
@@ -422,10 +422,10 @@
       "groupAbsent": true
     },
     {
-      "pid": 29049,
+      "pid": 34591,
       "args": [
         "--profile",
-        "skills-manager-test-f9351fe6",
+        "skills-manager-test-160f959e",
         "--dump-config"
       ],
       "stopped": true,
@@ -437,10 +437,10 @@
       "groupAbsent": true
     },
     {
-      "pid": 29062,
+      "pid": 34604,
       "args": [
         "--profile",
-        "skills-manager-test-f9351fe6",
+        "skills-manager-test-160f959e",
         "--port",
         "0",
         "--no-open"
@@ -460,13 +460,13 @@
     }
   ],
   "tarball": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/skillre-dsh-plugin-skills-manager-0.1.3.tgz",
-  "tarballSha256": "38b775d1eb1ed5dea6468dc08467f5098d7f655047050bd3574f5ba3d041617c",
-  "tarballSha256AtStart": "38b775d1eb1ed5dea6468dc08467f5098d7f655047050bd3574f5ba3d041617c",
+  "tarballSha256": "debdafe9db522df7908f62d4e6c19abccb9759a746b720f4ba40493f42c72c98",
+  "tarballSha256AtStart": "debdafe9db522df7908f62d4e6c19abccb9759a746b720f4ba40493f42c72c98",
   "clientResource": {
-    "path": "/plugins/??@deepseek-ai/dsh-client-ui-user-questions/client.js,@deepseek-ai/dsh-client-ui-trajectory/client.js,@deepseek-ai/dsh-api-remote-access/client.js,@deepseek-ai/dsh-session-log-export/client.js,@deepseek-ai/dsh-client-file-upload/client.js,@deepseek-ai/dsh-api-remotes/client.js,@deepseek-ai/dsh-client-ui-deliverables/client.js,@deepseek-ai/dsh-typert-registry/client.js,@deepseek-ai/dsh-client-connection/client.js,@deepseek-ai/dsh-api-workspace-controller/client.js,@skillre/dsh-plugin-skills-manager/client.js,@deepseek-ai/dsh-api-session-controller/client.js,@deepseek-ai/dsh-client-ui-directory-picker-native/client.js&rev=d5c6d9010cc4",
-    "rev": "d5c6d9010cc4",
+    "path": "/plugins/??@deepseek-ai/dsh-client-ui-user-questions/client.js,@deepseek-ai/dsh-client-ui-trajectory/client.js,@deepseek-ai/dsh-api-remote-access/client.js,@deepseek-ai/dsh-session-log-export/client.js,@deepseek-ai/dsh-client-file-upload/client.js,@deepseek-ai/dsh-api-remotes/client.js,@deepseek-ai/dsh-client-ui-deliverables/client.js,@deepseek-ai/dsh-typert-registry/client.js,@deepseek-ai/dsh-client-connection/client.js,@deepseek-ai/dsh-api-workspace-controller/client.js,@skillre/dsh-plugin-skills-manager/client.js,@deepseek-ai/dsh-api-session-controller/client.js,@deepseek-ai/dsh-client-ui-directory-picker-native/client.js&rev=7d7350bbbe00",
+    "rev": "7d7350bbbe00",
     "status": 200,
-    "sha256": "0c59ae87a6d7c6275f873d620b2696283020b6a46fca8726378e43d0f196f360",
+    "sha256": "8d559a286a0d408ed8e999ac05113409691d11083d4f3da38c78919e11c3c6ed",
     "packedClientSha256": "4fed8b64ab925e892b33bab5841d765402022c335203d4858e3957f6596e9a2d",
     "containsPackedClient": true
   },
