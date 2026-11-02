@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-02",
+  "fullAudit": {
+    "command": "npm audit --json",
+    "exitCode": 1,
+    "highFindings": 2,
+    "scope": "test-only @deepseek-ai/dsh-client-connection pinned from fleet toolchain; its nested zod is 4.4.3",
+    "advisory": "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5",
+    "note": "Do not use npm audit fix --force: replacing the tested DSH contract or changing shipped DSH is outside task-3."
+  },
+  "runtimeAudit": {
+    "command": "npm audit --omit=dev --json",
+    "exitCode": 0,
+    "vulnerabilities": 0
+  }
+}

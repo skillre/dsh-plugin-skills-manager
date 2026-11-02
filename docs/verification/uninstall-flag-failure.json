@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "scope": "historical-packed-test-before-remove-flag-fix",
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.1.0",
+  "dsh": "0.2.1-rc.5",
+  "verifiedAt": "2026-11-01",
+  "result": "failed",
+  "exitCode": 1,
+  "tarballSha256": "1591ce76221d80c4bfa4c846307e52ebaa6c53e144bc9a908a07913acc2045ec",
+  "checks": [
+    "profile-tarball-install",
+    "dump-config",
+    "packed-package-identity",
+    "packed-display-resources",
+    "authenticated-rpc-lifecycle",
+    "bounded-startup",
+    "client-bundle-delivery",
+    "owned-process-and-profile-cleanup",
+    "tarball-unchanged"
+  ],
+  "cleanupVerified": true,
+  "ownedRoot": "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-GM8LSZ",
+  "owner": "9211b10f-7d7b-4a7f-ab45-5db5dc274249",
+  "ownedProfile": "skills-manager-test-9211b10f",
+  "recordedPids": [72860, 72865, 72869, 72879, 72891, 72895, 72903],
+  "allRecordedProcessesClosedAndGroupsAbsent": true,
+  "serverTermination": {
+    "pid": 72895,
+    "signal": "SIGTERM",
+    "sent": true,
+    "closedCode": 0,
+    "groupAbsentAfterClose": true
+  },
+  "rootRemovedAndEnoentVerified": true,
+  "userProfileTouched": false,
+  "pnpmVersionObserved": "11.28.5",
+  "error": {
+    "stage": "profile-uninstall",
+    "message": "pnpm remove rejected --ignore-scripts: Unknown option: 'ignore-scripts'. Use --config.unknown=value to force an unknown option.",
+    "exitCode": 1
+  },
+  "fix": {
+    "scope": "scripts/verify-isolated.mjs remove arguments only",
+    "arguments": ["--config.ignore-scripts=true", "--config.store-dir=<owned pnpm-store>"],
+    "contractBasis": "Observed installed pnpm diagnostic accepts --config.<key>=<value>; current DSH package operations pass CLI args and environment to pnpm unchanged (queried packageDir, README and lib/index.js lines 569-572 and 610-621).",
+    "validation": "A new full packed-package test is required; this failed run is not a pass."
+  },
+  "ui": "not-verified-user-deferred"
+}

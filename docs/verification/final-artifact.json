@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.1.0",
+  "dsh": "0.2.1-rc.5",
+  "verifiedAt": "2026-11-01",
+  "result": "passed",
+  "artifact": {
+    "path": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/skillre-dsh-plugin-skills-manager-0.1.0.tgz",
+    "sha256": "9cf9dad0a691bc331d70c284e660dbfe5d6aa8d2f3f49ac022c207d8abc3a42c",
+    "sha1": "c73b5da6eb11ec2ee630d69189505585639eaeab",
+    "integrity": "sha512-FWa1t2uAj4h7GfhQXUKwOi3dav2ivL5E5E/izqJuyoieneNP6yvbw4Tm6e2BvyAiKm+8DnGWqxP9eZ8JTTqPtw==",
+    "sizeBytes": 53166,
+    "unpackedBytes": 212710,
+    "entryCount": 29
+  },
+  "tests": {
+    "command": "npm run check",
+    "exitCode": 0,
+    "testFiles": 5,
+    "testsPassed": 29,
+    "typecheck": "passed",
+    "build": "passed",
+    "publint": "passed",
+    "packDryRun": "passed",
+    "finalPack": "passed",
+    "finalPackedMount": "passed"
+  },
+  "verification": {
+    "report": "docs/verification/isolated-mount.json",
+    "log": "docs/verification/isolated-mount.log",
+    "invocation": "DSH_TEST_CLI='/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin/dsh' npm run test:integration -- '/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/skillre-dsh-plugin-skills-manager-0.1.0.tgz'",
+    "execution": "foreground-bounded",
+    "outerTimeoutMs": 300000,
+    "exitCode": 0,
+    "checks": [
+      "profile-tarball-install",
+      "dump-config",
+      "packed-package-identity",
+      "packed-payload-bytes",
+      "packed-display-resources",
+      "authenticated-rpc-lifecycle",
+      "bounded-startup",
+      "client-bundle-delivery",
+      "profile-uninstall-absence",
+      "owned-process-and-profile-cleanup",
+      "tarball-unchanged"
+    ],
+    "packedPayload": [
+      {
+        "path": "compatibility.json",
+        "sha256": "dfe41981f1d625746297e7b29881c8ff195dac68b7bbd71ba2e8a7b783f5d3f7"
+      },
+      {
+        "path": "README.md",
+        "sha256": "4dfcdebb9e7a82e581b476a042fb28ef02c9e89868fdb0545b6305624932afb0"
+      },
+      {
+        "path": "README.en.md",
+        "sha256": "07be6242b217c94a20955ea035fe7edf64222af1870b93977b2377dd31eb519e"
+      },
+      {
+        "path": "lib/index.js",
+        "sha256": "21e9b9022f3980e3f171a142e45cad09955354a841b094cfe0e86b800004590b"
+      },
+      {
+        "path": "lib/client.js",
+        "sha256": "abf1011ba0b405070fb5de6d53d0b806f312109c802049422035cb20ed118eb1"
+      }
+    ],
+    "cleanupVerified": true,
+    "finalOwnedProfile": "skills-manager-test-1524c7b7",
+    "finalOwnedRoot": "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-Rad6UY",
+    "recordedProcessesClosed": 8,
+    "allRecordedPosixGroupsAbsent": true,
+    "allThisWaveOwnedRootsEnoent": [
+      "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-Hmhmmu",
+      "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-GM8LSZ",
+      "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-2Uuqyu",
+      "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-Rad6UY"
+    ],
+    "clientResource": {
+      "path": "/plugins/??@deepseek-ai/dsh-client-ui-user-questions/client.js,@deepseek-ai/dsh-client-ui-trajectory/client.js,@deepseek-ai/dsh-api-remote-access/client.js,@deepseek-ai/dsh-session-log-export/client.js,@deepseek-ai/dsh-client-file-upload/client.js,@deepseek-ai/dsh-api-remotes/client.js,@deepseek-ai/dsh-client-ui-deliverables/client.js,@deepseek-ai/dsh-typert-registry/client.js,@deepseek-ai/dsh-client-connection/client.js,@deepseek-ai/dsh-api-workspace-controller/client.js,@skillre/dsh-plugin-skills-manager/client.js,@deepseek-ai/dsh-api-session-controller/client.js,@deepseek-ai/dsh-client-ui-directory-picker-native/client.js&rev=a0c412246c19",
+      "rev": "a0c412246c19",
+      "status": 200,
+      "sha256": "31c7d701a62b630e182536a2bd9f7e0a43cc59ca00fe53bcdde7989317375141",
+      "packedClientSha256": "abf1011ba0b405070fb5de6d53d0b806f312109c802049422035cb20ed118eb1",
+      "containsPackedClient": true
+    }
+  },
+  "safety": {
+    "protectedFileCount": 18,
+    "protectedScope": [
+      "src/",
+      "package.json",
+      "package-lock.json"
+    ],
+    "protectedSha256BeforeAndAfter": "4c10528c0597428c306091d1412e717d70cc1e49e4729e621bb22f419216129f",
+    "userProfileTouched": false,
+    "browserConfigured": false,
+    "fleetGlobalFilesWritten": false,
+    "remotePublicationOrPush": false,
+    "runnerSha256": "5768a43d5263cd3c7388ce7024e5976e8250e25b829c72c3fbd2e8acf20e1535"
+  },
+  "warnings": [
+    "[WARN] Issues with peer dependencies found. Run \"pnpm peers check\" to list them."
+  ],
+  "ui": "not-verified-user-deferred",
+  "limitations": [
+    "Real Web/Electron visual and interaction checks explicitly deferred by the user; release UI-evidence gate remains unsatisfied.",
+    "Only the currently mounted DSH macOS CLI carrier was tested; group proof does not claim arbitrary escaped daemons or Windows descendant behavior.",
+    "Real RPC verified local fixture lifecycle, not live public-repository installation."
+  ]
+}

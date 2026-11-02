@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "repo": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager",
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.1.2",
+  "result": "passed",
+  "artifact": {
+    "filename": "skillre-dsh-plugin-skills-manager-0.1.2.tgz",
+    "sha256": "ad943e21880cc780696ce15ddde8b6ef89b5acb4fe883659ac4d368a07a8faa5",
+    "sizeBytes": 64455,
+    "entryCount": 35
+  },
+  "filesChanged": [
+    "src/archive.ts",
+    "src/well-known.ts",
+    "src/manager.ts",
+    "src/types.ts",
+    "src/fs-store.ts",
+    "src/client/messages.ts",
+    "src/client/index.tsx",
+    "src/client/components.tsx",
+    "src/client/dialogs.tsx",
+    "tests/helpers.ts",
+    "tests/wellknown.spec.ts",
+    "package.json",
+    "CHANGELOG.md",
+    "compatibility.json",
+    ".changeset/skills-manager-wellknown.md",
+    "README.md",
+    "README.en.md",
+    "docs/architecture.md",
+    "lib/archive.js",
+    "lib/archive.d.ts",
+    "lib/well-known.js",
+    "lib/well-known.d.ts",
+    "lib/manager.js",
+    "lib/manager.d.ts",
+    "lib/types.js",
+    "lib/types.d.ts",
+    "lib/fs-store.js",
+    "lib/fs-store.d.ts",
+    "lib/client.js",
+    "lib/index.js",
+    "docs/verification/check-0.1.2.log",
+    "docs/verification/pre-final-mount-0.1.2-gateway.json",
+    "docs/verification/pre-final-mount-0.1.2-gateway.log",
+    "docs/verification/isolated-mount-0.1.2.json",
+    "docs/verification/isolated-mount-0.1.2.log",
+    "docs/verification/final-pack-0.1.2.json",
+    "docs/verification/final-artifact-0.1.2.json",
+    "docs/verification/handoff-0.1.2.json",
+    "skillre-dsh-plugin-skills-manager-0.1.2.tgz"
+  ],
+  "testsRun": [
+    {
+      "command": "npm run check",
+      "exitCode": 0,
+      "detail": "typecheck + 55 tests (7 files) + build + publint + pack dry-run, 35 entries"
+    },
+    {
+      "command": "DSH_TEST_REPORT_BASENAME=pre-final-mount-0.1.2-gateway node scripts/verify-isolated.mjs <tarball>",
+      "exitCode": 0,
+      "detail": "19 checks passed, 35 packed files byte-compared, real Gateway+Host restart+uninstall, cleanup verified"
+    },
+    {
+      "command": "DSH_TEST_REPORT_BASENAME=isolated-mount-0.1.2 node scripts/verify-isolated.mjs <tarball>",
+      "exitCode": 0,
+      "detail": "exact final artifact: 19 checks passed, tarball unchanged, cleanup verified"
+    }
+  ],
+  "implemented": [
+    "Check summary now reports updates, up to date, untracked and errors.",
+    "Skills CLI well-known provenance (sourceBaseUrl + sha256 wellKnownDigest) is imported; catalog index digest checks drive update status and in-place updates.",
+    "Well-known archives are same-origin HTTPS, sha256-verified and strictly parsed in-memory (tar.gz) with no links/devices/traversal/collisions/overruns.",
+    "Unsupported Skills CLI source types are labelled with their real origin and stay untracked (never claimed up to date)."
+  ],
+  "risks": [
+    "Real Web/Electron visual and interaction acceptance remains not verified (user-deferred); the user must restart Desktop with 0.1.2.",
+    "The packed mount test did not contact public well-known catalogs; that path is covered by local unit tests with a fake fetcher.",
+    "A skill installed by another tool has no verifiable local fingerprint until the plugin performs its first update (which backs up).",
+    "Well-known catalogs only support type=archive for updates; skill-md well-known entries remain untracked.",
+    "No npm publication, Git push, tag or user-profile change was made; all repository files remain untracked in git."
+  ],
+  "followUps": [
+    "User installs the 0.1.2 tarball in Plugins and restarts Desktop; then re-run Check updates to confirm 28 lark skills show latest/updates instead of untracked.",
+    "After real UI acceptance, consider publishing and market listing through the separate user-owned release flow.",
+    "Backups are retained indefinitely; a future version may add explicit storage management."
+  ]
+}

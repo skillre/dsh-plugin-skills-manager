@@ -1,0 +1,45 @@
+npm notice
+npm notice 📦  @skillre/dsh-plugin-skills-manager@0.1.1
+npm notice Tarball Contents
+npm notice 1.1kB LICENSE
+npm notice 11.6kB README.en.md
+npm notice 11.4kB README.md
+npm notice 5.0kB UNINSTALL.md
+npm notice 3.7kB compatibility.json
+npm notice 192B cordis.patch.yml
+npm notice 886B icon.svg
+npm notice 90.9kB lib/client.js
+npm notice 2.8kB lib/config.d.ts
+npm notice 3.1kB lib/config.js
+npm notice 403B lib/errors.d.ts
+npm notice 687B lib/errors.js
+npm notice 2.5kB lib/fs-store.d.ts
+npm notice 25.4kB lib/fs-store.js
+npm notice 2.0kB lib/github.d.ts
+npm notice 14.0kB lib/github.js
+npm notice 516B lib/index.d.ts
+npm notice 6.7kB lib/index.js
+npm notice 1.6kB lib/manager.d.ts
+npm notice 23.8kB lib/manager.js
+npm notice 244B lib/skill-metadata.d.ts
+npm notice 2.1kB lib/skill-metadata.js
+npm notice 729B lib/transport.d.ts
+npm notice 3.1kB lib/transport.js
+npm notice 4.3kB lib/types.d.ts
+npm notice 249B lib/types.js
+npm notice 169B lib/utils.d.ts
+npm notice 768B lib/utils.js
+npm notice 162B locale/en.json
+npm notice 154B locale/zh.json
+npm notice 2.9kB package.json
+npm notice Tarball Details
+npm notice name: @skillre/dsh-plugin-skills-manager
+npm notice version: 0.1.1
+npm notice filename: skillre-dsh-plugin-skills-manager-0.1.1.tgz
+npm notice package size: 56.4 kB
+npm notice unpacked size: 223.0 kB
+npm notice shasum: 0995db9b6fe24b18d37705ab44fe54742c996f60
+npm notice integrity: sha512-1E2RrIK0IcWmX[...]ef+nHoFwf9L5Q==
+npm notice total files: 31
+npm notice
+skillre-dsh-plugin-skills-manager-0.1.1.tgz

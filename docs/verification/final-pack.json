@@ -1,0 +1,161 @@
+[
+  {
+    "id": "@skillre/dsh-plugin-skills-manager@0.1.0",
+    "name": "@skillre/dsh-plugin-skills-manager",
+    "version": "0.1.0",
+    "size": 53166,
+    "unpackedSize": 212710,
+    "shasum": "c73b5da6eb11ec2ee630d69189505585639eaeab",
+    "integrity": "sha512-FWa1t2uAj4h7GfhQXUKwOi3dav2ivL5E5E/izqJuyoieneNP6yvbw4Tm6e2BvyAiKm+8DnGWqxP9eZ8JTTqPtw==",
+    "filename": "skillre-dsh-plugin-skills-manager-0.1.0.tgz",
+    "files": [
+      {
+        "path": "LICENSE",
+        "size": 1064,
+        "mode": 420
+      },
+      {
+        "path": "README.en.md",
+        "size": 9673,
+        "mode": 420
+      },
+      {
+        "path": "README.md",
+        "size": 9544,
+        "mode": 420
+      },
+      {
+        "path": "UNINSTALL.md",
+        "size": 3775,
+        "mode": 420
+      },
+      {
+        "path": "compatibility.json",
+        "size": 1673,
+        "mode": 420
+      },
+      {
+        "path": "cordis.patch.yml",
+        "size": 192,
+        "mode": 420
+      },
+      {
+        "path": "icon.svg",
+        "size": 886,
+        "mode": 420
+      },
+      {
+        "path": "lib/client.js",
+        "size": 90883,
+        "mode": 420
+      },
+      {
+        "path": "lib/config.d.ts",
+        "size": 2818,
+        "mode": 420
+      },
+      {
+        "path": "lib/config.js",
+        "size": 3086,
+        "mode": 420
+      },
+      {
+        "path": "lib/errors.d.ts",
+        "size": 403,
+        "mode": 420
+      },
+      {
+        "path": "lib/errors.js",
+        "size": 687,
+        "mode": 420
+      },
+      {
+        "path": "lib/fs-store.d.ts",
+        "size": 2451,
+        "mode": 420
+      },
+      {
+        "path": "lib/fs-store.js",
+        "size": 25397,
+        "mode": 420
+      },
+      {
+        "path": "lib/github.d.ts",
+        "size": 1983,
+        "mode": 420
+      },
+      {
+        "path": "lib/github.js",
+        "size": 14015,
+        "mode": 420
+      },
+      {
+        "path": "lib/index.d.ts",
+        "size": 516,
+        "mode": 420
+      },
+      {
+        "path": "lib/index.js",
+        "size": 7307,
+        "mode": 420
+      },
+      {
+        "path": "lib/manager.d.ts",
+        "size": 1593,
+        "mode": 420
+      },
+      {
+        "path": "lib/manager.js",
+        "size": 23780,
+        "mode": 420
+      },
+      {
+        "path": "lib/skill-metadata.d.ts",
+        "size": 244,
+        "mode": 420
+      },
+      {
+        "path": "lib/skill-metadata.js",
+        "size": 2124,
+        "mode": 420
+      },
+      {
+        "path": "lib/types.d.ts",
+        "size": 4262,
+        "mode": 420
+      },
+      {
+        "path": "lib/types.js",
+        "size": 249,
+        "mode": 420
+      },
+      {
+        "path": "lib/utils.d.ts",
+        "size": 169,
+        "mode": 420
+      },
+      {
+        "path": "lib/utils.js",
+        "size": 768,
+        "mode": 420
+      },
+      {
+        "path": "locale/en.json",
+        "size": 162,
+        "mode": 420
+      },
+      {
+        "path": "locale/zh.json",
+        "size": 154,
+        "mode": 384
+      },
+      {
+        "path": "package.json",
+        "size": 2852,
+        "mode": 420
+      }
+    ],
+    "entryCount": 29,
+    "bundled": []
+  }
+]

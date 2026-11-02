@@ -1,0 +1,248 @@
+{
+  "schemaVersion": 1,
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.1.2",
+  "dsh": "0.2.1-rc.5",
+  "verifiedAt": "2026-11-02",
+  "result": "passed",
+  "artifact": {
+    "path": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/skillre-dsh-plugin-skills-manager-0.1.2.tgz",
+    "sha256": "ad943e21880cc780696ce15ddde8b6ef89b5acb4fe883659ac4d368a07a8faa5",
+    "sha1": "1ea7b334e2017d75a38132fd22754e1e68509a6a",
+    "integrity": "sha512-WX/lKwCk3al3mTpG95K3oERpcoDiyymekPSQZJcklC9/d1OTDFrH1Xw28X2T3nUuxRM9UW9Os7DCz6lR2g9lQQ==",
+    "sizeBytes": 64455,
+    "unpackedBytes": 257461,
+    "entryCount": 35,
+    "filename": "skillre-dsh-plugin-skills-manager-0.1.2.tgz"
+  },
+  "tests": {
+    "command": "npm run check",
+    "log": "docs/verification/check-0.1.2.log",
+    "exitCode": 0,
+    "testFiles": 7,
+    "testsPassed": 55,
+    "realRegistryTests": 20,
+    "wellKnownAndArchiveTests": 7,
+    "typecheck": "passed",
+    "build": "passed",
+    "publint": "passed",
+    "explicitPackDryRun": "passed",
+    "finalPackedMount": "passed"
+  },
+  "verification": {
+    "report": "docs/verification/isolated-mount-0.1.2.json",
+    "log": "docs/verification/isolated-mount-0.1.2.log",
+    "preFinalEvidence": "docs/verification/pre-final-mount-0.1.2-gateway.json",
+    "preFinalChecks": 19,
+    "execution": "foreground-bounded",
+    "outerTimeoutMs": 900000,
+    "exitCode": 0,
+    "checks": [
+      "profile-tarball-install",
+      "dump-config",
+      "packed-package-identity",
+      "packed-payload-bytes",
+      "full-packed-payload-bytes",
+      "packed-display-resources",
+      "unauthenticated-request-refused",
+      "gateway-settings-describe",
+      "gateway-llm-list-configurable-providers",
+      "authenticated-rpc-lifecycle",
+      "bounded-startup",
+      "client-bundle-delivery",
+      "gateway-welcome-apis-after-plugin-restart",
+      "packed-plugin-restart",
+      "profile-uninstall-absence",
+      "gateway-welcome-apis-after-uninstall",
+      "uninstalled-plugin-route-absent",
+      "owned-process-and-profile-cleanup",
+      "tarball-unchanged"
+    ],
+    "cleanupVerified": true,
+    "processes": 10,
+    "packedFiles": 35,
+    "packedPayloadDigest": "ad943e21880cc780696ce15ddde8b6ef89b5acb4fe883659ac4d368a07a8faa5",
+    "packedPayload": [
+      {
+        "path": "LICENSE",
+        "bytes": 1064,
+        "sha256": "0c1e6f5c5467c9e18bf491a13866aa9b5395fc8ab3683c7af2bb02103c2c6f77"
+      },
+      {
+        "path": "README.en.md",
+        "bytes": 13405,
+        "sha256": "0339ddd945ff822cfadf69eae1684a5a5a627d3ab53782954ad4922fb9601bfd"
+      },
+      {
+        "path": "README.md",
+        "bytes": 13189,
+        "sha256": "4967a01ed6071ab06c286cb83870960878224dd13fc28cf9cd25868def34c73e"
+      },
+      {
+        "path": "UNINSTALL.md",
+        "bytes": 5040,
+        "sha256": "a65ec9f0c73571b9fe23449b9296e762db61890302ca655cfcc3224c578c19de"
+      },
+      {
+        "path": "compatibility.json",
+        "bytes": 6872,
+        "sha256": "719e2e7c73bd60aed572c89375a63c300c57aaca5eb9a7e46d229bf0e323ce5d"
+      },
+      {
+        "path": "cordis.patch.yml",
+        "bytes": 192,
+        "sha256": "17d60df6d18fa211b3672510d554937c8f85e483e5e055621ac5389129867b04"
+      },
+      {
+        "path": "icon.svg",
+        "bytes": 886,
+        "sha256": "7676697b4ec28af5cb5328bf1b740ff43e89aaf405218648a3d2f1da9c65e04e"
+      },
+      {
+        "path": "lib/archive.d.ts",
+        "bytes": 514,
+        "sha256": "30c936845a1d3f13935c2b4a413499379033b73166896b8096cb6129d1e8713f"
+      },
+      {
+        "path": "lib/archive.js",
+        "bytes": 7344,
+        "sha256": "76e5aae8e9a79e76592f0c344478a91cf23e782ec1a60ef0b85af3de854ea4d7"
+      },
+      {
+        "path": "lib/client.js",
+        "bytes": 93068,
+        "sha256": "822f328115843321612fbfb617a1408869914623d3caa44ed720485292e9ff35"
+      },
+      {
+        "path": "lib/config.d.ts",
+        "bytes": 2818,
+        "sha256": "0258d7079bfc79d9a93188e7f8818464eb40385442fa24aff70e35f5c47d0420"
+      },
+      {
+        "path": "lib/config.js",
+        "bytes": 3086,
+        "sha256": "1c52101b1128079862094cbf5c96164e2400d6fc18c58eb39bc94957032f27c4"
+      },
+      {
+        "path": "lib/errors.d.ts",
+        "bytes": 403,
+        "sha256": "d432cc772f51b09b108dd2474006c32da4aa4e194bab41239cab65db7a3f507f"
+      },
+      {
+        "path": "lib/errors.js",
+        "bytes": 687,
+        "sha256": "f99daa1823d5d65601c9548b8e8c3f62bbea68b3f07f399eab4229a43e65353b"
+      },
+      {
+        "path": "lib/fs-store.d.ts",
+        "bytes": 2451,
+        "sha256": "70ca66ffac3429a703d9ad46f2663189c8c5b102b4f8a443069d8ced5ed5a69e"
+      },
+      {
+        "path": "lib/fs-store.js",
+        "bytes": 25667,
+        "sha256": "b77417398c5899d0d6d2cc5cea23e7dc594c5b7d9968d1aea8eea9b9d65fac3b"
+      },
+      {
+        "path": "lib/github.d.ts",
+        "bytes": 1983,
+        "sha256": "00812ee82c45c24c8da8c4ddbd00c08535b40820406fbad225b7d4dd4f272642"
+      },
+      {
+        "path": "lib/github.js",
+        "bytes": 14015,
+        "sha256": "2f8ececa06923fc5a9994a1433271d82c0c646e6f9f2037e4e23d611379f5b04"
+      },
+      {
+        "path": "lib/index.d.ts",
+        "bytes": 516,
+        "sha256": "224bd96dd45ac58c58de09d1438726d264418ef50fe351eb192b9d72356e7d1d"
+      },
+      {
+        "path": "lib/index.js",
+        "bytes": 6659,
+        "sha256": "8ca68e394a01523c0ae26661ec835ff2071353466c05c22ca5be41f00bc200ed"
+      },
+      {
+        "path": "lib/manager.d.ts",
+        "bytes": 1720,
+        "sha256": "528881ea63f3f76613a6a91eca78b0822345da276b261477466ddc0b403b843f"
+      },
+      {
+        "path": "lib/manager.js",
+        "bytes": 30800,
+        "sha256": "51e6acf6b85498f6e441a0cc8d8479b9d8e0bb619914a2e2d9cab447de401dab"
+      },
+      {
+        "path": "lib/skill-metadata.d.ts",
+        "bytes": 244,
+        "sha256": "270728caafd33b22e3e518a1a6e47a01366a923f787a0cc144a5b8bce00f1747"
+      },
+      {
+        "path": "lib/skill-metadata.js",
+        "bytes": 2124,
+        "sha256": "a0f3129ee387df08c918feda649e0a0c575a25ad9f8790af8439d94e86f46d04"
+      },
+      {
+        "path": "lib/transport.d.ts",
+        "bytes": 729,
+        "sha256": "278702c6d796dd3b8088715c2579db5654684ab2b92c51a2b6826a8b2604248b"
+      },
+      {
+        "path": "lib/transport.js",
+        "bytes": 3133,
+        "sha256": "7836484b6e5714579079af9bcc312882d46f517bb2ad15ddf5f5bdee197343cd"
+      },
+      {
+        "path": "lib/types.d.ts",
+        "bytes": 4543,
+        "sha256": "18fe5dfdc03b580e55e92c2b860aeab67dc91a78201ba0a6e273b53c6c1a51a8"
+      },
+      {
+        "path": "lib/types.js",
+        "bytes": 249,
+        "sha256": "683f271325830873b613cb147673ddf41da092a25d6593c503b3d1c195b58b29"
+      },
+      {
+        "path": "lib/utils.d.ts",
+        "bytes": 169,
+        "sha256": "8604b45416281c7bf5d3635a7db2f2c59cbcaee47a6e99371b040bca67bef655"
+      },
+      {
+        "path": "lib/utils.js",
+        "bytes": 768,
+        "sha256": "9e8ffd7cf181b9afc41d25a7c40fcb7bd2ed33fc0a5e5419ba3fdf47f39221f9"
+      },
+      {
+        "path": "lib/well-known.d.ts",
+        "bytes": 1237,
+        "sha256": "7d97ebd6f65e4b8935fae7e13f1a956d0a56e312c14942d6ca4cdb3632dac234"
+      },
+      {
+        "path": "lib/well-known.js",
+        "bytes": 8662,
+        "sha256": "cb718a25fcb8fa9a41d3229d917090b040b35dd18b738f795efefee3ffdb0099"
+      },
+      {
+        "path": "locale/en.json",
+        "bytes": 162,
+        "sha256": "63d6812c70667d0f435a284c8af6fa0ddd45f09c9f01ac92c14d1f71d74a7464"
+      },
+      {
+        "path": "locale/zh.json",
+        "bytes": 154,
+        "sha256": "cd5857cbc626bd1b683ee97029751c7fa1cd7500f9dc05dd7df013aa9d2a5e06"
+      },
+      {
+        "path": "package.json",
+        "bytes": 2908,
+        "sha256": "1e1e8c3a8ad27adb13d548e881e1987110fba9eaccf2b998285ab08aa9c51cb9"
+      }
+    ]
+  },
+  "notes": [
+    "Exact artifact and packed payload are external evidence; no tarball hash is embedded inside the package it describes.",
+    "The final packed tarball was mounted in an owned temporary non-Desktop profile with real Gateway settings/describe and welcome llm/listConfigurableProviders before, during a real Host restart and after uninstall; every packed file was byte-compared.",
+    "Owned processes closed and every recorded group was ESRCH before canonical owner/UID-root removal and explicit ENOENT. The user's daily profile, Desktop restart, and real Web/Electron visual acceptance remain user-owned and unverified."
+  ]
+}

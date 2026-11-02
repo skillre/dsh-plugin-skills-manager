@@ -1,0 +1,123 @@
+{
+  "repo": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager",
+  "filesChanged": [
+    "src/index.ts",
+    "src/transport.ts",
+    "src/client/contracts.ts",
+    "src/client/index.tsx",
+    "tests/plugin.spec.ts",
+    "tests/transport.spec.ts",
+    "package.json",
+    "package-lock.json",
+    "scripts/verify-isolated.mjs",
+    "README.md",
+    "README.en.md",
+    "CHANGELOG.md",
+    "UNINSTALL.md",
+    "compatibility.json",
+    ".changeset/skills-manager-api-route.md",
+    "lib/index.js",
+    "lib/transport.d.ts",
+    "lib/transport.js",
+    "docs/verification/task-3-baseline.json",
+    "docs/verification/dependency-audit-0.1.1.json",
+    "docs/verification/transport-contract-0.1.1.md",
+    "docs/verification/check-pre-final-0.1.1.log",
+    "docs/verification/check-0.1.1.log",
+    "docs/verification/pack-dry-run-0.1.1.log",
+    "docs/verification/pre-final-pack-0.1.1.json",
+    "docs/verification/pre-final-0.1.1/skillre-dsh-plugin-skills-manager-0.1.1.tgz",
+    "docs/verification/pre-final-mount-0.1.1.json",
+    "docs/verification/pre-final-mount-0.1.1.log",
+    "docs/verification/pre-final-mount-0.1.1-validated.json",
+    "docs/verification/pre-final-mount-0.1.1-validated.log",
+    "docs/verification/pre-final-mount-0.1.1-gateway.json",
+    "docs/verification/pre-final-mount-0.1.1-gateway.log",
+    "docs/verification/isolated-mount-0.1.1.json",
+    "docs/verification/isolated-mount-0.1.1.log",
+    "docs/verification/final-pack-0.1.1.json",
+    "docs/verification/final-artifact-0.1.1.json",
+    "docs/verification/handoff-0.1.1.json",
+    "skillre-dsh-plugin-skills-manager-0.1.1.tgz"
+  ],
+  "testsRun": [
+    {
+      "command": "npm run check",
+      "exitCode": 0,
+      "result": "passed",
+      "testsPassed": 48,
+      "testFiles": 6,
+      "evidence": "docs/verification/check-0.1.1.log"
+    },
+    {
+      "command": "npm pack --dry-run --ignore-scripts",
+      "exitCode": 0,
+      "result": "passed",
+      "evidence": "docs/verification/pack-dry-run-0.1.1.log"
+    },
+    {
+      "command": "npm pack --json --ignore-scripts",
+      "exitCode": 0,
+      "result": "passed",
+      "evidence": "docs/verification/final-pack-0.1.1.json"
+    },
+    {
+      "command": "DSH_TEST_CLI='/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin/dsh' npm run test:integration -- '/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/skillre-dsh-plugin-skills-manager-0.1.1.tgz'",
+      "exitCode": 0,
+      "result": "passed",
+      "evidence": "docs/verification/isolated-mount-0.1.1.json",
+      "packedFilesCompared": 31,
+      "gatewayStages": 3,
+      "recordedProcessesClosed": 10,
+      "cleanupVerified": true
+    },
+    {
+      "command": "npm audit --json",
+      "exitCode": 1,
+      "result": "known-test-only-advisory",
+      "highFindings": 2
+    },
+    {
+      "command": "npm audit --omit=dev --json",
+      "exitCode": 0,
+      "result": "passed",
+      "vulnerabilities": 0
+    },
+    {
+      "command": "protected-source/historical-tar/lib-byte/frozen-final-payload/all-owned-root verification",
+      "exitCode": 0,
+      "result": "passed",
+      "recordedOwnedProcessesClosed": 32
+    }
+  ],
+  "result": "passed",
+  "risks": [
+    "Real user Desktop restart and Web/Electron visual/interaction acceptance are unverified; no browser setup or daily-profile modification occurred.",
+    "Only current DSH 0.2.1-rc.5 on the macOS isolated non-Desktop CLI/Web carrier was mounted; Desktop shell dispatch is supported by the live SDK/real registry, not a live Electron check.",
+    "Body cap belongs to Connection buffered HTTP (current default 300 MiB), not direct shared.fetch or this adapter; no new carrier-overflow test or escaped-daemon/platform claim.",
+    "npm audit reports two high findings from the exact test-only DSH connection dependency and its nested zod 4.4.3 (GHSA-mrhx-c7xc-m3w5). npm audit --omit=dev reports zero vulnerabilities; DSH/runtime dependency replacement is outside this task."
+  ],
+  "followUps": [
+    "User disables/uninstalls unsafe 0.1.0 through Plugins, installs the exact final 0.1.1 absolute tarball path, then checks an actual Desktop restart. Do not use 0.1.0 as rollback.",
+    "If Plugins is inaccessible, preserve logs and obtain separate user authorization, baseline inventory and a reversible recovery plan; this task does not alter the existing user installation.",
+    "Remote push/npm publication and real target-UI acceptance remain user-owned; the release UI-evidence gate remains unsatisfied."
+  ],
+  "artifact": {
+    "path": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/skillre-dsh-plugin-skills-manager-0.1.1.tgz",
+    "sha256": "5016a82fee3a16a6a58c703b46340236c8de6ef04e1ccd58f41e737ac94a9415",
+    "sha1": "0995db9b6fe24b18d37705ab44fe54742c996f60",
+    "integrity": "sha512-1E2RrIK0IcWmXP8NKY8pjVEW7nWdYfFBLXe7uBhK65ydae0jt7m7AA8AbM9q0+bW8kVVuArLjef+nHoFwf9L5Q==",
+    "sizeBytes": 56435,
+    "unpackedBytes": 222968,
+    "entryCount": 31
+  },
+  "evidence": "docs/verification/final-artifact-0.1.1.json",
+  "review": {
+    "task": "task-4",
+    "result": "passed",
+    "readOnly": true,
+    "filesChanged": [],
+    "testsRun": []
+  },
+  "task": "task-3"
+}

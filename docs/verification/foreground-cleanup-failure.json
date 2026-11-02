@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.1.0",
+  "dsh": "0.2.1-rc.5",
+  "verifiedAt": "2026-11-01",
+  "result": "failed",
+  "checks": [
+    "profile-tarball-install",
+    "dump-config",
+    "packed-display-resources",
+    "authenticated-rpc-lifecycle",
+    "bounded-startup",
+    "client-bundle-delivery"
+  ],
+  "cleanupVerified": false,
+  "tarballSha256": "5d2e476185d5778fe07da61f249d6332832903549aebfca357755757d4432d76",
+  "ui": "not-verified-user-deferred",
+  "command": "npm pack --json --ignore-scripts && DSH_TEST_CLI='/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin/dsh' npm run test:integration",
+  "foregroundTimeoutMs": 300000,
+  "exitCode": 1,
+  "ownedRoot": "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-Hmhmmu",
+  "owner": "16f3b0e9-c633-4d89-85c6-f9ce6ddc8ddb",
+  "profile": "skills-manager-test-16f3b0e9",
+  "recordedPids": [69386, 69391, 69395, 69402, 69430, 69434],
+  "recordedServerPid": 69434,
+  "error": {
+    "message": "The live process-group probe returned kill EPERM; process absence was not established and the owned root was preserved.",
+    "code": "EPERM"
+  },
+  "readOnlyRecoveryProbe": {
+    "command": "ps -p 69386,69391,69395,69402,69430,69434 -o pid=,ppid=,pgid=,stat=,command=",
+    "exitCode": 126,
+    "result": "sandbox-denied",
+    "message": "/bin/ps: Operation not permitted under workspace-write; no approval escalation or alternate retry was attempted."
+  },
+  "note": "Historical failed evidence only. Do not use these partial checks as an installation or cleanup pass. Any later authorized recovery must be recorded independently."
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "repo": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager",
+  "task": "task-3",
+  "recordedAt": "2026-11-02",
+  "protectedFiles": [
+    { "path": "src/manager.ts", "sha256": "0222ea80335dce72fed953483ac814cb7be8ee74ce861614b05544d98f23c503" },
+    { "path": "src/fs-store.ts", "sha256": "ad7817d01c9b772039dd75d68745fff4a99f8a0691f97761ece596fe56bf3f04" },
+    { "path": "src/github.ts", "sha256": "73a6c6b2e01a787ab3cc4c12b0524b790c2cd6ebae0cf27defbce60b42764fdb" },
+    { "path": "src/client/index.tsx", "sha256": "c66b5cbe6ab7a00bad49cfb921b3b68b2e1c536147495f845d95687e23837de4", "allowedChange": "type-only cast through unknown at the Host/Client realm boundary; preserve runtime UI" },
+    { "path": "src/client/contracts.ts", "sha256": "3326715faae273d7979025d1b2d0a16d6823900ab03ff4f3ce26eaa18d7cd932", "allowedChange": "type-only separation from Host Context.connection augmentation; preserve runtime RPC call" },
+    { "path": "skillre-dsh-plugin-skills-manager-0.1.0.tgz", "sha256": "9cf9dad0a691bc331d70c284e660dbfe5d6aa8d2f3f49ac022c207d8abc3a42c" }
+  ],
+  "policy": "The previous artifact is retained only as evidence; v0.1.0 is unsafe to install or roll back to. No user profile, browser, credentials, DSH installation or fleet-global files may be changed."
+}

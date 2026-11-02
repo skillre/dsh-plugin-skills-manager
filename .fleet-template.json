@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "fleetOwner": "skillre",
+  "slug": "skills-manager",
+  "templateVersion": "0.7.0",
+  "templateDigest": "sha256:ff567924d9f3c06ed3d606f79752f52bc906449cd01dbe99e726d37d47b3e0df",
+  "policyVersion": "0.7.0",
+  "policyDigest": "sha256:db406931449e005291b2c7e7cc76a0edaf0c43bcd8f7075166bfab45d8d2dbbd",
+  "createdAt": "2026-10-29",
+  "createdWithDsh": "0.2.1-rc.3"
+}

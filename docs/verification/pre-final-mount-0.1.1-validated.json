@@ -1,0 +1,303 @@
+{
+  "schemaVersion": 1,
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.1.1",
+  "installedPackage": {
+    "name": "@skillre/dsh-plugin-skills-manager",
+    "version": "0.1.1",
+    "manifestPath": "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-nzS8tX/home/profiles/skills-manager-test-caf799b6/node_modules/@skillre/dsh-plugin-skills-manager/package.json"
+  },
+  "packedPayload": [
+    {
+      "path": "LICENSE",
+      "bytes": 1064,
+      "sha256": "0c1e6f5c5467c9e18bf491a13866aa9b5395fc8ab3683c7af2bb02103c2c6f77"
+    },
+    {
+      "path": "README.en.md",
+      "bytes": 10832,
+      "sha256": "7beac6395958d7298b7a17cd9038fb6d658677d38fd617479002aaff3d57f8e8"
+    },
+    {
+      "path": "README.md",
+      "bytes": 10626,
+      "sha256": "24407756f75c8d0c555040a257f1c8485b954a66ac4ab2c6f4fb0566342aebea"
+    },
+    {
+      "path": "UNINSTALL.md",
+      "bytes": 5040,
+      "sha256": "a65ec9f0c73571b9fe23449b9296e762db61890302ca655cfcc3224c578c19de"
+    },
+    {
+      "path": "compatibility.json",
+      "bytes": 440,
+      "sha256": "c7e3ed4b26723ea8394704a57b9ef8383f4cba1d892c70cf6ea036bde3544de5"
+    },
+    {
+      "path": "cordis.patch.yml",
+      "bytes": 192,
+      "sha256": "17d60df6d18fa211b3672510d554937c8f85e483e5e055621ac5389129867b04"
+    },
+    {
+      "path": "icon.svg",
+      "bytes": 886,
+      "sha256": "7676697b4ec28af5cb5328bf1b740ff43e89aaf405218648a3d2f1da9c65e04e"
+    },
+    {
+      "path": "lib/client.js",
+      "bytes": 90883,
+      "sha256": "abf1011ba0b405070fb5de6d53d0b806f312109c802049422035cb20ed118eb1"
+    },
+    {
+      "path": "lib/config.d.ts",
+      "bytes": 2818,
+      "sha256": "0258d7079bfc79d9a93188e7f8818464eb40385442fa24aff70e35f5c47d0420"
+    },
+    {
+      "path": "lib/config.js",
+      "bytes": 3086,
+      "sha256": "1c52101b1128079862094cbf5c96164e2400d6fc18c58eb39bc94957032f27c4"
+    },
+    {
+      "path": "lib/errors.d.ts",
+      "bytes": 403,
+      "sha256": "d432cc772f51b09b108dd2474006c32da4aa4e194bab41239cab65db7a3f507f"
+    },
+    {
+      "path": "lib/errors.js",
+      "bytes": 687,
+      "sha256": "f99daa1823d5d65601c9548b8e8c3f62bbea68b3f07f399eab4229a43e65353b"
+    },
+    {
+      "path": "lib/fs-store.d.ts",
+      "bytes": 2451,
+      "sha256": "70ca66ffac3429a703d9ad46f2663189c8c5b102b4f8a443069d8ced5ed5a69e"
+    },
+    {
+      "path": "lib/fs-store.js",
+      "bytes": 25397,
+      "sha256": "d87c79fb47b2e6ed1761afa20a5f0c43acf19efdf5084aaaf297b53f1c546685"
+    },
+    {
+      "path": "lib/github.d.ts",
+      "bytes": 1983,
+      "sha256": "00812ee82c45c24c8da8c4ddbd00c08535b40820406fbad225b7d4dd4f272642"
+    },
+    {
+      "path": "lib/github.js",
+      "bytes": 14015,
+      "sha256": "2f8ececa06923fc5a9994a1433271d82c0c646e6f9f2037e4e23d611379f5b04"
+    },
+    {
+      "path": "lib/index.d.ts",
+      "bytes": 516,
+      "sha256": "224bd96dd45ac58c58de09d1438726d264418ef50fe351eb192b9d72356e7d1d"
+    },
+    {
+      "path": "lib/index.js",
+      "bytes": 6659,
+      "sha256": "8ca68e394a01523c0ae26661ec835ff2071353466c05c22ca5be41f00bc200ed"
+    },
+    {
+      "path": "lib/manager.d.ts",
+      "bytes": 1593,
+      "sha256": "c3a6b9791200af8279ca761feb9e9cf0a0f64be108c71caac5f9810b98096671"
+    },
+    {
+      "path": "lib/manager.js",
+      "bytes": 23780,
+      "sha256": "c3abc7a1e7bd0bdb357aa40ac5dd1cef12df936ea5e618228381508b2a65ee11"
+    },
+    {
+      "path": "lib/skill-metadata.d.ts",
+      "bytes": 244,
+      "sha256": "270728caafd33b22e3e518a1a6e47a01366a923f787a0cc144a5b8bce00f1747"
+    },
+    {
+      "path": "lib/skill-metadata.js",
+      "bytes": 2124,
+      "sha256": "a0f3129ee387df08c918feda649e0a0c575a25ad9f8790af8439d94e86f46d04"
+    },
+    {
+      "path": "lib/transport.d.ts",
+      "bytes": 729,
+      "sha256": "278702c6d796dd3b8088715c2579db5654684ab2b92c51a2b6826a8b2604248b"
+    },
+    {
+      "path": "lib/transport.js",
+      "bytes": 3133,
+      "sha256": "7836484b6e5714579079af9bcc312882d46f517bb2ad15ddf5f5bdee197343cd"
+    },
+    {
+      "path": "lib/types.d.ts",
+      "bytes": 4262,
+      "sha256": "1d67e8e17f4631bf56a34d1bf73438bbbc406b2695f24cf52a0c5a82c273fb19"
+    },
+    {
+      "path": "lib/types.js",
+      "bytes": 249,
+      "sha256": "683f271325830873b613cb147673ddf41da092a25d6593c503b3d1c195b58b29"
+    },
+    {
+      "path": "lib/utils.d.ts",
+      "bytes": 169,
+      "sha256": "8604b45416281c7bf5d3635a7db2f2c59cbcaee47a6e99371b040bca67bef655"
+    },
+    {
+      "path": "lib/utils.js",
+      "bytes": 768,
+      "sha256": "9e8ffd7cf181b9afc41d25a7c40fcb7bd2ed33fc0a5e5419ba3fdf47f39221f9"
+    },
+    {
+      "path": "locale/en.json",
+      "bytes": 162,
+      "sha256": "63d6812c70667d0f435a284c8af6fa0ddd45f09c9f01ac92c14d1f71d74a7464"
+    },
+    {
+      "path": "locale/zh.json",
+      "bytes": 154,
+      "sha256": "cd5857cbc626bd1b683ee97029751c7fa1cd7500f9dc05dd7df013aa9d2a5e06"
+    },
+    {
+      "path": "package.json",
+      "bytes": 2908,
+      "sha256": "7d1a6e95819abc551c6772f5cd8b623a78579901193099ab25af41fde90684ea"
+    }
+  ],
+  "gatewayChecks": [],
+  "dsh": "0.2.1-rc.5",
+  "verifiedAt": "2026-11-02",
+  "result": "failed",
+  "checks": [
+    "profile-tarball-install",
+    "dump-config",
+    "packed-package-identity",
+    "packed-payload-bytes",
+    "full-packed-payload-bytes",
+    "packed-display-resources",
+    "unauthenticated-request-refused",
+    "owned-process-and-profile-cleanup",
+    "tarball-unchanged"
+  ],
+  "cleanupVerified": true,
+  "cleanup": {
+    "ownedRoot": "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-nzS8tX",
+    "owner": "caf799b6-9452-4512-80e1-2d04cc51afec",
+    "profile": "skills-manager-test-caf799b6",
+    "userProfileTouched": false,
+    "processesStopped": true,
+    "rootRemoved": true
+  },
+  "processes": [
+    {
+      "pid": 92302,
+      "args": [
+        "--version"
+      ],
+      "stopped": true,
+      "closed": {
+        "code": 0,
+        "signal": null
+      },
+      "signals": [],
+      "groupAbsent": true
+    },
+    {
+      "pid": 92306,
+      "args": [
+        "--profile",
+        "skills-manager-test-caf799b6",
+        "--from-default-profile",
+        "web",
+        "--dump-config"
+      ],
+      "stopped": true,
+      "closed": {
+        "code": 0,
+        "signal": null
+      },
+      "signals": [],
+      "groupAbsent": true
+    },
+    {
+      "pid": 92310,
+      "args": [
+        "--profile",
+        "skills-manager-test-caf799b6",
+        "--help"
+      ],
+      "stopped": true,
+      "closed": {
+        "code": 0,
+        "signal": null
+      },
+      "signals": [],
+      "groupAbsent": true
+    },
+    {
+      "pid": 92318,
+      "args": [
+        "plugin",
+        "--profile",
+        "skills-manager-test-caf799b6",
+        "add",
+        "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/docs/verification/pre-final-0.1.1/skillre-dsh-plugin-skills-manager-0.1.1.tgz",
+        "--ignore-scripts",
+        "--store-dir",
+        "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-nzS8tX/pnpm-store"
+      ],
+      "stopped": true,
+      "closed": {
+        "code": 0,
+        "signal": null
+      },
+      "signals": [],
+      "groupAbsent": true
+    },
+    {
+      "pid": 92336,
+      "args": [
+        "--profile",
+        "skills-manager-test-caf799b6",
+        "--dump-config"
+      ],
+      "stopped": true,
+      "closed": {
+        "code": 0,
+        "signal": null
+      },
+      "signals": [],
+      "groupAbsent": true
+    },
+    {
+      "pid": 92340,
+      "args": [
+        "--profile",
+        "skills-manager-test-caf799b6",
+        "--port",
+        "0",
+        "--no-open"
+      ],
+      "stopped": true,
+      "closed": {
+        "code": 0,
+        "signal": null
+      },
+      "signals": [
+        {
+          "signal": "SIGTERM",
+          "sent": true
+        }
+      ],
+      "groupAbsent": true
+    }
+  ],
+  "tarball": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/docs/verification/pre-final-0.1.1/skillre-dsh-plugin-skills-manager-0.1.1.tgz",
+  "tarballSha256": "21e56141d1daee33c6174ba5e3a74779850a56cd7d52b6727157a0cbcd263651",
+  "tarballSha256AtStart": "21e56141d1daee33c6174ba5e3a74779850a56cd7d52b6727157a0cbcd263651",
+  "ui": "not-verified-user-deferred",
+  "error": {
+    "message": "Settings must reflect the real installed/uninstalled bundle\n\nfalse !== true\n",
+    "code": "ERR_ASSERTION"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "scope": "historical-owned-root-cleanup-only",
+  "dsh": "0.2.1-rc.5",
+  "verifiedAt": "2026-11-01",
+  "result": "passed",
+  "ownedRoot": "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-Hmhmmu",
+  "owner": "16f3b0e9-c633-4d89-85c6-f9ce6ddc8ddb",
+  "ownedProfile": "skills-manager-test-16f3b0e9",
+  "recordedProcessGroups": [69386, 69391, 69395, 69402, 69430, 69434],
+  "parentVerification": {
+    "source": "lead authorized external cleanup report",
+    "exitCode": 0,
+    "completePsInventoryMatchingMembers": [],
+    "allRecordedProcessGroupsAbsent": true,
+    "canonicalRootVerified": true,
+    "uidVerified": true,
+    "ownerMarkerMatched": true,
+    "rootRemoved": true,
+    "absenceVerified": true,
+    "pluginRepositoryWritten": false,
+    "userProfileTouched": false
+  },
+  "independentAbsenceProbe": {
+    "source": "skills-delivery foreground Node access assertion under workspace-write",
+    "exitCode": 0,
+    "rootAbsent": true,
+    "absenceCode": "ENOENT",
+    "processProbeRetried": false,
+    "permissionEscalationRequested": false
+  },
+  "userProfileTouched": false,
+  "historicalTarballMountResult": "failed",
+  "note": "Independent recovery evidence for the preserved root only. The historical mount failed at EPERM and remains failed; this cleanup record is not a packed-package verification pass. Fresh exact-tarball installation and cleanup are verified separately."
+}

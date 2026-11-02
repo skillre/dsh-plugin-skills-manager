@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96" role="img" aria-label="Skills Manager">
+  <!-- Original Skillre artwork, distributed under the package MIT license. -->
+  <defs><linearGradient id="skills-blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#4f7cff"/><stop offset="1" stop-color="#3153d9"/></linearGradient></defs>
+  <rect x="6" y="6" width="84" height="84" rx="23" fill="url(#skills-blue)"/>
+  <path d="M48 32c-9-6-18-8-29-6v40c11-2 20 0 29 6 9-6 18-8 29-6V26c-11-2-20 0-29 6Z" fill="none" stroke="#fff" stroke-width="4.8" stroke-linejoin="round"/>
+  <path d="M48 33v38M28 38l11 2M28 48l11 2M57 40l10-2M57 50l10-2" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="74" cy="25" r="13" fill="#ecf2ff"/>
+  <path d="m74 17 2.2 5.8 5.8 2.2-5.8 2.2L74 33l-2.2-5.8L66 25l5.8-2.2L74 17Z" fill="#345ae3"/>
+</svg>

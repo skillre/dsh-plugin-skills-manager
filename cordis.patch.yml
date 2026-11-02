@@ -1,0 +1,5 @@
+# One native Host + Client row. The user's profile may override its configuration.
+- insert:
+    - id: skillre-skills-manager
+      name: '@skillre/dsh-plugin-skills-manager'
+      config: {}

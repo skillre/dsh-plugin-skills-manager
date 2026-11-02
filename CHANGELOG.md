@@ -1,0 +1,46 @@
+# Changelog
+
+## 0.1.3 — batch operations, backup management and wider install sources (local build)
+
+- Batch-update all checked skills (`update-batch`): each item is re-verified against its source, previous versions are backed up, locally modified skills are skipped unless explicitly allowed, and the result reports updated/skipped/failed per skill.
+- Backup management: backups record size/file count, individual backups can be purged, and a location can be cleaned while keeping the newest N. Backups remain manual-only by default.
+- Move/rename (`move`): move a skill to another writable root (copy-verify-publish then back up the source) or rename its directory within a root, without overwriting existing entries.
+- Permanent removal option for `remove`: explicit, second-factor confirmation deletes the files without a restorable backup.
+- File-level update diff (`diff`): compare local files with the remote revision/archive before confirming an update; the update dialog shows added/removed/changed/unchanged files.
+- Wider install sources: local `.tar.gz`/`.tgz`/`.zip` archives (strict in-memory parsing, never executed) and well-known HTTPS catalogs (digest-verified archive install from `well-known-inspect`), plus cross-root `restore-to` for backups.
+- Add management regression tests (batch, purge, permanent removal, move, local install, well-known install, restore-to, diff). Upgrade from 0.1.2 in place; 0.1.0 remains withdrawn.
+
+No npm publication, remote push, user-profile change or real Web/Electron visual/restart acceptance is included.
+
+## 0.1.2 — well-known provenance and clearer check summaries (local build)
+
+- Track skills installed by the Skills CLI from well-known HTTPS catalogs (`sourceBaseUrl` + `.well-known/agent-skills/index.json`): compare the catalog's `sha256` artifact digest, report updates and update in place with a backup. GitHub provenance remains commit/tree-hash pinned.
+- Download a well-known skill archive only from the catalog's own HTTPS origin, verify its `sha256` digest, and extract it with a strict in-memory tar parser that rejects links, devices, traversal, duplicate/collision paths and size/file-count overruns before any local change.
+- Show externally recorded origins (`open.feishu.cn`, other Skills CLI source types) on untracked skills instead of a generic label. Unsupported entries remain untracked and are never claimed as up to date.
+- Include the up-to-date count in the check summary so the reported numbers account for every checked skill.
+- Add archive-extraction, well-known check/update/error, digest-mismatch, rename and origin-label regressions (7 new tests).
+- Upgrade from 0.1.1 in place; 0.1.0 remains withdrawn and is not a rollback target.
+
+No npm publication, remote push, user-profile change or real Web/Electron visual/restart acceptance is included.
+
+## 0.1.1 — API Gateway coexistence fix (local build)
+
+- Replace the shared `/api` RPC interceptor with the exact buffered POST Fetch route `/api/skillre-skills-manager/execute`; preserve the existing Client RPC path and result envelope.
+- Keep DSH Gateway ownership, Connection authentication/owner-only dispatch and Desktop shell-carrier compatibility without another server.
+- Add real current-DSH ConnectionRegistry tests for both registration orders, method/envelope validation, non-owner rejection, request cancellation and Fiber withdrawal that preserves Gateway.
+- Extend packed isolated-profile verification to real `settings/describe` and Desktop welcome `llm/listConfigurableProviders`, before and after uninstall, plus every packed file's bytes and the original strict owned close/ESRCH/ENOENT cleanup proof.
+- Keep the skill/filesystem/GitHub business core unchanged; Client source adjustments are type-only Host/Client realm separation.
+- Withdraw 0.1.0 as an installation/rollback target after its Desktop startup failure. Preserve the historical tarball as evidence, never overwrite it.
+
+No npm publication, remote push, user-profile change or real Web/Electron visual/restart acceptance is included.
+
+## 0.1.0 — initial local build (withdrawn; unsafe to install)
+
+- Add a native Skills sidebar page with installed, discovery, update and backup views.
+- Add bounded public GitHub inspection/download and skills.sh search.
+- Add provenance-aware update checks, safe installation, fingerprint-checked updates/removal and reversible backups.
+- Expose the same operations through an approval-gated Agent tool.
+- Add strict path/metadata/integrity, real-filesystem, native Cordis Fiber and cancellation regressions.
+- Include English/Chinese display metadata, original icon and a packed-profile verification runner.
+
+This build has not been published to npm or pushed to GitHub. Actual browser/Electron visual acceptance remains user-deferred; compatibility evidence records only checks actually performed.
