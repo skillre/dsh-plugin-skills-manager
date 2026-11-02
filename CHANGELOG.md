@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.4 — update and backup usability fixes (local build)
+
+- Keep the cached update results of all other skills after an update, install, removal, move or restore, so the Updates tab no longer empties and the remaining updates stay visible without running the check again.
+- Mark a successfully updated or freshly installed skill as up to date instead of "not checked".
+- Show the Update all action in the page header whenever updates are known, in addition to the Updates tab, so batch updates are discoverable from any view.
+- Explain why and where updates/removals are backed up (`.skills-manager/backups/<id>/content` under each skill location), display each backup path, and add a labelled Delete backup action next to Restore; the update dialog now names the backup location and the restore/delete path.
+- List failed skill names in the batch-update result notice.
+- Add a regression test for preserved update results (64 tests total); rebuild the committed `lib/` output.
+
+No npm publication or user-profile change is included; the GitHub source repository and Release asset are updated in the same user-authorized GitHub flow.
+
 ## 0.1.3 — batch operations, backup management and wider install sources (local build)
 
 - Batch-update all checked skills (`update-batch`): each item is re-verified against its source, previous versions are backed up, locally modified skills are skipped unless explicitly allowed, and the result reports updated/skipped/failed per skill.

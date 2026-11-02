@@ -32,7 +32,7 @@ describe('real filesystem skill lifecycle', () => {
       const update = await f.manager.execute({ action: 'update', id: skill.id, expectedFingerprint: detail.fingerprint, commit: checks[0]!.latestCommit }) as MutationResult
       expect(update.backupId).toBeTruthy()
       expect(await readFile(join(result.path, 'SKILL.md'), 'utf8')).toBe(skillText('two'))
-      expect((await catalog(f)).skills[0]?.check).toBeUndefined()
+      expect((await catalog(f)).skills[0]?.check?.status).toBe('latest')
       const backups = await f.manager.execute({ action: 'backups' }) as Backup[]
       expect(backups).toHaveLength(1)
       expect(await readFile(join(f.skillRoot, '.skills-manager/backups', backups[0]!.id, 'content/SKILL.md'), 'utf8')).toBe(skillText('one'))

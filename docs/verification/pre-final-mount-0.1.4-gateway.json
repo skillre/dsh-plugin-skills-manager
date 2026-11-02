@@ -1,0 +1,474 @@
+{
+  "schemaVersion": 1,
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.1.4",
+  "installedPackage": {
+    "name": "@skillre/dsh-plugin-skills-manager",
+    "version": "0.1.4",
+    "manifestPath": "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-oxv5pM/home/profiles/skills-manager-test-a6c1b697/node_modules/@skillre/dsh-plugin-skills-manager/package.json"
+  },
+  "packedPayload": [
+    {
+      "path": "LICENSE",
+      "bytes": 1064,
+      "sha256": "0c1e6f5c5467c9e18bf491a13866aa9b5395fc8ab3683c7af2bb02103c2c6f77"
+    },
+    {
+      "path": "README.en.md",
+      "bytes": 17833,
+      "sha256": "58783bb3771230b73453c432d0026bcc9730768ca73a55158aa4078c6004a657"
+    },
+    {
+      "path": "README.md",
+      "bytes": 17687,
+      "sha256": "d5ec9c9419bd0b5714ac77ed7bae1f9cd14c4e9df1641137535d54745253bcc6"
+    },
+    {
+      "path": "UNINSTALL.md",
+      "bytes": 5040,
+      "sha256": "a65ec9f0c73571b9fe23449b9296e762db61890302ca655cfcc3224c578c19de"
+    },
+    {
+      "path": "compatibility.json",
+      "bytes": 13442,
+      "sha256": "c07d043b70e1a453381bc473546a0f4f0d0943d3639ec3dc03a670576da77625"
+    },
+    {
+      "path": "cordis.patch.yml",
+      "bytes": 192,
+      "sha256": "17d60df6d18fa211b3672510d554937c8f85e483e5e055621ac5389129867b04"
+    },
+    {
+      "path": "icon.svg",
+      "bytes": 886,
+      "sha256": "7676697b4ec28af5cb5328bf1b740ff43e89aaf405218648a3d2f1da9c65e04e"
+    },
+    {
+      "path": "lib/archive.d.ts",
+      "bytes": 688,
+      "sha256": "fffd6ae35933947cd718c9c438239cec8c7b983eb53f076538a5061565525ba3"
+    },
+    {
+      "path": "lib/archive.js",
+      "bytes": 7948,
+      "sha256": "b689378b1e71aec42a5e47d5f237a942724a67c9f1ff877db7cd2af0b6dfb5b1"
+    },
+    {
+      "path": "lib/client.js",
+      "bytes": 135154,
+      "sha256": "ca7ec73c2d483bc2c6820ed97e1a3f5bc723b4e64740633e55a07c39b4dc35c4"
+    },
+    {
+      "path": "lib/config.d.ts",
+      "bytes": 4522,
+      "sha256": "f426ed575d0dfc38b37c5826d087e70a151c2bfff1f85875b3a45f854e085d47"
+    },
+    {
+      "path": "lib/config.js",
+      "bytes": 4077,
+      "sha256": "ac07260b81db3426ea8de95014dd2641c6851876f3f5540ab7282b9575d6031d"
+    },
+    {
+      "path": "lib/errors.d.ts",
+      "bytes": 403,
+      "sha256": "d432cc772f51b09b108dd2474006c32da4aa4e194bab41239cab65db7a3f507f"
+    },
+    {
+      "path": "lib/errors.js",
+      "bytes": 687,
+      "sha256": "f99daa1823d5d65601c9548b8e8c3f62bbea68b3f07f399eab4229a43e65353b"
+    },
+    {
+      "path": "lib/fs-store.d.ts",
+      "bytes": 3044,
+      "sha256": "d955f8c6b731d817fa2a7982309be4f033d8fa58070ee506adf29c5d36b79ba9"
+    },
+    {
+      "path": "lib/fs-store.js",
+      "bytes": 33126,
+      "sha256": "1b438fd3221130b6468614670e003cb6226281784d89be8a2f7671960b4f292e"
+    },
+    {
+      "path": "lib/github.d.ts",
+      "bytes": 1983,
+      "sha256": "00812ee82c45c24c8da8c4ddbd00c08535b40820406fbad225b7d4dd4f272642"
+    },
+    {
+      "path": "lib/github.js",
+      "bytes": 14015,
+      "sha256": "2f8ececa06923fc5a9994a1433271d82c0c646e6f9f2037e4e23d611379f5b04"
+    },
+    {
+      "path": "lib/index.d.ts",
+      "bytes": 516,
+      "sha256": "224bd96dd45ac58c58de09d1438726d264418ef50fe351eb192b9d72356e7d1d"
+    },
+    {
+      "path": "lib/index.js",
+      "bytes": 8526,
+      "sha256": "db96cc611c622b011758bede867fb17385103e99a1239294af5d2c814581f621"
+    },
+    {
+      "path": "lib/manager.d.ts",
+      "bytes": 1953,
+      "sha256": "21640c142c4030cce2e3fae5b5442ee6b2f9c0a62e715b5e0d2052591ee42ccf"
+    },
+    {
+      "path": "lib/manager.js",
+      "bytes": 44267,
+      "sha256": "5790e62c80dba2b4f48a5c709b6d53805ebca731d94dac40fcdd2db4d69b5b44"
+    },
+    {
+      "path": "lib/skill-metadata.d.ts",
+      "bytes": 244,
+      "sha256": "270728caafd33b22e3e518a1a6e47a01366a923f787a0cc144a5b8bce00f1747"
+    },
+    {
+      "path": "lib/skill-metadata.js",
+      "bytes": 2124,
+      "sha256": "a0f3129ee387df08c918feda649e0a0c575a25ad9f8790af8439d94e86f46d04"
+    },
+    {
+      "path": "lib/transport.d.ts",
+      "bytes": 729,
+      "sha256": "278702c6d796dd3b8088715c2579db5654684ab2b92c51a2b6826a8b2604248b"
+    },
+    {
+      "path": "lib/transport.js",
+      "bytes": 3133,
+      "sha256": "7836484b6e5714579079af9bcc312882d46f517bb2ad15ddf5f5bdee197343cd"
+    },
+    {
+      "path": "lib/types.d.ts",
+      "bytes": 6623,
+      "sha256": "7a480b3c01c685ea1ed6700bf2e25f9ecba8652bd3b82149ecb6b247bc74843d"
+    },
+    {
+      "path": "lib/types.js",
+      "bytes": 359,
+      "sha256": "f20ea4bc376488c30f60747897d821e4ebef956cd99c8828e2fa831023637fb6"
+    },
+    {
+      "path": "lib/utils.d.ts",
+      "bytes": 169,
+      "sha256": "8604b45416281c7bf5d3635a7db2f2c59cbcaee47a6e99371b040bca67bef655"
+    },
+    {
+      "path": "lib/utils.js",
+      "bytes": 768,
+      "sha256": "9e8ffd7cf181b9afc41d25a7c40fcb7bd2ed33fc0a5e5419ba3fdf47f39221f9"
+    },
+    {
+      "path": "lib/well-known.d.ts",
+      "bytes": 1461,
+      "sha256": "8fa09577fe8453028c57beae2bede2d35f69cd0cdf274f82f431a37ea35dffb9"
+    },
+    {
+      "path": "lib/well-known.js",
+      "bytes": 9620,
+      "sha256": "f3d65701b83d57eb006a04359fce99dc855c44d5073f701f1443512044d571c2"
+    },
+    {
+      "path": "lib/zip.d.ts",
+      "bytes": 319,
+      "sha256": "96f950f8ffd617413974a0a3c27ff030619b808ae36b74276faa6ca3f75fab56"
+    },
+    {
+      "path": "lib/zip.js",
+      "bytes": 6182,
+      "sha256": "c18fb95f04b8e472c0699017c64fd1b0750a5dc3e48e714e4f6c9b1ec1b05c55"
+    },
+    {
+      "path": "locale/en.json",
+      "bytes": 162,
+      "sha256": "63d6812c70667d0f435a284c8af6fa0ddd45f09c9f01ac92c14d1f71d74a7464"
+    },
+    {
+      "path": "locale/zh.json",
+      "bytes": 154,
+      "sha256": "cd5857cbc626bd1b683ee97029751c7fa1cd7500f9dc05dd7df013aa9d2a5e06"
+    },
+    {
+      "path": "package.json",
+      "bytes": 2908,
+      "sha256": "81024e1a871c0b8f339e3e3ce80dcf56469f0819d00925f008e919ec38d9a2df"
+    }
+  ],
+  "gatewayChecks": [
+    {
+      "stage": "with-plugin",
+      "settingsDescribe": {
+        "endpoint": "/api/settings/describe",
+        "status": 200,
+        "ok": true,
+        "namespaceCount": 21,
+        "recordAndNamespaceArrayValid": true
+      },
+      "desktopWelcome": {
+        "endpoint": "/api/llm/listConfigurableProviders",
+        "status": 200,
+        "ok": true,
+        "providerCount": 43
+      }
+    },
+    {
+      "stage": "after-plugin-restart",
+      "settingsDescribe": {
+        "endpoint": "/api/settings/describe",
+        "status": 200,
+        "ok": true,
+        "namespaceCount": 21,
+        "recordAndNamespaceArrayValid": true
+      },
+      "desktopWelcome": {
+        "endpoint": "/api/llm/listConfigurableProviders",
+        "status": 200,
+        "ok": true,
+        "providerCount": 43
+      }
+    },
+    {
+      "stage": "after-uninstall",
+      "settingsDescribe": {
+        "endpoint": "/api/settings/describe",
+        "status": 200,
+        "ok": true,
+        "namespaceCount": 21,
+        "recordAndNamespaceArrayValid": true
+      },
+      "desktopWelcome": {
+        "endpoint": "/api/llm/listConfigurableProviders",
+        "status": 200,
+        "ok": true,
+        "providerCount": 43
+      }
+    }
+  ],
+  "dsh": "0.2.1-rc.5",
+  "verifiedAt": "2026-11-03",
+  "result": "passed",
+  "checks": [
+    "profile-tarball-install",
+    "dump-config",
+    "packed-package-identity",
+    "packed-payload-bytes",
+    "full-packed-payload-bytes",
+    "packed-display-resources",
+    "unauthenticated-request-refused",
+    "gateway-settings-describe",
+    "gateway-llm-list-configurable-providers",
+    "authenticated-rpc-lifecycle",
+    "bounded-startup",
+    "client-bundle-delivery",
+    "gateway-welcome-apis-after-plugin-restart",
+    "packed-plugin-restart",
+    "profile-uninstall-absence",
+    "gateway-welcome-apis-after-uninstall",
+    "uninstalled-plugin-route-absent",
+    "owned-process-and-profile-cleanup",
+    "tarball-unchanged"
+  ],
+  "cleanupVerified": true,
+  "cleanup": {
+    "ownedRoot": "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-oxv5pM",
+    "owner": "a6c1b697-3c0f-4274-a04e-d02f250235c0",
+    "profile": "skills-manager-test-a6c1b697",
+    "userProfileTouched": false,
+    "processesStopped": true,
+    "rootRemoved": true
+  },
+  "processes": [
+    {
+      "pid": 51713,
+      "args": [
+        "--version"
+      ],
+      "stopped": true,
+      "closed": {
+        "code": 0,
+        "signal": null
+      },
+      "signals": [],
+      "groupAbsent": true
+    },
+    {
+      "pid": 51727,
+      "args": [
+        "--profile",
+        "skills-manager-test-a6c1b697",
+        "--from-default-profile",
+        "web",
+        "--dump-config"
+      ],
+      "stopped": true,
+      "closed": {
+        "code": 0,
+        "signal": null
+      },
+      "signals": [],
+      "groupAbsent": true
+    },
+    {
+      "pid": 51740,
+      "args": [
+        "--profile",
+        "skills-manager-test-a6c1b697",
+        "--help"
+      ],
+      "stopped": true,
+      "closed": {
+        "code": 0,
+        "signal": null
+      },
+      "signals": [],
+      "groupAbsent": true
+    },
+    {
+      "pid": 51754,
+      "args": [
+        "plugin",
+        "--profile",
+        "skills-manager-test-a6c1b697",
+        "add",
+        "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/skillre-dsh-plugin-skills-manager-0.1.4.tgz",
+        "--ignore-scripts",
+        "--store-dir",
+        "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-oxv5pM/pnpm-store"
+      ],
+      "stopped": true,
+      "closed": {
+        "code": 0,
+        "signal": null
+      },
+      "signals": [],
+      "groupAbsent": true
+    },
+    {
+      "pid": 51778,
+      "args": [
+        "--profile",
+        "skills-manager-test-a6c1b697",
+        "--dump-config"
+      ],
+      "stopped": true,
+      "closed": {
+        "code": 0,
+        "signal": null
+      },
+      "signals": [],
+      "groupAbsent": true
+    },
+    {
+      "pid": 51791,
+      "args": [
+        "--profile",
+        "skills-manager-test-a6c1b697",
+        "--port",
+        "0",
+        "--no-open"
+      ],
+      "stopped": true,
+      "closed": {
+        "code": 0,
+        "signal": null
+      },
+      "signals": [
+        {
+          "signal": "SIGTERM",
+          "sent": true
+        }
+      ],
+      "groupAbsent": true
+    },
+    {
+      "pid": 51807,
+      "args": [
+        "--profile",
+        "skills-manager-test-a6c1b697",
+        "--port",
+        "0",
+        "--no-open"
+      ],
+      "stopped": true,
+      "closed": {
+        "code": 0,
+        "signal": null
+      },
+      "signals": [
+        {
+          "signal": "SIGTERM",
+          "sent": true
+        }
+      ],
+      "groupAbsent": true
+    },
+    {
+      "pid": 51820,
+      "args": [
+        "plugin",
+        "--profile",
+        "skills-manager-test-a6c1b697",
+        "remove",
+        "@skillre/dsh-plugin-skills-manager",
+        "--config.ignore-scripts=true",
+        "--config.store-dir=/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-mount-oxv5pM/pnpm-store"
+      ],
+      "stopped": true,
+      "closed": {
+        "code": 0,
+        "signal": null
+      },
+      "signals": [],
+      "groupAbsent": true
+    },
+    {
+      "pid": 51843,
+      "args": [
+        "--profile",
+        "skills-manager-test-a6c1b697",
+        "--dump-config"
+      ],
+      "stopped": true,
+      "closed": {
+        "code": 0,
+        "signal": null
+      },
+      "signals": [],
+      "groupAbsent": true
+    },
+    {
+      "pid": 51856,
+      "args": [
+        "--profile",
+        "skills-manager-test-a6c1b697",
+        "--port",
+        "0",
+        "--no-open"
+      ],
+      "stopped": true,
+      "closed": {
+        "code": 0,
+        "signal": null
+      },
+      "signals": [
+        {
+          "signal": "SIGTERM",
+          "sent": true
+        }
+      ],
+      "groupAbsent": true
+    }
+  ],
+  "tarball": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/skillre-dsh-plugin-skills-manager-0.1.4.tgz",
+  "tarballSha256": "57613f047a9f9be45163233f7fc3a7899872b7ec97803d2daaf20bcd0a2b2764",
+  "tarballSha256AtStart": "57613f047a9f9be45163233f7fc3a7899872b7ec97803d2daaf20bcd0a2b2764",
+  "clientResource": {
+    "path": "/plugins/??@deepseek-ai/dsh-client-ui-user-questions/client.js,@deepseek-ai/dsh-client-ui-trajectory/client.js,@deepseek-ai/dsh-api-remote-access/client.js,@deepseek-ai/dsh-session-log-export/client.js,@deepseek-ai/dsh-client-file-upload/client.js,@deepseek-ai/dsh-api-remotes/client.js,@deepseek-ai/dsh-client-ui-deliverables/client.js,@deepseek-ai/dsh-typert-registry/client.js,@deepseek-ai/dsh-client-connection/client.js,@deepseek-ai/dsh-api-workspace-controller/client.js,@skillre/dsh-plugin-skills-manager/client.js,@deepseek-ai/dsh-api-session-controller/client.js,@deepseek-ai/dsh-client-ui-directory-picker-native/client.js&rev=3c5f3e51616c",
+    "rev": "3c5f3e51616c",
+    "status": 200,
+    "sha256": "b0341d89987cfdd34f4e916bca9a394cbe43f68d20660924f9df359b5e373231",
+    "packedClientSha256": "ca7ec73c2d483bc2c6820ed97e1a3f5bc723b4e64740633e55a07c39b4dc35c4",
+    "containsPackedClient": true
+  },
+  "ui": "not-verified-user-deferred"
+}

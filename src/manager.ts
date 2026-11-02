@@ -29,6 +29,9 @@ export interface ManagerHooks {
 }
 export type SourceProvider = Pick<GitHubSource, 'search' | 'inspect' | 'preview' | 'tree' | 'folderHashFor' | 'download' | 'clear'>
 const entryId = (rootId: string, entry: string) => `${rootId}::${encodeURIComponent(entry)}`
+function checkKey(source: Provenance | undefined, name: string, valid: boolean, writable: boolean): string {
+  return JSON.stringify([source?.kind, source?.repository, source?.ref, source?.skillPath, source?.treeHash, source?.digest, source?.sourceBaseUrl, source?.skillName, name, valid, writable])
+}
 function originHint(entry: Record<string, unknown>): SkillOrigin {
   const sourceType = typeof entry.sourceType === 'string' && /^[a-z][a-z0-9-]{0,31}$/.test(entry.sourceType) ? entry.sourceType : 'external'
   const raw = typeof entry.source === 'string' ? entry.source.trim() : ''
@@ -181,7 +184,7 @@ export class SkillsManager {
     const source = ownValue(records, entry) ?? (imported ? ownValue(origins.provenance, metadata.name) : undefined)
     const origin = source ? undefined : imported ? ownValue(origins.hints, metadata.name) : undefined
     const id = entryId(root.id, entry)
-    const key = JSON.stringify([source?.kind, source?.repository, source?.ref, source?.skillPath, source?.treeHash, source?.digest, source?.sourceBaseUrl, source?.skillName, metadata.name, valid, writable])
+    const key = checkKey(source, metadata.name, valid, writable)
     const check = this.checkKeys.get(id) === key ? this.checks.get(id) : undefined
     return { id, rootId: root.id, entry, path: skillPath, format: directory ? 'directory' : 'file', writable, valid, ...metadata, ...(issue ? { issue } : {}), ...(origin ? { origin } : {}), ...(source ? { source } : {}), ...(check ? { check } : {}) }
   }
@@ -284,7 +287,7 @@ export class SkillsManager {
       }
       if (epoch === this.mutationEpoch) {
         this.checks.set(skill.id, result)
-        this.checkKeys.set(skill.id, JSON.stringify([skill.source?.kind, skill.source?.repository, skill.source?.ref, skill.source?.skillPath, skill.source?.treeHash, skill.source?.digest, skill.source?.sourceBaseUrl, skill.source?.skillName, skill.name, skill.valid, skill.writable]))
+        this.checkKeys.set(skill.id, checkKey(skill.source, skill.name, skill.valid, skill.writable))
       }
       return result
     }, signal)
@@ -306,8 +309,6 @@ export class SkillsManager {
     if (MUTATING_ACTIONS.has(request.action)) {
       this.assertMutable()
       this.mutationEpoch++
-      this.checks.clear()
-      this.checkKeys.clear()
     }
     switch (request.action) {
       case 'list': return this.catalog(request.workspaceId, signal)
@@ -332,7 +333,7 @@ export class SkillsManager {
         const now = new Date().toISOString()
         const source: Provenance = { kind: 'github', repository: downloaded.tree.repository, ref: downloaded.tree.ref, skillPath: downloaded.skill.skillPath, commit: downloaded.tree.commit, treeHash: downloaded.skill.treeHash, fingerprint: bundleFingerprint(downloaded.files), installedAt: now, updatedAt: now }
         await withRootWrite(root, store => installEntry(store, name, downloaded.files, source, signal), signal)
-        this.checks.delete(entryId(root.id, name))
+        this.rememberLatest(entryId(root.id, name), source, name)
         return { action: 'install', name, rootId: root.id, path: join(root.path, name), ...(source.commit ? { commit: source.commit } : {}) } satisfies MutationResult
       }
       case 'update': {
@@ -421,8 +422,13 @@ export class SkillsManager {
       if (!current || current.kind === 'well-known' || current.repository !== previous.repository || current.ref !== previous.ref || current.skillPath !== skillPath || current.treeHash !== previous.treeHash) fail('stale', 'Skill provenance changed while its update was downloading.')
       return changeEntry(store, skill.entry, skill.name, 'update', expectedFingerprint, this.config, previous, { files: downloaded.files, source }, signal)
     }, signal)
-    this.checks.delete(skill.id)
+    this.rememberLatest(skill.id, source, skill.name)
     return { action: 'update', name: skill.name, rootId: root.id, path: join(root.path, skill.entry), backupId: backup.id, ...(source.commit ? { commit: source.commit } : {}) } satisfies MutationResult
+  }
+
+  private rememberLatest(id: string, source: Provenance, name: string): void {
+    this.checks.set(id, { id, status: 'latest', checkedAt: new Date().toISOString(), ...(source.digest ? { latestDigest: source.digest } : {}), ...(source.treeHash ? { latestTreeHash: source.treeHash } : {}) })
+    this.checkKeys.set(id, checkKey(source, name, true, true))
   }
 
   private async batchUpdate(ids: string[], overwriteModified: boolean, workspaceId: string | undefined, signal: AbortSignal): Promise<BatchUpdateResult> {

@@ -60,8 +60,10 @@ describe('cancellation, recovery priority and stale checks', () => {
       await f.manager.execute({ action: 'remove', id: skill.id, expectedFingerprint: detail.fingerprint }) as MutationResult
       release()
       expect((await checking as SkillsManagerError).code).toBe('stale')
+      expect((await f.manager.execute({ action: 'list' }) as Catalog).skills).toEqual([])
       await f.manager.execute(request)
-      expect((await f.manager.execute({ action: 'list' }) as Catalog).skills[0]?.check).toBeUndefined()
+      const reinstalled = (await f.manager.execute({ action: 'list' }) as Catalog).skills[0]!
+      expect(reinstalled.check?.status).toBe('latest')
     } finally { await f.cleanup() }
   })
 })

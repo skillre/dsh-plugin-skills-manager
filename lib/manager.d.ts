@@ -45,6 +45,7 @@ export declare class SkillsManager {
     private writableRoot;
     private run;
     private applyUpdate;
+    private rememberLatest;
     private batchUpdate;
     private diffSkill;
     private moveSkill;

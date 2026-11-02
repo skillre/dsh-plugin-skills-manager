@@ -1,6 +1,6 @@
 # DSH 技能管理 · Skills Manager
 
-> `@skillre/dsh-plugin-skills-manager` · `0.1.3` · experimental
+> `@skillre/dsh-plugin-skills-manager` · `0.1.4` · experimental
 
 [English](<README.en.md>)
 
@@ -30,7 +30,7 @@
 
 0.1.1 改为 `connection.fetch.register` 注册精确 `POST /api/skillre-skills-manager/execute`，保留 Client 的原 RPC 路径和 JSON 响应。Gateway 继续独占共享 interceptor；认证、owner-only 与 Web/Desktop shell carrier 均由 DSH Connection 承担，不新增服务器。
 
-已有安装的用户：在 **Plugins / 插件** 中先关闭或卸载 0.1.0，确认宿主恢复后，再按下节安装 0.1.2 并重启 Desktop 验证（已是 0.1.1 可原地升级）。技能、来源记录与备份会保留。若故障使 Plugins 完全不可打开，请保留日志并寻求维护者协助；本轮不擅自修改日常 profile，不用 CLI `--profile desktop`、重装 DSH 或删除技能来代替恢复。
+已有安装的用户：在 **Plugins / 插件** 中先关闭或卸载 0.1.0，确认宿主恢复后，再按「用户安装」一节安装当前版本并重启 Desktop 验证（0.1.1 及以上可原地升级）。技能、来源记录与备份会保留。若故障使 Plugins 完全不可打开，请保留日志并寻求维护者协助；本轮不擅自修改日常 profile，不用 CLI `--profile desktop`、重装 DSH 或删除技能来代替恢复。
 
 ## 用户安装
 
@@ -44,19 +44,19 @@ https://github.com/skillre/dsh-plugin-skills-manager
 
 仓库已提交构建产物（`lib/`），pnpm 不需要执行构建脚本，因此不受 `allowBuilds` 供应链限制；安装后重启 Desktop 即可。该方式跟随 `main` 最新提交，适合持续获取最新版。
 
-**方式 B：Release tarball（固定版本）** —— 从 [GitHub Release v0.1.3](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.1.3) 下载 [`skillre-dsh-plugin-skills-manager-0.1.3.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.1.3/skillre-dsh-plugin-skills-manager-0.1.3.tgz)，在 **Add plugin** 中输入它的**完整本地绝对路径**。
+**方式 B：Release tarball（固定版本）** —— 从 [GitHub Release v0.1.4](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.1.4) 下载 [`skillre-dsh-plugin-skills-manager-0.1.4.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.1.4/skillre-dsh-plugin-skills-manager-0.1.4.tgz)，在 **Add plugin** 中输入它的**完整本地绝对路径**。
 
 1. 打开 DSH 左侧 **Plugins / 插件**。
 2. 选择 **Add plugin / 添加插件**。
 3. 粘贴 Git 仓库地址或 tarball 的本地绝对路径，查看信任提示并自行确认安装。
 4. 启用后，从左侧栏「**技能 / Skills**」进入。
 
-最终安装由用户发起。不要输入尚未发布的 npm 包名或源码目录；`v0.1.3` tag 的源码树不含构建产物，若要固定版本请使用方式 B 的 Release 资产。
+最终安装由用户发起。不要输入尚未发布的 npm 包名或源码目录；若要固定版本，请使用方式 B 的 Release 资产（该文件经过精确验证）。
 
 ## 使用
 
 - 「本地技能」展示全局目录；选择工作区后额外加入其最近 `.git` 项目根下的技能目录。
-- 「检查更新」仅发起检查，不自动更新。完成后摘要分别给出可更新、已是最新、无来源和检查失败的数量；可更新的入口显示更新操作。
+- 「检查更新」仅发起检查，不自动更新。完成后摘要分别给出可更新、已是最新、无来源和检查失败的数量；可更新的入口显示更新操作。更新其中一个技能后，其余技能的更新结果会保留，不需要重新检查。
 - 「技能检索」输入任务或技术关键词；「查看并安装」先检查来源，安装前必须勾选信任确认。
 - 「从仓库安装」支持 `owner/repo` 或 `https://github.com/owner/repo`；分支/标签选填，默认 `HEAD`。
 - 删除和更新会生成「备份记录」。备份持续保留，不自动清除；恢复时原位置必须空闲。
@@ -95,8 +95,11 @@ https://github.com/skillre/dsh-plugin-skills-manager
 
 ## 批量、备份与迁移
 
-- 「可用更新」标签页的「全部更新」会再次校验每一项；存在本地修改的技能默认跳过，勾选后才备份并替换。失败项不会中断其余项。
-- 备份记录现在显示大小与文件数；垃圾桶按钮删除单条备份，「清理备份」可按「保留最新 N 份」清理当前位置。删除备份只作用于 `.skills-manager/backups`，不影响已安装技能。
+- 「全部更新」在页面顶部和「可用更新」标签页都可见（需先执行检查更新）；会再次校验每一项，本地修改默认跳过，勾选后才备份并替换。失败项不会中断其余项，结果会列出失败技能名。
+- 备份位置：每个技能根目录下的 `.skills-manager/backups/<id>/content`（例如 `~/.agents/skills/.skills-manager/backups/<id>/content`）。更新/删除前会把完整旧版本整体移入，记录里显示大小、文件数、时间、来源和完整路径。
+- 为什么更新也要备份：更新是破坏性替换，保留旧版本可在新版本有问题时回滚；备份默认不会自动清理。
+- 恢复：「备份与恢复」标签页每条记录右侧「恢复」，把旧版本移回原位置；原位置已有同名技能时拒绝覆盖。
+- 删除：每条记录右侧「删除备份」永久删除该份备份；顶部「清理备份」可按「保留最新 N 份」清理当前位置。删除备份只作用于 `.skills-manager/backups`，不影响已安装技能。
 - 「移动 / 重命名」在技能详情中；跨位置移动会先复制并校验，再移除原入口（保留备份），因此失败时不会丢文件。
 - 永久删除仍需重新计算完整指纹；不保留可恢复备份，操作前有明确警告。
 
@@ -156,9 +159,9 @@ https://github.com/skillre/dsh-plugin-skills-manager
 
 ## 验证与限制
 
-已在 **2026-11-02** 重新 Inspect 并实挂当前 DSH **0.2.1-rc.5**。本地类型检查、构建、publint、打包检查和 **63 项自动化测试**通过（含 **20 项真实 ConnectionRegistry 运输层回归**、**7 项 well-known/归档回归**、**8 项批量/备份/移动/安装/对比回归**）。自有临时非 Desktop profile 的预最终包验证了全部 **37 个 packed 文件**的字节、真实 Gateway `settings/describe` 与 Desktop welcome 实际调用 `llm/listConfigurableProviders`、插件 list/detail/check/remove/restore 的实际文件与指纹、仍安装插件时真实 Host 重启后的欢迎方法与 fixture 保留、卸载后依赖/选择/组合/插件路径缺失，以及再次启动后两个 Gateway 方法继续成功。10 个自有 CLI 进程真实关闭并核实组 `ESRCH` 后，确认 owner/UID/规范路径才删除测试 root，最终核实 `ENOENT`。旧版只测插件自身 RPC 的记录不是本版本兼容证明。
+已在 **2026-11-02** 重新 Inspect 并实挂当前 DSH **0.2.1-rc.5**。本地类型检查、构建、publint、打包检查和 **64 项自动化测试**通过（含 **20 项真实 ConnectionRegistry 运输层回归**、**7 项 well-known/归档回归**、**9 项批量/备份/移动/安装/对比回归**）。自有临时非 Desktop profile 的预最终包验证了全部 **37 个 packed 文件**的字节、真实 Gateway `settings/describe` 与 Desktop welcome 实际调用 `llm/listConfigurableProviders`、插件 list/detail/check/remove/restore 的实际文件与指纹、仍安装插件时真实 Host 重启后的欢迎方法与 fixture 保留、卸载后依赖/选择/组合/插件路径缺失，以及再次启动后两个 Gateway 方法继续成功。10 个自有 CLI 进程真实关闭并核实组 `ESRCH` 后，确认 owner/UID/规范路径才删除测试 root，最终核实 `ENOENT`。旧版只测插件自身 RPC 的记录不是本版本兼容证明。
 
-安装包中的 [兼容记录](<compatibility.json>) 只引用本版本 [已通过的预最终实挂证据](<docs/verification/pre-final-mount-0.1.3-gateway.json>)。补入文档/兼容元数据后必须重新打包并安装**精确最终文件**；全部 packed payload、SHA256、Gateway/插件检查与清理结果以 [最终实挂记录](<docs/verification/isolated-mount-0.1.3.json>)、[日志](<docs/verification/isolated-mount-0.1.3.log>) 和 [最终文件摘要](<docs/verification/final-artifact-0.1.3.json>) 为准。精确 tarball 哈希保留在外部证据中，避免安装包自引用自己的哈希。
+安装包中的 [兼容记录](<compatibility.json>) 只引用本版本 [已通过的预最终实挂证据](<docs/verification/pre-final-mount-0.1.4-gateway.json>)。补入文档/兼容元数据后必须重新打包并安装**精确最终文件**；全部 packed payload、SHA256、Gateway/插件检查与清理结果以 [最终实挂记录](<docs/verification/isolated-mount-0.1.4.json>)、[日志](<docs/verification/isolated-mount-0.1.4.log>) 和 [最终文件摘要](<docs/verification/final-artifact-0.1.4.json>) 为准。精确 tarball 哈希保留在外部证据中，避免安装包自引用自己的哈希。
 
 **实际 Web/Electron 视觉与交互、用户日常 Desktop 重启验收尚未完成**：本轮不配置浏览器/扩展，也未安装、关闭或卸载日常 profile 的既有插件。隔离 CLI/Web Host 的真实重启、认证 RPC 与 Client 资源可加载不等于 Electron 窗口、主题或交互验收；发布准备保留 UI 证据门禁。
 

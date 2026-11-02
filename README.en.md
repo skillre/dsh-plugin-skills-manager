@@ -1,6 +1,6 @@
 # DSH Skills Manager
 
-> `@skillre/dsh-plugin-skills-manager` · `0.1.3` · experimental
+> `@skillre/dsh-plugin-skills-manager` · `0.1.4` · experimental
 
 [中文](<README.md>)
 
@@ -44,13 +44,13 @@ https://github.com/skillre/dsh-plugin-skills-manager
 
 The repository commits its built output under `lib/`, so pnpm does not need to execute build scripts and the `allowBuilds` supply-chain policy does not block the install. Restart Desktop afterwards. This follows the latest `main` commit.
 
-**Option B: Release tarball (pinned version)** — download [`skillre-dsh-plugin-skills-manager-0.1.3.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.1.3/skillre-dsh-plugin-skills-manager-0.1.3.tgz) from the [GitHub Release v0.1.3](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.1.3) and enter its **full absolute local path** in **Add plugin**.
+**Option B: Release tarball (pinned version)** — download [`skillre-dsh-plugin-skills-manager-0.1.4.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.1.4/skillre-dsh-plugin-skills-manager-0.1.4.tgz) from the [GitHub Release v0.1.4](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.1.4) and enter its **full absolute local path** in **Add plugin**.
 
 1. Open **Plugins → Add plugin** in DSH.
 2. Paste the Git URL or the tarball's absolute path, review the trust notice and initiate installation yourself.
 3. Enable it and open **Skills** in the sidebar.
 
-Final installation belongs to the user. Do not use an unpublished npm spec or source directory; the `v0.1.3` tag's source tree does not contain build output, so use the Option B Release asset when pinning a version.
+Final installation belongs to the user. Do not use an unpublished npm spec or source directory; use the Option B Release asset (the exact verified file) when pinning a version.
 
 ## Usage and scope
 
@@ -79,8 +79,12 @@ Every install/local-archive/well-known/move/restore dialog shows the target root
 
 ## Batch, backups and migration
 
-- Update all in the Updates tab re-verifies each item. Locally modified skills are skipped unless the overwrite checkbox is enabled; one failure does not abort the rest.
-- Backups show size/file count; the trash button deletes one backup and Clean up keeps the newest N in a location. Backup cleanup only touches `.skills-manager/backups`, never installed skills.
+- Update all is available in the page header and the Updates tab once updates have been checked. It re-verifies each item; locally modified skills are skipped unless the overwrite checkbox is enabled, one failure does not abort the rest, and failed skill names are listed.
+- After updating one skill, the cached results of the other checked skills are preserved, so the remaining updates stay visible without running Check updates again.
+- Backups live under each skill location at `.skills-manager/backups/<id>/content` (for example `~/.agents/skills/.skills-manager/backups/<id>/content`). Every update/removal moves the complete previous entry there; each record shows size, file count, time, source and its full path.
+- Updates are backed up because replacement is destructive: keeping the previous version makes a bad update reversible; backups are never auto-deleted.
+- Restore: the Restore button on a backup returns it to its original location and refuses to overwrite an existing skill.
+- Delete: the labelled Delete backup button removes that single backup permanently; Clean up keeps the newest N in a location. Backup cleanup only touches `.skills-manager/backups`, never installed skills.
 - Move / rename lives in the skill detail dialog. Cross-root moves copy and verify first, then remove the source entry (kept as a backup), so a failure cannot lose files.
 - Permanent removal still rechecks the complete fingerprint and keeps no restorable backup; the dialog warns explicitly.
 
@@ -140,9 +144,9 @@ Downloads are commit-pinned and checked against every Git blob and the complete 
 
 ## Verification and limits
 
-DSH **0.2.1-rc.5** was re-inspected and mounted on **2026-11-02**. Type checking, build, publint, package checks and **63 automated tests** pass, including **20 real ConnectionRegistry transport regressions**, **7 well-known/archive regressions** and **8 batch/backup/move/install/diff regressions**. The pre-final packed test in an owned temporary non-Desktop profile compared all **37 packed files** byte-for-byte and exercised real Gateway `settings/describe` and Desktop welcome `llm/listConfigurableProviders`, plugin list/detail/check/remove/restore with filesystem/fingerprint checks, a real Host restart while the plugin remained installed, dependency/selection/composition/plugin-route absence after uninstall, and both Gateway methods after another startup. Ten owned CLI processes closed and every recorded group returned `ESRCH` before canonical owner/UID-root removal and explicit `ENOENT`. The previous build's plugin-RPC-only checks are not this version's compatibility proof.
+DSH **0.2.1-rc.5** was re-inspected and mounted on **2026-11-02**. Type checking, build, publint, package checks and **64 automated tests** pass, including **20 real ConnectionRegistry transport regressions**, **7 well-known/archive regressions** and **9 batch/backup/move/install/diff regressions**. The pre-final packed test in an owned temporary non-Desktop profile compared all **37 packed files** byte-for-byte and exercised real Gateway `settings/describe` and Desktop welcome `llm/listConfigurableProviders`, plugin list/detail/check/remove/restore with filesystem/fingerprint checks, a real Host restart while the plugin remained installed, dependency/selection/composition/plugin-route absence after uninstall, and both Gateway methods after another startup. Ten owned CLI processes closed and every recorded group returned `ESRCH` before canonical owner/UID-root removal and explicit `ENOENT`. The previous build's plugin-RPC-only checks are not this version's compatibility proof.
 
-The shipped [compatibility record](<compatibility.json>) references only this version's [passed pre-final mount evidence](<docs/verification/pre-final-mount-0.1.3-gateway.json>). After adding documentation/compatibility metadata, repack and reinstall the **exact final file**; every packed file, SHA256, Gateway/plugin checks and cleanup outcome are recorded in the external [final mount report](<docs/verification/isolated-mount-0.1.3.json>), [log](<docs/verification/isolated-mount-0.1.3.log>) and [artifact summary](<docs/verification/final-artifact-0.1.3.json>). Keeping the exact tarball hash outside the package avoids a self-referential hash.
+The shipped [compatibility record](<compatibility.json>) references only this version's [passed pre-final mount evidence](<docs/verification/pre-final-mount-0.1.4-gateway.json>). After adding documentation/compatibility metadata, repack and reinstall the **exact final file**; every packed file, SHA256, Gateway/plugin checks and cleanup outcome are recorded in the external [final mount report](<docs/verification/isolated-mount-0.1.4.json>), [log](<docs/verification/isolated-mount-0.1.4.log>) and [artifact summary](<docs/verification/final-artifact-0.1.4.json>). Keeping the exact tarball hash outside the package avoids a self-referential hash.
 
 **Real Web/Electron visual/interaction acceptance and the user's daily Desktop restart remain unverified.** This task configures no browser/extension and does not install, disable or remove existing daily-profile plugins. A real isolated CLI/Web Host restart, authenticated RPC and Client asset delivery are not Electron-window, theme or interaction acceptance; release preparation retains its UI-evidence gate.
 

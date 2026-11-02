@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "repo": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager",
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.1.4",
+  "result": "passed",
+  "artifact": {
+    "filename": "skillre-dsh-plugin-skills-manager-0.1.4.tgz",
+    "sha256": "57613f047a9f9be45163233f7fc3a7899872b7ec97803d2daaf20bcd0a2b2764",
+    "sizeBytes": 80039,
+    "entryCount": 37
+  },
+  "publication": {
+    "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
+    "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.1.4"
+  },
+  "filesChanged": [
+    "src/manager.ts",
+    "src/client/index.tsx",
+    "src/client/messages.ts",
+    "tests/management.spec.ts",
+    "tests/manager.spec.ts",
+    "tests/lifecycle.spec.ts",
+    "package.json",
+    "CHANGELOG.md",
+    "compatibility.json",
+    "README.md",
+    "README.en.md",
+    "lib/",
+    "docs/verification/check-0.1.4.log",
+    "docs/verification/pre-final-mount-0.1.4-gateway.json",
+    "docs/verification/pre-final-mount-0.1.4-gateway.log",
+    "docs/verification/isolated-mount-0.1.4.json",
+    "docs/verification/isolated-mount-0.1.4.log",
+    "docs/verification/final-pack-0.1.4.json",
+    "docs/verification/final-artifact-0.1.4.json",
+    "docs/verification/handoff-0.1.4.json",
+    "skillre-dsh-plugin-skills-manager-0.1.4.tgz"
+  ],
+  "testsRun": [
+    {
+      "command": "npm run check",
+      "exitCode": 0,
+      "detail": "typecheck + 64 tests (8 files) + build + publint + pack dry-run, 37 entries"
+    },
+    {
+      "command": "DSH_TEST_REPORT_BASENAME=pre-final-mount-0.1.4-gateway node scripts/verify-isolated.mjs <tarball>",
+      "exitCode": 0,
+      "detail": "19 checks passed, 37 packed files byte-compared"
+    },
+    {
+      "command": "DSH_TEST_REPORT_BASENAME=isolated-mount-0.1.4 node scripts/verify-isolated.mjs <tarball>",
+      "exitCode": 0,
+      "detail": "exact final Release asset: 19 checks passed, tarball unchanged, cleanup verified"
+    }
+  ],
+  "fixed": [
+    "Updates tab no longer empties after updating one skill: unrelated cached update results are preserved and the updated skill is marked latest.",
+    "Batch update is exposed in the page header as well as the Updates tab.",
+    "Backups explain why/where they are stored, show their path, and offer a labelled Delete backup action beside Restore.",
+    "Batch failure notices list the failed skill names."
+  ],
+  "risks": [
+    "Real Web/Electron visual acceptance remains user-deferred; the user must update/reinstall and restart Desktop to see the new client bundle.",
+    "The running Desktop Host may still serve the previous client bundle until the plugin is updated and the app/Host restarted; DSH may report a restart requirement when the package source changes.",
+    "No npm publication; GitHub source and Release asset only."
+  ],
+  "followUps": [
+    "User updates the plugin (Git URL or v0.1.4 Release asset), restarts Desktop, then verifies batch update, backup restore/delete and preserved update lists."
+  ]
+}

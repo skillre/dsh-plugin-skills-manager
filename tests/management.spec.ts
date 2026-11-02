@@ -38,6 +38,23 @@ describe('batch updates and backup management', () => {
       expect(await readFile(join(first.path, 'SKILL.md'), 'utf8')).toBe(skillText('two'))
     } finally { await f.cleanup() }
   })
+  it('keeps other updates visible after updating one skill', async () => {
+    const f = await fixture()
+    try {
+      await install(f, 'user-agents')
+      await install(f, 'user-dsh')
+      f.remote.setLatest(2)
+      const checked = await f.manager.execute({ action: 'check' }) as { id: string; status: string }[]
+      expect(checked.filter(check => check.status === 'update')).toHaveLength(2)
+      const first = (await list(f)).skills.find(skill => skill.rootId === 'user-agents')!
+      const detail = await f.manager.execute({ action: 'detail', id: first.id }) as { fingerprint: string }
+      await f.manager.execute({ action: 'update', id: first.id, expectedFingerprint: detail.fingerprint })
+      const after = (await list(f)).skills
+      expect(after.find(skill => skill.id === first.id)?.check?.status).toBe('latest')
+      expect(after.find(skill => skill.rootId === 'user-dsh')?.check?.status).toBe('update')
+      expect(after.filter(skill => skill.check?.status === 'update')).toHaveLength(1)
+    } finally { await f.cleanup() }
+  })
   it('purges single and older backups without touching other state', async () => {
     const f = await fixture()
     try {
