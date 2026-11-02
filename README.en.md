@@ -34,16 +34,23 @@ For an existing installation, first disable or uninstall 0.1.0 in **Plugins**, c
 
 ## User installation
 
-The source lives at [github.com/skillre/dsh-plugin-skills-manager](https://github.com/skillre/dsh-plugin-skills-manager); the installable package is provided by that repository's [GitHub Release v0.1.3](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.1.3). It is **not published to npm**. The current DSH Plugins manager accepts absolute tarball paths.
+The source lives at [github.com/skillre/dsh-plugin-skills-manager](https://github.com/skillre/dsh-plugin-skills-manager). It is **not published to npm**. DSH Plugins accepts two sources:
+
+**Option A: Git repository URL (tracks the default branch)** — paste this directly into **Add plugin**:
+
+```
+https://github.com/skillre/dsh-plugin-skills-manager
+```
+
+The repository commits its built output under `lib/`, so pnpm does not need to execute build scripts and the `allowBuilds` supply-chain policy does not block the install. Restart Desktop afterwards. This follows the latest `main` commit.
+
+**Option B: Release tarball (pinned version)** — download [`skillre-dsh-plugin-skills-manager-0.1.3.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.1.3/skillre-dsh-plugin-skills-manager-0.1.3.tgz) from the [GitHub Release v0.1.3](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.1.3) and enter its **full absolute local path** in **Add plugin**.
 
 1. Open **Plugins → Add plugin** in DSH.
-2. Download [`skillre-dsh-plugin-skills-manager-0.1.3.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.1.3/skillre-dsh-plugin-skills-manager-0.1.3.tgz) from the Release and enter its **full absolute path**.
-3. Review the trust notice and initiate installation yourself.
-4. Enable it and open **Skills** in the sidebar.
+2. Paste the Git URL or the tarball's absolute path, review the trust notice and initiate installation yourself.
+3. Enable it and open **Skills** in the sidebar.
 
-> **Common install error: do not paste this repository's GitHub URL into Add plugin.** DSH treats `https://github.com/...` as a Git dependency and asks pnpm to build it; this repository does not commit build output, and DSH's supply-chain policy blocks package build scripts that are not in `allowBuilds`, producing `ERR_PNPM_GIT_DEP_PREPARE_NOT_ALLOWED`. Download the Release asset and paste its **absolute local path** instead (or pick the local `.tgz` in the file selector).
-
-Final installation belongs to the user. Development does not leave an installation in the user's daily profile. Do not use an unpublished npm spec, raw Git URL or source directory: source links are not a verified delivery channel.
+Final installation belongs to the user. Do not use an unpublished npm spec or source directory; the `v0.1.3` tag's source tree does not contain build output, so use the Option B Release asset when pinning a version.
 
 ## Usage and scope
 
@@ -152,7 +159,7 @@ npm pack --json --ignore-scripts
 DSH_TEST_CLI=/path/to/current/dsh npm run test:integration -- /absolute/path/to/package.tgz
 ```
 
-Run the runner in a **bounded foreground shell with sufficient time**. It creates a new owned non-Desktop home/profile, installs the packed artifact, inspects composition, exercises authenticated RPC and Client delivery, uninstalls, then waits for actual owned-process closure and verifies group/root absence in `finally`. `EPERM` or uncertain cleanup is a failure, never proof of exit/removal; owner/PID and failure evidence are retained. It must never target a user's profile; source/link deployment is forbidden. Keep the tarball, built files and metadata unchanged during verification; do not repack concurrently.
+The repository commits its built `lib/` output so that Option A Git-URL installs need no build scripts; after changing `src/`, run `npm run build` and commit `lib/` — CI enforces this with `git diff --exit-code -- lib`. Run the runner in a **bounded foreground shell with sufficient time**. It creates a new owned non-Desktop home/profile, installs the packed artifact, inspects composition, exercises authenticated RPC and Client delivery, uninstalls, then waits for actual owned-process closure and verifies group/root absence in `finally`. `EPERM` or uncertain cleanup is a failure, never proof of exit/removal; owner/PID and failure evidence are retained. It must never target a user's profile; source/link deployment is forbidden. Keep the tarball, built files and metadata unchanged during verification; do not repack concurrently.
 
 See [uninstall and recovery](<UNINSTALL.md>). Removing the plugin does not delete user skills or backups.
 

@@ -10,6 +10,7 @@
 - Wider install sources: local `.tar.gz`/`.tgz`/`.zip` archives (strict in-memory parsing, never executed) and well-known HTTPS catalogs (digest-verified archive install from `well-known-inspect`), plus cross-root `restore-to` for backups.
 - Add management regression tests (batch, purge, permanent removal, move, local install, well-known install, restore-to, diff). Upgrade from 0.1.2 in place; 0.1.0 remains withdrawn.
 - Publish the source repository and the verified tarball as GitHub Release `v0.1.3`; README now links the Release asset. Dependabot version updates are disabled for this repository.
+- Commit `lib/` so the repository URL can be installed directly through DSH Plugins without pnpm build-script approval; CI verifies committed build output matches `src/`.
 
 No npm publication or user-profile change is included; the GitHub source repository and the GitHub Release asset are published. Real Web/Electron visual/restart acceptance remains user-owned.
 

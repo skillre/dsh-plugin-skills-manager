@@ -30,7 +30,7 @@ For Cordis composition or preset work, load `editing-cordis-compositions` when a
 ## Native package constraints
 
 - Preserve the package, repository, row, and Cordis plugin names after first public release.
-- Keep the package ESM and its bundle patch at `cordis.patch.yml`.
+- Keep the package ESM and its bundle patch at `cordis.patch.yml`. Commit the built `lib/` output so the GitHub repository URL can be installed through DSH Plugins without build-script approval; CI must reject drift between `src/` and the committed build.
 - Ensure `package.json#dsh.bundle.patch` points to a file included by `files`; publish only built runtime/declaration files, the patch, `compatibility.json`, the `locale/` dictionaries, the icon, README/uninstall guidance, and license.
 - Declare `engines.dsh` and keep it honest: it is the machine-readable statement of the DSH lines this package was really mounted and tested against. A SemVer range is documentation, not evidence; re-verify on each new DSH line instead of widening the range.
 - Row IDs are fleet-global and start with `skillre-`.
@@ -66,7 +66,7 @@ into an isolated profile — that is the only supported **development-test** ins
 
 - Development installs are temporary. Before a packed-tarball test, record ownership and a cleanup plan; after testing (including errors), stop test processes, remove only test-created bundle/dependency/selection/config entries or the confirmed owned isolated profile, and verify their absence. Never leave an agent-installed plugin in the user's DSH at handoff.
 - Electron owns the `desktop` profile; do not use CLI `--profile desktop` as a substitute. A test install in a user's actual Desktop Client or Web UI profile requires prior user approval, a baseline inventory and a reversible plan. Preserve all preexisting plugins and data; only undo this test's changes and verify the prior state. If complete restoration cannot be verified, disclose the residue and do not claim delivery is complete.
-- Final installation, update and enablement are the user's decision in the Desktop Client or Web UI **Plugins** manager. After cleanup give the user the supported source and steps; never run CLI, an agent plugin manager or a profile edit to install/enable it for the user. Check the target manager and artifact before presenting an npm package spec, an absolute local built-package/tarball path, or a GitHub URL as usable. Raw Git requires a safe, documented, self-contained `prepare` build; a `file:` dependency in a manifest is not a user-entered local installation address.
+- Final installation, update and enablement are the user's decision in the Desktop Client or Web UI **Plugins** manager. After cleanup give the user the supported source and steps; never run CLI, an agent plugin manager or a profile edit to install/enable it for the user. Check the target manager and artifact before presenting an npm package spec, an absolute local built-package/tarball path, or a GitHub URL as usable. Raw Git installs are supported only when the checkout is self-contained (committed build output and no required lifecycle build); verified GitHub-URL installs must be recorded, and a `file:` dependency in a manifest is not a user-entered local installation address.
 
 ## Subagents
 

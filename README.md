@@ -34,16 +34,24 @@
 
 ## 用户安装
 
-源码托管在 [github.com/skillre/dsh-plugin-skills-manager](https://github.com/skillre/dsh-plugin-skills-manager)，安装包通过该仓库的 [GitHub Release v0.1.3](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.1.3) 提供；**尚未发布 npm**。当前 DSH 管理器支持绝对 tarball 路径。
+源码托管在 [github.com/skillre/dsh-plugin-skills-manager](https://github.com/skillre/dsh-plugin-skills-manager)。**尚未发布 npm**。DSH Plugins 支持两种安装来源：
+
+**方式 A：Git 仓库地址（跟随默认分支）** —— 在 **Add plugin / 添加插件** 输入框直接输入：
+
+```
+https://github.com/skillre/dsh-plugin-skills-manager
+```
+
+仓库已提交构建产物（`lib/`），pnpm 不需要执行构建脚本，因此不受 `allowBuilds` 供应链限制；安装后重启 Desktop 即可。该方式跟随 `main` 最新提交，适合持续获取最新版。
+
+**方式 B：Release tarball（固定版本）** —— 从 [GitHub Release v0.1.3](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.1.3) 下载 [`skillre-dsh-plugin-skills-manager-0.1.3.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.1.3/skillre-dsh-plugin-skills-manager-0.1.3.tgz)，在 **Add plugin** 中输入它的**完整本地绝对路径**。
 
 1. 打开 DSH 左侧 **Plugins / 插件**。
 2. 选择 **Add plugin / 添加插件**。
-3. 从 Release 下载 [`skillre-dsh-plugin-skills-manager-0.1.3.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.1.3/skillre-dsh-plugin-skills-manager-0.1.3.tgz)，输入它的**完整绝对路径**，查看信任提示并自行确认安装。
+3. 粘贴 Git 仓库地址或 tarball 的本地绝对路径，查看信任提示并自行确认安装。
 4. 启用后，从左侧栏「**技能 / Skills**」进入。
 
-> **常见安装错误：不要把本仓库的 GitHub URL 粘贴到「添加插件」。** DSH 会把 `https://github.com/...` 当作 Git 依赖交给 pnpm 构建；本仓库不提交构建产物，且 DSH 的供应链策略禁止未列入 `allowBuilds` 的构建脚本，会报 `ERR_PNPM_GIT_DEP_PREPARE_NOT_ALLOWED`。请下载 Release 资产后粘贴它的**本地绝对路径**（或使用文件选择器选择本地 `.tgz`）。
-
-最终安装由用户发起。不要输入尚未发布的 npm 包名、原始 GitHub 地址或源码目录；源码链接不是本轮验证的安装渠道。
+最终安装由用户发起。不要输入尚未发布的 npm 包名或源码目录；`v0.1.3` tag 的源码树不含构建产物，若要固定版本请使用方式 B 的 Release 资产。
 
 ## 使用
 
@@ -167,7 +175,7 @@ npm pack --json --ignore-scripts
 DSH_TEST_CLI=/path/to/current/dsh npm run test:integration -- /absolute/path/to/package.tgz
 ```
 
-隔离脚本必须在给足时限的**前景有界 shell** 中运行。它创建新的非 Desktop 自有测试 home/profile，验证真实安装、组合、RPC、Client 资源及卸载，最后等待全部自有进程真实关闭并核实进程组与目录缺失。`EPERM` 或其他不明清理状态是失败，不会被当成已退出/已清理；会保留 owner/PID 与失败证据。严禁将测试脚本指向用户 profile，严禁源码 `link:` 部署。检查期间保持同一 tarball、构建文件与元数据不变，不并发重包。
+仓库提交了 `lib/` 构建产物，以支持方式 A 的 Git 地址安装；修改 `src/` 后必须执行 `npm run build` 并提交 `lib/`，CI 会通过 `git diff --exit-code -- lib` 校验两者一致。隔离脚本必须在给足时限的**前景有界 shell** 中运行。它创建新的非 Desktop 自有测试 home/profile，验证真实安装、组合、RPC、Client 资源及卸载，最后等待全部自有进程真实关闭并核实进程组与目录缺失。`EPERM` 或其他不明清理状态是失败，不会被当成已退出/已清理；会保留 owner/PID 与失败证据。严禁将测试脚本指向用户 profile，严禁源码 `link:` 部署。检查期间保持同一 tarball、构建文件与元数据不变，不并发重包。
 
 ## 卸载与回滚
 
