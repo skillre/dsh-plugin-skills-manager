@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "repo": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager",
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.1.7",
+  "result": "passed",
+  "artifact": {
+    "filename": "skillre-dsh-plugin-skills-manager-0.1.7.tgz",
+    "sha256": "c7d82f8df3f8d06abd80c797bdc2542e3003617c76860618b40f0ddd978b9507",
+    "sizeBytes": 83155,
+    "entryCount": 37
+  },
+  "publication": {
+    "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
+    "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.1.7",
+    "asset": "https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.1.7/skillre-dsh-plugin-skills-manager-0.1.7.tgz",
+    "npmPublished": false
+  },
+  "filesChanged": [
+    "src/manager.ts",
+    "src/client/index.tsx",
+    "src/client/dialogs.tsx",
+    "src/client/components.tsx",
+    "src/client/messages.ts",
+    "src/client/styles.css",
+    "tests/manager.spec.ts",
+    "package.json",
+    "CHANGELOG.md",
+    "compatibility.json",
+    "README.md",
+    "README.en.md",
+    "lib/",
+    "docs/verification/check-0.1.7.log",
+    "docs/verification/pre-final-mount-0.1.7-gateway.json",
+    "docs/verification/pre-final-mount-0.1.7-gateway.log",
+    "docs/verification/isolated-mount-0.1.7.json",
+    "docs/verification/isolated-mount-0.1.7.log",
+    "docs/verification/final-pack-0.1.7.json",
+    "docs/verification/final-artifact-0.1.7.json",
+    "docs/verification/handoff-0.1.7.json",
+    "skillre-dsh-plugin-skills-manager-0.1.7.tgz"
+  ],
+  "testsRun": [
+    {
+      "command": "npm run check",
+      "exitCode": 0,
+      "detail": "66 tests, 37 packed files"
+    },
+    {
+      "command": "pre-final isolated mount",
+      "exitCode": 0,
+      "detail": "19 checks passed"
+    },
+    {
+      "command": "final isolated mount (foreground bounded)",
+      "exitCode": 0,
+      "detail": "exact release tarball: 19 checks, tarball unchanged, cleanup verified"
+    }
+  ],
+  "risks": [
+    "Real Web/Electron visual acceptance remains user-deferred; the new Details button and dialog were verified through packed Client delivery, not an Electron window check.",
+    "Read-only skills whose location is symlinked or unreadable stay content-only in the detail view (by design, no symlink following)."
+  ],
+  "followUps": [
+    "User updates to 0.1.7, restarts if prompted, and opens any installed skill via its Details button or card body to check the new detail layout and copy-path action."
+  ]
+}

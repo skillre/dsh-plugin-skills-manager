@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import type { Backup, BatchUpdateResult, Catalog, LocalSkill, MutationResult, RemotePreview, RepositoryInfo, RepositorySkill, SkillDetail, SkillDiff, UpdateCheck, WellKnownInspect, WellKnownSkillEntry } from '../types.js'
 import type { ClientApi } from './contracts.js'
 import type { Translate } from './messages.js'
-import { bytes, Dialog, errorText, Icon, Loader, Notice, rootLabel, time } from './components.js'
+import { bytes, Dialog, errorText, Icon, Loader, Notice, rootLabel, StatusBadge, time } from './components.js'
 
 interface CommonProps {
   api: ClientApi
@@ -104,17 +104,19 @@ export function SkillDialog({ skill, initialAction, onMove, ...props }: CommonPr
   const [permanent, setPermanent] = useState(false)
   const [diff, setDiff] = useState<SkillDiff | null>(null)
   const [diffError, setDiffError] = useState('')
+  const [copied, setCopied] = useState(false)
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const life = useRef(new AbortController())
   const alive = useRef(true)
   const initialized = useRef(false)
   useEffect(() => {
     alive.current = true; if (life.current.signal.aborted) life.current = new AbortController()
     void load(initialAction === 'update')
-    return () => { alive.current = false; life.current.abort() }
+    return () => { alive.current = false; life.current.abort(); if (copyTimer.current) clearTimeout(copyTimer.current) }
   }, [skill.id])
   function close(): void { life.current.abort(); props.onClose() }
   async function load(update = false): Promise<void> {
-    setBusy('loading'); setError(''); setOverwrite(false); setPermanent(false); setDiff(null); setDiffError('')
+    setBusy('loading'); setError(''); setOverwrite(false); setPermanent(false); setDiff(null); setDiffError(''); setCopied(false)
     try {
       let value = await api.call<SkillDetail>({ action: 'detail', id: skill.id, ...scope(workspaceId) }, life.current.signal)
       if (update && value.skill.source && value.skill.writable) {
@@ -138,6 +140,16 @@ export function SkillDialog({ skill, initialAction, onMove, ...props }: CommonPr
     finally { if (alive.current) setBusy('') }
   }
   async function checkUpdate(): Promise<void> { if (!busy) await load(true) }
+  async function copyPath(): Promise<void> {
+    const path = detail?.skill.path
+    if (!path || !navigator.clipboard) return
+    try {
+      await navigator.clipboard.writeText(path)
+      setCopied(true)
+      if (copyTimer.current) clearTimeout(copyTimer.current)
+      copyTimer.current = setTimeout(() => { if (alive.current) setCopied(false) }, 1600)
+    } catch { if (alive.current) setError(t('copyFailed')) }
+  }
   async function mutate(): Promise<void> {
     if (!detail || !detail.skill.writable || busy || mode === 'detail' || (mode === 'update' && detail.locallyModified && !overwrite)) return
     setBusy(mode === 'update' ? 'updating' : 'removing'); setError(''); props.onBusy(true, t(mode === 'update' ? 'updating' : 'removing'))
@@ -147,14 +159,14 @@ export function SkillDialog({ skill, initialAction, onMove, ...props }: CommonPr
     } catch (error) { const message = errorText(error); if (alive.current) setError(message); props.onError(message) }
     finally { if (alive.current) setBusy(''); props.onBusy(false); props.onSettled() }
   }
-  const title = mode === 'remove' ? t('removeTitle') : mode === 'update' ? t('updateTitle') : skill.name
+  const title = mode === 'remove' ? t('removeTitle') : mode === 'update' ? t('updateTitle') : `${t('details')} · ${skill.name}`
   const canUpdate = !!detail?.skill.source && detail.skill.writable && detail.skill.format === 'directory'
   return <Dialog title={title} t={t} onClose={close} alert={mode !== 'detail'} footer={<>
     {mode !== 'detail' ? <><button type="button" className="skm-button skm-button-quiet" data-autofocus onClick={() => { if (!busy) { setMode('detail'); setOverwrite(false); setError('') } else close() }}>{t('cancel')}</button><button type="button" className={`skm-button ${mode === 'remove' ? 'skm-button-danger' : 'skm-button-primary'}`} disabled={!detail || !detail.skill.writable || !!busy || (mode === 'update' && !!detail.locallyModified && !overwrite) || (mode === 'update' && detail.skill.check?.status === 'latest' && !detail.locallyModified)} onClick={() => void mutate()}><Icon name={busy ? 'refresh' : mode === 'remove' ? 'trash' : 'up'} spin={!!busy}/>{busy ? t(busy) : t(mode === 'remove' ? 'confirmRemove' : 'confirmUpdate')}</button></> : <>
       <button type="button" className="skm-button skm-button-quiet" onClick={close}>{t('close')}</button>
       {detail?.skill.writable && detail.skill.format !== 'registry' && onMove && <button type="button" className="skm-button" onClick={() => onMove(detail.skill)} disabled={!!busy}><Icon name="move" size={15}/>{t('moveButton')}</button>}
       {detail?.skill.writable && <button type="button" className="skm-button skm-button-danger" onClick={() => { setMode('remove'); setError('') }} disabled={!!busy}><Icon name="trash" size={15}/>{t('remove')}</button>}
-      {canUpdate && <button type="button" className="skm-button skm-button-primary" onClick={() => void checkUpdate()} disabled={!!busy}><Icon name={busy ? 'refresh' : 'up'} spin={!!busy}/>{t('updateButton')}</button>}
+      {canUpdate && <button type="button" className="skm-button skm-button-primary" onClick={() => void checkUpdate()} disabled={!!busy}><Icon name={busy ? 'refresh' : detail.skill.check?.status === 'update' ? 'up' : 'refresh'} spin={!!busy}/>{busy ? t(busy) : detail.skill.check?.status === 'update' ? t('updateButton') : t('check')}</button>}
     </>}
   </>}>
     {error && <><Notice text={error} kind="error"/><button type="button" className="skm-button" onClick={() => { setMode('detail'); void load() }} disabled={!!busy}>{t('retry')}</button></>}
@@ -175,13 +187,13 @@ export function SkillDialog({ skill, initialAction, onMove, ...props }: CommonPr
       <div className="skm-detail-grid">
         <div className="skm-detail-item"><div className="skm-detail-label">{t('location')}</div><div className="skm-detail-value">{rootLabel(props.catalog.roots.find(root => root.id === detail.skill.rootId), t)}</div></div>
         <div className="skm-detail-item"><div className="skm-detail-label">{t('revision')}</div><div className="skm-detail-value skm-mono">{detail.skill.source?.kind === 'well-known' ? detail.skill.source.digest ? `${t('digest')} ${detail.skill.source.digest.slice(7, 19)}` : t('localOnly') : detail.skill.source?.commit && detail.skill.source.commit !== 'unknown' ? detail.skill.source.commit.slice(0, 12) : detail.skill.source?.imported ? t('cliImported') : t('localOnly')}</div></div>
+        <div className="skm-detail-item"><div className="skm-detail-label">{t('updateStatus')}</div><div className="skm-detail-value skm-status-cell"><StatusBadge skill={detail.skill} t={t}/>{detail.skill.check?.checkedAt && <span className="skm-hint">{time(detail.skill.check.checkedAt, locale)}</span>}</div></div>
         <div className="skm-detail-item"><div className="skm-detail-label">{t('model')}</div><div className="skm-detail-value">{t(detail.skill.modelInvocable ? 'enabled' : 'disabled')}</div></div>
         <div className="skm-detail-item"><div className="skm-detail-label">{t('user')}</div><div className="skm-detail-value">{t(detail.skill.userInvocable ? 'enabled' : 'disabled')}</div></div>
       </div>
-      <div className="skm-hint skm-mono">{detail.skill.path}</div>
+      <div className="skm-path-row"><span className="skm-hint skm-mono">{detail.skill.path}</span><button type="button" className="skm-button skm-button-quiet skm-copy-button" onClick={() => void copyPath()} aria-label={t('copyPath')} title={t('copyPath')}>{copied ? <><Icon name="check" size={13}/>{t('pathCopied')}</> : <Icon name="copy" size={14}/>}</button></div>
       {detail.skill.source?.kind === 'well-known' && <div className="skm-meta" style={{ marginTop: 9 }}><span className="skm-mono">{detail.skill.source.repository}</span>{detail.skill.source.sourceBaseUrl && <a className="skm-source-link" href={detail.skill.source.sourceBaseUrl} target="_blank" rel="noopener noreferrer">{t('sourceSite')} ↗</a>}</div>}
       {detail.skill.source && detail.skill.source.kind !== 'well-known' && <div className="skm-meta" style={{ marginTop: 9 }}><span className="skm-mono">{detail.skill.source.repository}</span>{detail.skill.source.ref && <span>{detail.skill.source.ref}</span>}<SourceLink repository={detail.skill.source.repository} revision={detail.skill.source.commit && detail.skill.source.commit !== 'unknown' ? detail.skill.source.commit : detail.skill.source.ref} t={t}/></div>}
-      {detail.skill.check?.checkedAt && <p className="skm-hint">{t('checkedAt', { time: time(detail.skill.check.checkedAt, locale) })}</p>}
       {detail.locallyModified && <Notice text={`${t('modified')} · ${t('modifiedBody')}`} kind="warning"/>}
       {!detail.skill.source && detail.skill.origin && <Notice text={t('externalSourceBody', { source: detail.skill.origin.label })}/>}
       {!detail.skill.source && !detail.skill.origin && detail.skill.writable && <Notice text={t('noSource')}/>}

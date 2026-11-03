@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.7 — installed skill details (local build)
+
+- Every installed-skill card now has an explicit **Details** action and the card body is clickable, so the detail dialog no longer depends on finding the small skill name link.
+- The detail dialog now shows an **update status** badge with the last check time, the skill's **absolute path with a copy button**, and a full **resource inventory** for read-only skills too (bundled/custom locations are listed when readable; unreadable linked entries stay content-only instead of failing).
+- The detail dialog title names the skill and its actions are labelled by intent: **Check** when no update is known, **Update** when one is available.
+- Add the matching zh/en labels and a regression test for read-only details (66 tests total); rebuild the committed `lib/`.
+
+No npm publication or user-profile change is included; the GitHub source repository and Release asset are updated in the same user-authorized GitHub flow.
+
 ## 0.1.6 — one header entry for update checks (local build)
 
 - Remove the ambiguous second refresh button from the page header: the header now offers a single **Check updates** action.

@@ -19,6 +19,8 @@ export function Icon({ name = 'book', size = 18, spin = false }: { name?: string
     arrow: <path d="m9 5 7 7-7 7"/>,
     back: <path d="m15 5-7 7 7 7"/>,
     archive: <><path d="M4 8h16v13H4V8Z"/><path d="M3 3h18v5H3V3ZM9 12h6"/></>,
+    info: <><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></>,
+    copy: <><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></>,
     restore: <><path d="M3 4v6h6"/><path d="M3 10a9 9 0 1 1 1 8M12 7v5l3 2"/></>,
     link: <><path d="m10 14 4-4M8 16l-2 2a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0M16 8l2-2a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0" transform="translate(2 0) scale(.85)"/></>,
     move: <><path d="M12 3v18M8 7l4-4 4 4M8 17l4 4 4-4M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></>,

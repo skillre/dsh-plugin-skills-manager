@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { mkdir, readFile, symlink, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, realpath, rm, symlink, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import type { Backup, Catalog, MutationResult, RepositoryInfo, SkillDetail, UpdateCheck } from '../src/types.js'
@@ -108,6 +109,29 @@ describe('real filesystem skill lifecycle', () => {
       await expect(f.manager.execute({ action: 'detail', id: skill.id })).rejects.toMatchObject({ code: 'read-only' })
       expect(await readFile(join(outside, 'SKILL.md'), 'utf8')).toBe(skillText('one'))
     } finally { await f.cleanup() }
+  })
+  it('returns content, file inventory and update state for read-only installed skills', async () => {
+    const readOnly = await mkdtemp(join(await realpath(tmpdir()), 'dsh-skills-manager-readonly-'))
+    const f = await fixture({ readOnlySkillDirs: [readOnly] })
+    try {
+      await writeBundle(join(readOnly, 'public'), [
+        { path: 'SKILL.md', bytes: new TextEncoder().encode(skillText('one', 'public')), executable: false },
+        { path: 'references/a.txt', bytes: new TextEncoder().encode('a'), executable: false },
+      ])
+      const skill = (await catalog(f)).skills.find(item => item.entry === 'public')!
+      expect(skill.writable).toBe(false)
+      expect(skill.check).toBeUndefined()
+      const detail = await f.manager.execute({ action: 'detail', id: skill.id }) as SkillDetail
+      expect(detail.content).toContain('one')
+      expect(detail.files.map(file => file.path)).toEqual(['SKILL.md', 'references/a.txt'])
+      expect(detail.totalBytes).toBeGreaterThan(0)
+      expect(detail.fingerprint).toBe('')
+      expect(detail.locallyModified).toBeNull()
+      await expect(f.manager.execute({ action: 'remove', id: skill.id, expectedFingerprint: '0'.repeat(64) })).rejects.toMatchObject({ code: 'read-only' })
+    } finally {
+      await f.cleanup()
+      await rm(readOnly, { recursive: true, force: true })
+    }
   })
   it('does not use inherited provenance for constructor or __proto__ directories', async () => {
     const f = await fixture()
