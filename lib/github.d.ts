@@ -43,6 +43,7 @@ export declare class GitHubSource {
     folderHashFor(tree: RepositoryTree, skillPath: string): string;
     private selectedFiles;
     private file;
+    private downloadArchive;
     inspect(source: string, ref: string | undefined, signal: AbortSignal): Promise<RepositoryInfo>;
     preview(source: string, ref: string | undefined, commit: string, skillPath: string, signal: AbortSignal): Promise<RemotePreview>;
     download(source: string, ref: string | undefined, commit: string, skillPath: string, signal: AbortSignal): Promise<DownloadedSkill>;

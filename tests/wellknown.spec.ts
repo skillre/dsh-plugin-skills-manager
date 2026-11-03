@@ -29,7 +29,7 @@ describe('strict well-known archive extraction', () => {
     expect(() => extractSkillBundle(tarGz([{ path: 'SKILL.md', bytes: encoder.encode(skillText()) }, { path: 'link', type: 'symlink', linkname: '/etc/passwd' }]), limits)).toThrow(/links, devices/)
     expect(() => extractSkillBundle(tarGz([{ path: 'SKILL.md', bytes: encoder.encode(skillText()) }, { path: 'skill.md', bytes: encoder.encode('x') }]), limits)).toThrow(/duplicate or normalization-colliding/)
     expect(() => extractSkillBundle(tarGz([{ path: 'SKILL.md', bytes: new Uint8Array(2048) }]), { ...limits, maxFileBytes: 1024 })).toThrow(/file-size limit/)
-    expect(() => extractSkillBundle(tarGz([{ path: 'SKILL.md', bytes: encoder.encode(skillText()) }]), { ...limits, maxFiles: 0 })).toThrow(/more files than the configured limit/)
+    expect(() => extractSkillBundle(tarGz([{ path: 'SKILL.md', bytes: encoder.encode(skillText()) }]), { ...limits, maxFiles: 0 })).toThrow(/more files than the configured/)
     expect(() => extractSkillBundle(tarGz([{ path: 'README.md', bytes: encoder.encode('x') }]), limits)).toThrow(/SKILL.md/)
     expect(() => extractSkillBundle(encoder.encode('not an archive'), limits)).toThrow(/not a valid gzip-compressed tar/)
   })

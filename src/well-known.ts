@@ -47,9 +47,9 @@ export class WellKnownSource {
   private readonly indexes = new Map<string, Promise<Map<string, WellKnownEntry>>>()
   constructor(private readonly config: ManagerConfig, private readonly doFetch: Fetcher = (input, init) => fetch(input, init)) {}
   clear(): void { this.indexes.clear() }
-  private async bytes(url: string, limit: number, signal: AbortSignal, accept: string, updateCheck: boolean): Promise<Uint8Array> {
+  private async bytes(url: string, limit: number, signal: AbortSignal, accept: string, updateCheck: boolean, timeoutMs = this.config.requestTimeoutMs): Promise<Uint8Array> {
     throwIfAborted(signal)
-    const timeout = AbortSignal.timeout(this.config.requestTimeoutMs)
+    const timeout = AbortSignal.timeout(timeoutMs)
     const response = await this.doFetch(url, {
       signal: AbortSignal.any([signal, timeout]),
       redirect: 'error',
@@ -133,7 +133,7 @@ export class WellKnownSource {
     let archiveUrl: URL
     try { archiveUrl = new URL(found.entry.url, found.base.indexUrl) } catch { fail('invalid-source', 'The well-known catalog declares an invalid skill artifact URL.') }
     if (archiveUrl.protocol !== 'https:' || archiveUrl.origin !== new URL(found.base.indexUrl).origin || archiveUrl.username || archiveUrl.password) fail('invalid-source', 'Skill artifacts must stay on the same HTTPS origin as their catalog.')
-    const bytes = await this.bytes(archiveUrl.href, this.config.maxBundleBytes, signal, 'application/octet-stream', false)
+    const bytes = await this.bytes(archiveUrl.href, this.config.maxBundleBytes, signal, 'application/octet-stream', false, Math.max(this.config.requestTimeoutMs, this.config.operationTimeoutMs))
     const digest = `sha256:${sha256(bytes)}`
     if (digest !== found.entry.digest) fail('integrity', 'Downloaded skill archive did not match the catalog digest; no local files were changed.')
     const files = extractSkillBundle(bytes, { maxBytes: this.config.maxBundleBytes, maxFiles: this.config.maxBundleFiles, maxFileBytes: this.config.maxFileBytes }, signal)

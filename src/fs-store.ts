@@ -110,7 +110,7 @@ export async function snapshotPath(path: string, config: ManagerConfig, signal?:
   let visited = 0
   async function visit(absolute: string, local: string, depth: number): Promise<void> {
     throwIfAborted(signal)
-    if (++visited > config.maxBundleFiles * 4 || depth > 30) fail('limit', 'Skill directory exceeds the configured traversal limit.')
+    if (++visited > config.maxBundleFiles * 4 || depth > 30) fail('limit', `Skill directory exceeds the configured traversal limit (maxBundleFiles=${config.maxBundleFiles}). Raise maxBundleFiles in the plugin configuration if you trust this skill.`)
     const info = await lstat(absolute)
     if (info.isSymbolicLink()) fail('read-only', 'Skill bundles containing symlinks are read-only.')
     if (info.isDirectory()) {
@@ -122,10 +122,10 @@ export async function snapshotPath(path: string, config: ManagerConfig, signal?:
         await visit(join(absolute, entry), child, depth + 1)
       }
     } else if (info.isFile()) {
-      if (files.length >= config.maxBundleFiles) fail('limit', 'Skill bundle exceeds the configured file-count limit.')
+      if (files.length >= config.maxBundleFiles) fail('limit', `Skill bundle exceeds the configured file-count limit (maxBundleFiles=${config.maxBundleFiles}). Raise maxBundleFiles in the plugin configuration if you trust this skill.`)
       const bytes = await readBytes(absolute, config.maxFileBytes, signal)
       totalBytes += bytes.length
-      if (totalBytes > config.maxBundleBytes) fail('limit', 'Skill bundle exceeds the configured total-size limit.')
+      if (totalBytes > config.maxBundleBytes) fail('limit', `Skill bundle exceeds the configured total-size limit (maxBundleBytes=${config.maxBundleBytes}). Raise maxBundleBytes in the plugin configuration if you trust this skill.`)
       files.push({ path: local || basename(path), bytes, executable: !!(info.mode & 0o111) })
     } else fail('unsafe-path', 'Skill bundles may contain only regular files and directories.')
   }

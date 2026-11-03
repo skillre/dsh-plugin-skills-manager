@@ -4,7 +4,7 @@ import type { Fetcher } from '../src/github.js'
 import { resolveConfig } from '../src/config.js'
 import { gitBlobHash, gitTreeHash } from '../src/fs-store.js'
 import type { BundleFile } from '../src/fs-store.js'
-import { fakeGitHub, skillText } from './helpers.js'
+import { fakeGitHub, skillText, tarGz } from './helpers.js'
 
 const signal = () => new AbortController().signal
 const config = () => resolveConfig({})
@@ -48,6 +48,33 @@ describe('bounded public skill sources', () => {
       const fetcher: Fetcher = async url => url.includes('/commits/') ? Response.json({ sha: commit, commit: { tree: { sha: rootHash } } }) : Response.json({ sha: rootHash, tree: [{ path: 'demo', mode: '040000', type: 'tree', sha: treeHash }, ...files.map(file => ({ path: `demo/${file.path}`, mode: '100644', type: 'blob', sha: gitBlobHash(file.bytes), size: file.bytes.length }))] })
       await expect(new GitHubSource(config(), fetcher).preview('test/skills', undefined, commit, 'demo/SKILL.md', signal())).rejects.toMatchObject({ code: 'unsafe-source' })
     }
+  })
+  it('downloads large skills from one commit tarball and verifies every blob', async () => {
+    const encoder = new TextEncoder()
+    const files: BundleFile[] = [{ path: 'SKILL.md', bytes: encoder.encode(skillText()), executable: false }, ...Array.from({ length: 80 }, (_, index) => ({ path: `references/file-${index}.txt`, bytes: encoder.encode(`resource ${index}`), executable: false }))]
+    const treeHash = gitTreeHash(files)
+    const rootHash = gitTreeHash(files.map(file => ({ ...file, path: `demo/${file.path}` })))
+    const commit = 'b'.repeat(40)
+    const tree = [{ path: 'demo', mode: '040000', type: 'tree', sha: treeHash }, ...files.map(file => ({ path: `demo/${file.path}`, mode: '100644', type: 'blob', sha: gitBlobHash(file.bytes), size: file.bytes.length }))]
+    const archive = tarGz(files.map(file => ({ path: `test-large-${commit}/demo/${file.path}`, bytes: file.bytes })))
+    const calls: string[] = []
+    const makeFetcher = (archiveBytes: Buffer): Fetcher => async url => {
+      calls.push(url)
+      const parsed = new URL(url)
+      if (parsed.hostname === 'api.github.com') {
+        if (parsed.pathname.includes('/commits/')) return Response.json({ sha: commit, commit: { tree: { sha: rootHash } } })
+        return Response.json({ sha: rootHash, tree, truncated: false })
+      }
+      if (parsed.hostname === 'codeload.github.com') return new Response(new Uint8Array(archiveBytes))
+      throw new Error(`Unexpected request: ${url}`)
+    }
+    const downloaded = await new GitHubSource(resolveConfig({ maxBundleFiles: 200 }), makeFetcher(archive)).download('test/large', undefined, commit, 'demo/SKILL.md', signal())
+    expect(downloaded.files).toHaveLength(81)
+    expect(downloaded.skill.name).toBe('demo')
+    expect(calls.some(url => url.includes('codeload.github.com'))).toBe(true)
+    expect(calls.some(url => url.includes('raw.githubusercontent.com'))).toBe(false)
+    const badArchive = tarGz(files.map(file => ({ path: `test-large-${commit}/demo/${file.path}`, bytes: file.path === 'references/file-3.txt' ? encoder.encode('tampered') : file.bytes })))
+    await expect(new GitHubSource(resolveConfig({ maxBundleFiles: 200 }), makeFetcher(badArchive)).download('test/large', undefined, commit, 'demo/SKILL.md', signal())).rejects.toMatchObject({ code: 'integrity' })
   })
   it('stops oversized streams and reports HTTP failures honestly', async () => {
     const over: Fetcher = async () => new Response(new Uint8Array(2048))

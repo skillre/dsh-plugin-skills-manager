@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.5 — large skill support (local build)
+
+- Raise the default bundle limits to real-world sizes (`maxBundleFiles` 20,000, `maxBundleBytes` 100 MiB, `operationTimeoutMs` 300 s); the schemas allow `maxBundleFiles` up to 50,000.
+- GitHub skills with more than 64 files are now fetched as one commit-pinned `codeload` tarball and parsed in memory, with every selected file still verified against its Git blob SHA and the complete folder tree; this replaces thousands of per-file requests for asset-heavy skills (e.g. `ppt-master`, 13k files).
+- Use the same longer operation timeout for well-known archive downloads.
+- Limit failures now name the exact configured limit and which `maxBundleFiles`/`maxBundleBytes` setting to raise.
+- Real-world verification: `tt-a1i/archify` (206 files) and `hugohe3/ppt-master` (13,051 files, 39.5 MB) downloaded and verified through the new archive path; 65 tests pass.
+- Rebuild and commit `lib/`.
+
+No npm publication or user-profile change is included; the GitHub source repository and Release asset are updated in the same user-authorized GitHub flow.
+
 ## 0.1.4 — update and backup usability fixes (local build)
 
 - Keep the cached update results of all other skills after an update, install, removal, move or restore, so the Updates tab no longer empties and the remaining updates stay visible without running the check again.

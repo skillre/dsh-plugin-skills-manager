@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "repo": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager",
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.1.5",
+  "result": "passed",
+  "artifact": {
+    "filename": "skillre-dsh-plugin-skills-manager-0.1.5.tgz",
+    "sha256": "6dcc8e1567929b75cb71f0aa127766c25ba7acc0648f7d6fc88d99ff3dc1ddcc",
+    "sizeBytes": 81643,
+    "entryCount": 37
+  },
+  "publication": {
+    "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
+    "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.1.5"
+  },
+  "filesChanged": [
+    "src/config.ts",
+    "src/archive.ts",
+    "src/github.ts",
+    "src/well-known.ts",
+    "src/fs-store.ts",
+    "tests/github.spec.ts",
+    "tests/wellknown.spec.ts",
+    "package.json",
+    "CHANGELOG.md",
+    "compatibility.json",
+    "README.md",
+    "README.en.md",
+    "docs/architecture.md",
+    "lib/",
+    "docs/verification/check-0.1.5.log",
+    "docs/verification/pre-final-mount-0.1.5-gateway.json",
+    "docs/verification/pre-final-mount-0.1.5-gateway.log",
+    "docs/verification/isolated-mount-0.1.5.json",
+    "docs/verification/isolated-mount-0.1.5.log",
+    "docs/verification/final-pack-0.1.5.json",
+    "docs/verification/final-artifact-0.1.5.json",
+    "docs/verification/handoff-0.1.5.json",
+    "skillre-dsh-plugin-skills-manager-0.1.5.tgz"
+  ],
+  "testsRun": [
+    {
+      "command": "npm run check",
+      "exitCode": 0,
+      "detail": "65 tests, 37 packed files"
+    },
+    {
+      "command": "pre-final isolated mount",
+      "exitCode": 0,
+      "detail": "19 checks passed"
+    },
+    {
+      "command": "final isolated mount",
+      "exitCode": 0,
+      "detail": "exact release tarball: 19 checks, tarball unchanged, cleanup verified"
+    },
+    {
+      "command": "live GitHub download test",
+      "exitCode": 0,
+      "detail": "archify 206 files and ppt-master 13,051 files/39.5 MB verified through codeload path"
+    }
+  ],
+  "risks": [
+    "Very large skills need operationTimeoutMs headroom and depend on network speed.",
+    "Real Web/Electron visual acceptance remains user-deferred."
+  ],
+  "followUps": [
+    "User updates to 0.1.5 (Git URL or Release asset), restarts if prompted, then updates ppt-master and verifies the preserved update list/backup UI."
+  ]
+}

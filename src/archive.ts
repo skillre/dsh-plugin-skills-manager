@@ -86,7 +86,7 @@ export function extractSkillBundle(bytes: Uint8Array, limits: ArchiveLimits, sig
     const type = String.fromCharCode(header[156] ?? 0)
     const size = octal(header, 124, 12, 'size')
     if ((header[124] ?? 0) & 0x80) fail('invalid-source', 'Archive uses an unsupported base-256 size field.')
-    if (size > limits.maxFileBytes && type !== 'x' && type !== 'g' && type !== 'L' && type !== 'K') fail('limit', 'Archive entry exceeds the configured file-size limit.')
+    if (size > limits.maxFileBytes && type !== 'x' && type !== 'g' && type !== 'L' && type !== 'K') fail('limit', `Archive entry exceeds the configured file-size limit (maxFileBytes=${limits.maxFileBytes}).`)
     const dataStart = offset + BLOCK
     const dataEnd = dataStart + size
     if (dataEnd > tar.length) fail('invalid-source', 'Archive entry is truncated.')
@@ -115,8 +115,8 @@ export function extractSkillBundle(bytes: Uint8Array, limits: ArchiveLimits, sig
     seen.set(folded, { path, directory })
     if (directory) continue
     totalBytes += size
-    if (totalBytes > limits.maxBytes) fail('limit', 'Archive extracts beyond the configured total-size limit.')
-    if (files.length >= limits.maxFiles) fail('limit', 'Archive contains more files than the configured limit.')
+    if (totalBytes > limits.maxBytes) fail('limit', `Archive extracts beyond the configured total-size limit (maxBundleBytes=${limits.maxBytes}).`)
+    if (files.length >= limits.maxFiles) fail('limit', `Archive contains more files than the configured file-count limit (maxBundleFiles=${limits.maxFiles}). Raise maxBundleFiles in the plugin configuration if you trust this source.`)
     const mode = octal(header, 100, 8, 'mode')
     files.push({ path, bytes: Buffer.from(data), executable: (mode & 0o111) !== 0 })
   }
@@ -124,12 +124,82 @@ export function extractSkillBundle(bytes: Uint8Array, limits: ArchiveLimits, sig
   return finalizeBundle(files, limits)
 }
 
+function repositoryPath(raw: string): string | undefined {
+  const value = raw.replace(/\\/g, '/').replace(/^(?:\.\/)+/, '').replace(/\/+$/, '')
+  if (!value) return undefined
+  if (value.startsWith('/') || /[\x00-\x1f\x7f]/.test(value)) fail('unsafe-source', 'Repository archive has an unsafe resource path.')
+  const segments = value.split('/')
+  if (segments.some(segment => !segment || segment === '.' || segment === '..')) fail('unsafe-source', 'Repository archive has path traversal segments.')
+  return value
+}
+
+/**
+ * Parse a GitHub commit tarball into every regular file it contains. Unlike
+ * skill-bundle extraction this tolerates unrelated files, symlinks and large
+ * assets outside the selected skill; regular files above maxFileBytes are
+ * skipped and the caller verifies only the tree-selected files.
+ */
+export function extractRepositoryFiles(bytes: Uint8Array, limits: ArchiveLimits, signal?: AbortSignal): BundleFile[] {
+  throwIfAborted(signal)
+  let tar: Buffer
+  try {
+    tar = gunzipSync(Buffer.from(bytes), { maxOutputLength: limits.maxBytes + 1 })
+  } catch (error) {
+    if (error instanceof RangeError || (error as { code?: string }).code === 'ERR_BUFFER_TOO_LARGE') fail('limit', 'Repository archive expands beyond the configured size limit.')
+    fail('invalid-source', 'The repository archive is not a valid gzip-compressed tar file.')
+  }
+  const files: BundleFile[] = []
+  const seen = new Set<string>()
+  let offset = 0
+  let totalBytes = 0
+  let longName: string | undefined
+  let extendedPath: string | undefined
+  let ended = false
+  while (offset + BLOCK <= tar.length) {
+    throwIfAborted(signal)
+    const header = tar.subarray(offset, offset + BLOCK)
+    if (header.every(byte => byte === 0)) { ended = true; break }
+    checksum(header)
+    const type = String.fromCharCode(header[156] ?? 0)
+    const size = octal(header, 124, 12, 'size')
+    if ((header[124] ?? 0) & 0x80) fail('invalid-source', 'Repository archive uses an unsupported base-256 size field.')
+    const dataStart = offset + BLOCK
+    const dataEnd = dataStart + size
+    if (dataEnd > tar.length) fail('invalid-source', 'Repository archive entry is truncated.')
+    const data = tar.subarray(dataStart, dataEnd)
+    offset = dataStart + Math.ceil(size / BLOCK) * BLOCK
+    if (type === 'L') { longName = decoder.decode(data).replace(/\0+$/, ''); continue }
+    if (type === 'x') { extendedPath = paxPath(data) ?? extendedPath; continue }
+    if (type === 'g' || type === 'K') continue
+    if (type !== '0' && type !== '\0' && type !== '5') { extendedPath = undefined; longName = undefined; continue }
+    const shortName = field(header, 0, 100)
+    const prefix = field(header, 345, 155)
+    const overridden = extendedPath ?? longName
+    extendedPath = undefined
+    longName = undefined
+    const raw = overridden ?? (prefix ? `${prefix}/${shortName}` : shortName)
+    const path = repositoryPath(raw)
+    if (!path) continue
+    if (type === '5') continue
+    if (size > limits.maxFileBytes) continue
+    const folded = path.normalize('NFC')
+    if (seen.has(folded)) fail('unsafe-source', 'Repository archive contains duplicate resource paths.')
+    seen.add(folded)
+    totalBytes += size
+    if (totalBytes > limits.maxBytes) fail('limit', 'Repository archive expands beyond the configured total-size limit.')
+    if (files.length >= limits.maxFiles) fail('limit', `Repository archive contains more files than the configured file-count limit (${limits.maxFiles}). Raise maxBundleFiles if you trust this repository.`)
+    files.push({ path, bytes: Buffer.from(data), executable: (octal(header, 100, 8, 'mode') & 0o111) !== 0 })
+  }
+  if (!ended) fail('invalid-source', 'Repository archive is truncated and has no end-of-archive marker.')
+  return files
+}
+
 /** Normalize an extracted archive to a skill bundle rooted at SKILL.md. */
 export function finalizeBundle(files: BundleFile[], limits: ArchiveLimits): BundleFile[] {
   if (files.length === 0) fail('invalid-source', 'Archive contains no skill files.')
-  if (files.length > limits.maxFiles) fail('limit', 'Archive contains more files than the configured limit.')
+  if (files.length > limits.maxFiles) fail('limit', `Archive contains more files than the configured file-count limit (maxBundleFiles=${limits.maxFiles}).`)
   if (files.some(file => file.bytes.length > limits.maxFileBytes)) fail('limit', 'Archive entry exceeds the configured file-size limit.')
-  if (files.reduce((sum, file) => sum + file.bytes.length, 0) > limits.maxBytes) fail('limit', 'Archive extracts beyond the configured total-size limit.')
+  if (files.reduce((sum, file) => sum + file.bytes.length, 0) > limits.maxBytes) fail('limit', `Archive extracts beyond the configured total-size limit (maxBundleBytes=${limits.maxBytes}).`)
   const root = files.find(file => file.path === 'SKILL.md')
   if (root) return files
   const wrapper = files.every(file => file.path.split('/').length >= 2) ? files[0]!.path.split('/')[0]! : undefined

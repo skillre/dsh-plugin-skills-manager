@@ -1,6 +1,6 @@
 # DSH 技能管理 · Skills Manager
 
-> `@skillre/dsh-plugin-skills-manager` · `0.1.4` · experimental
+> `@skillre/dsh-plugin-skills-manager` · `0.1.5` · experimental
 
 [English](<README.en.md>)
 
@@ -44,7 +44,7 @@ https://github.com/skillre/dsh-plugin-skills-manager
 
 仓库已提交构建产物（`lib/`），pnpm 不需要执行构建脚本，因此不受 `allowBuilds` 供应链限制；安装后重启 Desktop 即可。该方式跟随 `main` 最新提交，适合持续获取最新版。
 
-**方式 B：Release tarball（固定版本）** —— 从 [GitHub Release v0.1.4](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.1.4) 下载 [`skillre-dsh-plugin-skills-manager-0.1.4.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.1.4/skillre-dsh-plugin-skills-manager-0.1.4.tgz)，在 **Add plugin** 中输入它的**完整本地绝对路径**。
+**方式 B：Release tarball（固定版本）** —— 从 [GitHub Release v0.1.5](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.1.5) 下载 [`skillre-dsh-plugin-skills-manager-0.1.5.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.1.5/skillre-dsh-plugin-skills-manager-0.1.5.tgz)，在 **Add plugin** 中输入它的**完整本地绝对路径**。
 
 1. 打开 DSH 左侧 **Plugins / 插件**。
 2. 选择 **Add plugin / 添加插件**。
@@ -118,11 +118,11 @@ https://github.com/skillre/dsh-plugin-skills-manager
     customSkillDirs: []
     readOnlySkillDirs: []
     requestTimeoutMs: 15000
-    operationTimeoutMs: 120000
+    operationTimeoutMs: 300000
     maxSkills: 500
     maxFileBytes: 2097152
-    maxBundleBytes: 26214400
-    maxBundleFiles: 300
+    maxBundleBytes: 104857600
+    maxBundleFiles: 20000
     maxRepositoryEntries: 30000
     checkConcurrency: 3
 ```
@@ -139,11 +139,11 @@ https://github.com/skillre/dsh-plugin-skills-manager
 | `allowMutations` | `true` | 安装、更新、删除及恢复开关；关闭后所有目录只读 |
 | `enableAgentTool` | `true` | 注册模型管理工具（依赖宿主 tools；授权通道缺失时写操作失败闭合） |
 | `requestTimeoutMs` | `15000` | 单个网络请求上限 |
-| `operationTimeoutMs` | `120000` | 一次操作上限；提交已开始时仍需核对最终状态 |
+| `operationTimeoutMs` | `300000` | 一次操作上限；提交已开始时仍需核对最终状态 |
 | `maxSkills` | `500` | 本地及来源目录结果上限 |
 | `maxFileBytes` | `2097152` | 单个文件上限，2 MiB |
-| `maxBundleBytes` | `26214400` | 技能总大小上限，25 MiB |
-| `maxBundleFiles` | `300` | 技能文件数上限 |
+| `maxBundleBytes` | `104857600` | 技能总大小上限，100 MiB |
+| `maxBundleFiles` | `20000` | 技能文件数上限；配置上限 50000，适合模板/素材型技能 |
 | `maxRepositoryEntries` | `30000` | GitHub 完整树条目上限；截断树不用于判定更新 |
 | `checkConcurrency` | `3` | 网络检查/下载并发，1–6 |
 
@@ -159,9 +159,9 @@ https://github.com/skillre/dsh-plugin-skills-manager
 
 ## 验证与限制
 
-已在 **2026-11-02** 重新 Inspect 并实挂当前 DSH **0.2.1-rc.5**。本地类型检查、构建、publint、打包检查和 **64 项自动化测试**通过（含 **20 项真实 ConnectionRegistry 运输层回归**、**7 项 well-known/归档回归**、**9 项批量/备份/移动/安装/对比回归**）。自有临时非 Desktop profile 的预最终包验证了全部 **37 个 packed 文件**的字节、真实 Gateway `settings/describe` 与 Desktop welcome 实际调用 `llm/listConfigurableProviders`、插件 list/detail/check/remove/restore 的实际文件与指纹、仍安装插件时真实 Host 重启后的欢迎方法与 fixture 保留、卸载后依赖/选择/组合/插件路径缺失，以及再次启动后两个 Gateway 方法继续成功。10 个自有 CLI 进程真实关闭并核实组 `ESRCH` 后，确认 owner/UID/规范路径才删除测试 root，最终核实 `ENOENT`。旧版只测插件自身 RPC 的记录不是本版本兼容证明。
+已在 **2026-11-02** 重新 Inspect 并实挂当前 DSH **0.2.1-rc.5**。本地类型检查、构建、publint、打包检查和 **65 项自动化测试**通过（含 **20 项真实 ConnectionRegistry 运输层回归**、**7 项 well-known/归档回归**、**9 项批量/备份/移动/安装/对比回归**、**1 项大技能 commit tarball 下载回归**）。自有临时非 Desktop profile 的预最终包验证了全部 **37 个 packed 文件**的字节、真实 Gateway `settings/describe` 与 Desktop welcome 实际调用 `llm/listConfigurableProviders`、插件 list/detail/check/remove/restore 的实际文件与指纹、仍安装插件时真实 Host 重启后的欢迎方法与 fixture 保留、卸载后依赖/选择/组合/插件路径缺失，以及再次启动后两个 Gateway 方法继续成功。10 个自有 CLI 进程真实关闭并核实组 `ESRCH` 后，确认 owner/UID/规范路径才删除测试 root，最终核实 `ENOENT`。旧版只测插件自身 RPC 的记录不是本版本兼容证明。
 
-安装包中的 [兼容记录](<compatibility.json>) 只引用本版本 [已通过的预最终实挂证据](<docs/verification/pre-final-mount-0.1.4-gateway.json>)。补入文档/兼容元数据后必须重新打包并安装**精确最终文件**；全部 packed payload、SHA256、Gateway/插件检查与清理结果以 [最终实挂记录](<docs/verification/isolated-mount-0.1.4.json>)、[日志](<docs/verification/isolated-mount-0.1.4.log>) 和 [最终文件摘要](<docs/verification/final-artifact-0.1.4.json>) 为准。精确 tarball 哈希保留在外部证据中，避免安装包自引用自己的哈希。
+安装包中的 [兼容记录](<compatibility.json>) 只引用本版本 [已通过的预最终实挂证据](<docs/verification/pre-final-mount-0.1.5-gateway.json>)。补入文档/兼容元数据后必须重新打包并安装**精确最终文件**；全部 packed payload、SHA256、Gateway/插件检查与清理结果以 [最终实挂记录](<docs/verification/isolated-mount-0.1.5.json>)、[日志](<docs/verification/isolated-mount-0.1.5.log>) 和 [最终文件摘要](<docs/verification/final-artifact-0.1.5.json>) 为准。精确 tarball 哈希保留在外部证据中，避免安装包自引用自己的哈希。
 
 **实际 Web/Electron 视觉与交互、用户日常 Desktop 重启验收尚未完成**：本轮不配置浏览器/扩展，也未安装、关闭或卸载日常 profile 的既有插件。隔离 CLI/Web Host 的真实重启、认证 RPC 与 Client 资源可加载不等于 Electron 窗口、主题或交互验收；发布准备保留 UI 证据门禁。
 

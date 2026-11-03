@@ -4,6 +4,7 @@ import type { ManagerConfig } from './config.js'
 import type { RemotePreview, RepositoryInfo, RepositorySkill, SearchResults } from './types.js'
 import type { BundleFile } from './fs-store.js'
 import { gitBlobHash, gitTreeHash, safeRelativePath } from './fs-store.js'
+import { extractRepositoryFiles } from './archive.js'
 import { fail, throwIfAborted } from './errors.js'
 import { parseSkill } from './skill-metadata.js'
 import { mapLimit } from './utils.js'
@@ -36,10 +37,10 @@ export class GitHubSource {
   private readonly immutableTrees = new Map<string, RepositoryTree>()
   constructor(private readonly config: ManagerConfig, private readonly doFetch: Fetcher = (input, init) => fetch(input, init)) {}
   clear(): void { this.immutableTrees.clear() }
-  private async bytes(url: string, limit: number, signal: AbortSignal, github = false): Promise<Uint8Array> {
+  private async bytes(url: string, limit: number, signal: AbortSignal, github = false, redirect: RequestRedirect = 'error', timeoutMs = this.config.requestTimeoutMs): Promise<Uint8Array> {
     throwIfAborted(signal)
-    const timeout = AbortSignal.timeout(this.config.requestTimeoutMs)
-    const response = await this.doFetch(url, { signal: AbortSignal.any([signal, timeout]), redirect: 'error', credentials: 'omit', headers: { 'User-Agent': 'skillre-dsh-skills-manager', ...(github ? { Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' } : {}) } })
+    const timeout = AbortSignal.timeout(timeoutMs)
+    const response = await this.doFetch(url, { signal: AbortSignal.any([signal, timeout]), redirect, credentials: 'omit', headers: { 'User-Agent': 'skillre-dsh-skills-manager', ...(github ? { Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' } : {}) } })
     if (!response.ok) {
       await response.body?.cancel().catch(() => {})
       if (response.status === 403 || response.status === 429) fail('rate-limit', 'The public skill source is rate-limited. Wait and retry; this plugin does not read your GitHub credentials.')
@@ -103,7 +104,7 @@ export class GitHubSource {
     const prefix = folder === '.' ? '' : `${folder}/`
     const selected = tree.tree.filter(node => node.path.startsWith(prefix) && node.type !== 'tree')
     if (!selected.some(node => node.path === skillPath && node.type === 'blob')) fail('source-not-found', 'Selected SKILL.md is absent from this revision.')
-    if (selected.length > this.config.maxBundleFiles) fail('limit', 'Selected skill exceeds the configured file-count limit.')
+    if (selected.length > this.config.maxBundleFiles) fail('limit', `Selected skill exceeds the configured file-count limit (maxBundleFiles=${this.config.maxBundleFiles}). Raise maxBundleFiles in the plugin configuration if you trust this source.`)
     const paths = new Map<string, { actual: string; directory: boolean }>()
     let declaredBytes = 0
     for (const node of selected) {
@@ -118,10 +119,10 @@ export class GitHubSource {
         if (previous && (previous.actual !== actual || previous.directory !== directory || !directory)) fail('unsafe-source', 'Source contains duplicate, case-colliding or normalization-colliding resource paths.')
         paths.set(folded, { actual, directory })
       }
-      if (node.size !== undefined && node.size > this.config.maxFileBytes) fail('limit', 'Remote resource exceeds the configured file-size limit.')
+      if (node.size !== undefined && node.size > this.config.maxFileBytes) fail('limit', `Remote resource exceeds the configured file-size limit (maxFileBytes=${this.config.maxFileBytes}).`)
       declaredBytes += node.size ?? 0
     }
-    if (declaredBytes > this.config.maxBundleBytes) fail('limit', 'Selected skill exceeds the configured total-size limit.')
+    if (declaredBytes > this.config.maxBundleBytes) fail('limit', `Selected skill exceeds the configured total-size limit (maxBundleBytes=${this.config.maxBundleBytes}). Raise maxBundleBytes in the plugin configuration if you trust this source.`)
     return selected
   }
   private async file(tree: RepositoryTree, node: TreeNode, signal: AbortSignal): Promise<Uint8Array> {
@@ -129,6 +130,33 @@ export class GitHubSource {
     const bytes = await this.bytes(`https://raw.githubusercontent.com/${tree.repository}/${tree.commit}/${path}`, this.config.maxFileBytes, signal)
     if (gitBlobHash(bytes) !== node.sha) fail('integrity', 'Downloaded resource did not match its Git blob hash; no local files were changed.')
     return bytes
+  }
+  private async downloadArchive(tree: RepositoryTree, nodes: TreeNode[], skillPath: string, signal: AbortSignal): Promise<BundleFile[]> {
+    const archiveLimit = Math.min(this.config.maxBundleBytes * 3, 256 * 1024 * 1024)
+    const bytes = await this.bytes(`https://codeload.github.com/${tree.repository}/tar.gz/${tree.commit}`, Math.min(this.config.maxBundleBytes * 2, archiveLimit), signal, false, 'follow', Math.max(this.config.requestTimeoutMs, this.config.operationTimeoutMs))
+    const entries = extractRepositoryFiles(bytes, { maxBytes: archiveLimit, maxFiles: this.config.maxRepositoryEntries, maxFileBytes: this.config.maxFileBytes }, signal)
+    const repoFiles = new Map<string, Uint8Array>()
+    for (const entry of entries) {
+      const slash = entry.path.indexOf('/')
+      if (slash < 0) continue
+      const repoPath = entry.path.slice(slash + 1)
+      if (repoFiles.has(repoPath)) fail('integrity', 'Repository archive contains duplicate paths; no local files were changed.')
+      repoFiles.set(repoPath, entry.bytes)
+    }
+    const prefix = posix.dirname(skillPath) === '.' ? '' : `${posix.dirname(skillPath)}/`
+    let totalBytes = 0
+    const files = nodes.map(node => {
+      if (node.size !== undefined && node.size > this.config.maxFileBytes) fail('limit', 'Selected skill resource exceeds the configured file-size limit.')
+      const content = repoFiles.get(node.path)
+      if (!content) fail('source-invalid', `Repository archive is missing ${node.path}.`)
+      if (node.size !== undefined && content.length !== node.size) fail('integrity', 'Downloaded resource size did not match its Git tree entry; no local files were changed.')
+      if (gitBlobHash(content) !== node.sha) fail('integrity', 'Downloaded resource did not match its Git blob hash; no local files were changed.')
+      totalBytes += content.length
+      if (totalBytes > this.config.maxBundleBytes) fail('limit', 'Downloaded skill exceeds the configured total-size limit. Raise maxBundleBytes in the plugin configuration if you trust this skill.')
+      return { path: node.path.slice(prefix.length), bytes: content, executable: node.mode === '100755' }
+    })
+    if (files.length > this.config.maxBundleFiles) fail('limit', `Selected skill exceeds the configured file-count limit (${this.config.maxBundleFiles} files). Raise maxBundleFiles in the plugin configuration if you trust this skill.`)
+    return files
   }
   async inspect(source: string, ref: string | undefined, signal: AbortSignal): Promise<RepositoryInfo> {
     const tree = await this.tree(source, ref, signal)
@@ -161,13 +189,18 @@ export class GitHubSource {
     const tree = await this.tree(source, ref, signal, commit)
     const nodes = this.selectedFiles(tree, skillPath)
     const prefix = posix.dirname(skillPath) === '.' ? '' : `${posix.dirname(skillPath)}/`
-    let totalBytes = 0
-    const files = await mapLimit(nodes, this.config.checkConcurrency, async node => {
-      const bytes = await this.file(tree, node, signal)
-      totalBytes += bytes.length
-      if (totalBytes > this.config.maxBundleBytes) fail('limit', 'Downloaded skill exceeds the configured total-size limit.')
-      return { path: node.path.slice(prefix.length), bytes, executable: node.mode === '100755' }
-    }, signal)
+    let files: BundleFile[]
+    if (nodes.length > 64) {
+      files = await this.downloadArchive(tree, nodes, skillPath, signal)
+    } else {
+      let totalBytes = 0
+      files = await mapLimit(nodes, this.config.checkConcurrency, async node => {
+        const bytes = await this.file(tree, node, signal)
+        totalBytes += bytes.length
+        if (totalBytes > this.config.maxBundleBytes) fail('limit', 'Downloaded skill exceeds the configured total-size limit.')
+        return { path: node.path.slice(prefix.length), bytes, executable: node.mode === '100755' }
+      }, signal)
+    }
     if (gitTreeHash(files) !== this.folderHash(tree, skillPath)) fail('integrity', 'Downloaded skill did not reconstruct the selected Git tree; no local files were changed.')
     const skillFile = files.find(file => file.path === 'SKILL.md')
     if (!skillFile) fail('invalid-skill', 'Selected bundle has no root SKILL.md.')
