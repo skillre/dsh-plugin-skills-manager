@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "package": "@skillre/dsh-plugin-skills-manager",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "withdrawnVersions": [
     {
       "version": "0.1.0",
@@ -11,6 +11,45 @@
     }
   ],
   "verified": [
+    {
+      "dsh": "0.2.1-rc.5",
+      "verifiedAt": "2026-11-03",
+      "result": "passed",
+      "checks": [
+        "profile-tarball-install",
+        "dump-config",
+        "packed-package-identity",
+        "packed-payload-bytes",
+        "full-packed-payload-bytes",
+        "packed-display-resources",
+        "unauthenticated-request-refused",
+        "gateway-settings-describe",
+        "gateway-llm-list-configurable-providers",
+        "authenticated-rpc-lifecycle",
+        "bounded-startup",
+        "client-bundle-delivery",
+        "gateway-welcome-apis-after-plugin-restart",
+        "packed-plugin-restart",
+        "profile-uninstall-absence",
+        "gateway-welcome-apis-after-uninstall",
+        "uninstalled-plugin-route-absent",
+        "owned-process-and-profile-cleanup",
+        "tarball-unchanged"
+      ],
+      "cleanupVerified": true,
+      "ui": "not-verified-user-deferred",
+      "evidence": "docs/verification/pre-final-mount-0.1.6-gateway.json",
+      "finalArtifactEvidence": "docs/verification/isolated-mount-0.1.6.json",
+      "notes": [
+        "This record consumes the successful frozen pre-final packed test. After documentation/compatibility metadata changes, the exact final tarball must be repacked, installed and checked separately. Its complete payload and SHA256 remain in external final-artifact evidence to avoid a self-referential hash.",
+        "The real Gateway settings/describe and Desktop welcome llm/listConfigurableProviders requests succeeded with the plugin installed, after a real owned Host restart while still installed, and after uninstall. Remote payloads use {args:{}}; Settings namespaces and provider directories may be empty, and no plugin live-form namespace is required.",
+        "Plugin RPC covered list, detail, check, remove and restore of an owned fixture with actual filesystem/fingerprint checks, including persistence after packed-plugin Host restart. Batch, diff, move, purge, permanent removal, local-archive install, well-known install and restore-to are covered by local unit tests; the packed mount test keeps the same route, transaction and Client delivery path. No live public-repository or public well-known catalog coverage is claimed.",
+        "Every one of the 37 pre-final packed files was compared byte-for-byte with the frozen checkout. Real DSH revisioned Client delivery contained the packed Client bytes, which carry the single-header Check updates control and the toolbar rescan button. This is not Web/Electron visual or interaction acceptance.",
+        "Ten owned CLI processes closed and every recorded POSIX group was absent before canonical owner/UID-root removal and explicit ENOENT. EPERM is uncertainty/failure, never exit evidence.",
+        "Only current DSH 0.2.1-rc.5 on the macOS isolated non-Desktop CLI/Web carrier was mounted. Desktop shell exact-Fetch dispatch is supported by the inspected SDK and real registry tests, not a live Electron acceptance check. The user's daily profile and Desktop restart remain user-owned and unverified. Other DSH versions/platforms and arbitrary escaped-daemon behavior require fresh verification.",
+        "The buffered request-body limit belongs to the DSH Connection HTTP carrier (current default 300 MiB), not this adapter or direct shared.fetch calls. No new carrier-overflow test is claimed."
+      ]
+    },
     {
       "dsh": "0.2.1-rc.5",
       "verifiedAt": "2026-11-02",

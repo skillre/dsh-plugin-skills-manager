@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.6 — one header entry for update checks (local build)
+
+- Remove the ambiguous second refresh button from the page header: the header now offers a single **Check updates** action.
+- Move the local-only rescan button into the list toolbar (Installed and Updates tabs) and the Backups toolbar. Its tooltip states that it only re-reads local directories and never contacts remote sources; in the Backups tab it only reloads backup records.
+- Add the matching zh/en labels and README usage notes explaining the difference between rescan and Check updates.
+- Rebuild and commit `lib/`.
+
+No npm publication or user-profile change is included; the GitHub source repository and Release asset are updated in the same user-authorized GitHub flow.
+
 ## 0.1.5 — large skill support (local build)
 
 - Raise the default bundle limits to real-world sizes (`maxBundleFiles` 20,000, `maxBundleBytes` 100 MiB, `operationTimeoutMs` 300 s); the schemas allow `maxBundleFiles` up to 50,000.
