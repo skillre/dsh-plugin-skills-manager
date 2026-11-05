@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.2.0",
+  "dsh": "0.2.2-rc.1",
+  "verifiedAt": "2026-11-05",
+  "result": "passed",
+  "publication": {
+    "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
+    "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.2.0",
+    "asset": "https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.2.0/skillre-dsh-plugin-skills-manager-0.2.0.tgz",
+    "npmPublished": false
+  },
+  "artifact": {
+    "path": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/skillre-dsh-plugin-skills-manager-0.2.0.tgz",
+    "sha256": "b93b3ff76c9ce462ddd06f56036b601981d603ac2f6cf310e0865a298589e37b",
+    "sha1": "dce0f71b825abc9ff7a153c467ae64f8e3917f6e",
+    "integrity": "sha512-mORJHQwVDGVBLLhXKoYwI+h9yJvkEOCHcdPQs1NHrUIXdtkdVeloyMdihvtzF75AHQaqUoJXTa/Mk/V7ReZ0EA==",
+    "sizeBytes": 90245,
+    "unpackedBytes": 411771,
+    "entryCount": 37,
+    "filename": "skillre-dsh-plugin-skills-manager-0.2.0.tgz"
+  },
+  "tests": {
+    "command": "npm run check",
+    "log": "docs/verification/check-0.2.0.log",
+    "exitCode": 0,
+    "testFiles": 8,
+    "testsPassed": 71,
+    "realRegistryTests": 20,
+    "managementTests": 9,
+    "backgroundJobTests": 5,
+    "typecheck": "passed",
+    "build": "passed",
+    "publint": "passed",
+    "packDryRun": "passed",
+    "finalPackedMount": "passed"
+  },
+  "verification": {
+    "report": "docs/verification/isolated-mount-0.2.0.json",
+    "log": "docs/verification/isolated-mount-0.2.0.log",
+    "preFinalEvidence": "docs/verification/pre-final-mount-0.2.0-gateway.json",
+    "preFinalChecks": 19,
+    "execution": "foreground-bounded",
+    "outerTimeoutMs": 900000,
+    "exitCode": 0,
+    "checks": [
+      "profile-tarball-install",
+      "dump-config",
+      "packed-package-identity",
+      "packed-payload-bytes",
+      "full-packed-payload-bytes",
+      "packed-display-resources",
+      "unauthenticated-request-refused",
+      "gateway-settings-describe",
+      "gateway-llm-list-configurable-providers",
+      "authenticated-rpc-lifecycle",
+      "bounded-startup",
+      "client-bundle-delivery",
+      "gateway-welcome-apis-after-plugin-restart",
+      "packed-plugin-restart",
+      "profile-uninstall-absence",
+      "gateway-welcome-apis-after-uninstall",
+      "uninstalled-plugin-route-absent",
+      "owned-process-and-profile-cleanup",
+      "tarball-unchanged"
+    ],
+    "cleanupVerified": true,
+    "tarballUnchanged": true,
+    "ui": "not-verified-user-deferred"
+  }
+}

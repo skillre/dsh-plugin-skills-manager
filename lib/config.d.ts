@@ -89,6 +89,29 @@ export declare const RequestSchema: z.ZodDiscriminatedUnion<[z.ZodObject<{
     overwriteModified: z.ZodOptional<z.ZodBoolean>;
 }, z.core.$strict>, z.ZodObject<{
     workspaceId: z.ZodOptional<z.ZodString>;
+    action: z.ZodLiteral<"update-start">;
+    id: z.ZodString;
+    expectedFingerprint: z.ZodString;
+    commit: z.ZodOptional<z.ZodString>;
+    overwriteModified: z.ZodOptional<z.ZodBoolean>;
+}, z.core.$strict>, z.ZodObject<{
+    workspaceId: z.ZodOptional<z.ZodString>;
+    action: z.ZodLiteral<"update-batch-start">;
+    ids: z.ZodArray<z.ZodString>;
+    overwriteModified: z.ZodOptional<z.ZodBoolean>;
+}, z.core.$strict>, z.ZodObject<{
+    workspaceId: z.ZodOptional<z.ZodString>;
+    action: z.ZodLiteral<"job-list">;
+}, z.core.$strict>, z.ZodObject<{
+    workspaceId: z.ZodOptional<z.ZodString>;
+    action: z.ZodLiteral<"job-get">;
+    id: z.ZodString;
+}, z.core.$strict>, z.ZodObject<{
+    workspaceId: z.ZodOptional<z.ZodString>;
+    action: z.ZodLiteral<"job-cancel">;
+    id: z.ZodString;
+}, z.core.$strict>, z.ZodObject<{
+    workspaceId: z.ZodOptional<z.ZodString>;
     action: z.ZodLiteral<"remove">;
     id: z.ZodString;
     expectedFingerprint: z.ZodString;

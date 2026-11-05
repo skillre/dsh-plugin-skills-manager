@@ -24,6 +24,7 @@ export function Icon({ name = 'book', size = 18, spin = false }: { name?: string
     restore: <><path d="M3 4v6h6"/><path d="M3 10a9 9 0 1 1 1 8M12 7v5l3 2"/></>,
     link: <><path d="m10 14 4-4M8 16l-2 2a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0M16 8l2-2a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0" transform="translate(2 0) scale(.85)"/></>,
     move: <><path d="M12 3v18M8 7l4-4 4 4M8 17l4 4 4-4M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></>,
+    list: <><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></>,
   }
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={spin ? 'skm-spinner' : undefined}>{paths[name] ?? paths.book}</svg>
 }
@@ -38,6 +39,10 @@ export function StatusBadge({ skill, t }: { skill: LocalSkill; t: Translate }): 
   const status = !skill.valid ? 'invalid' : !skill.writable ? 'protected' : skill.check?.status ?? (skill.source ? 'unchecked' : 'untracked')
   const labels: Record<string, string> = { invalid: 'invalid', protected: 'protected', update: 'update', latest: 'latest', error: 'checkError', untracked: 'untracked', unchecked: 'unchecked' }
   return <span className={`skm-badge ${status === 'update' ? 'skm-badge-update' : status === 'latest' ? 'skm-badge-success' : status === 'error' || status === 'invalid' ? 'skm-badge-error' : ''}`}>{status === 'protected' && <Icon name="lock" size={10}/>} {t(labels[status] ?? 'unchecked')}</span>
+}
+export function ProgressBar({ value, label }: { value: number; label?: string }): React.JSX.Element {
+  const percent = Math.max(0, Math.min(100, Math.round(value)))
+  return <div className="skm-progress" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent} aria-label={label}><div className="skm-progress-bar" style={{ width: `${percent}%` }}/></div>
 }
 export function rootLabel(root: SkillRoot | undefined, t: Translate): string { return root ? t(`root.${root.source}`) : '' }
 export function bytes(value: number): string {

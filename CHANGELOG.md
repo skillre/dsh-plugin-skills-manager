@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.2.0 — background updates with live progress (local build)
+
+- Single and batch updates now run as Host-side **background jobs**: confirming an update closes the dialog, switches to the new **Update jobs** tab and keeps running while you use the rest of the plugin. A header button shows the running job and its overall progress, so progress is reachable at any time.
+- Per-skill progress reports the current phase — resolving the source, downloading files (real byte/file-count ratio), verifying, backing up the previous version, installing the new version — with an approximate percentage. Batch jobs show overall progress plus each skill's status: not started, updating, updated, failed, skipped or cancelled, with timestamps, backup id, commit and failure reason.
+- A running job can be stopped cooperatively: the current skill finishes atomically, remaining skills are marked cancelled. Failed items can be retried in one click with the current local state.
+- Only one update job runs at a time; update actions and source checks stay disabled while it runs. Finished jobs refresh the skill list automatically.
+- Job history (up to 20 jobs) lives in Host memory: a Host restart clears it, but in-flight skill transactions remain journaled and recoverable, so no partial skill state is lost silently.
+- Add `update-start`, `update-batch-start`, `job-list`, `job-get` and `job-cancel` (also exposed to the `skills_manager` agent tool) and regression tests for background single/batch runs, live progress, busy rejection and cooperative cancellation (71 tests total).
+- Rebuild and commit `lib/`.
+
+No npm publication or user-profile change is included; the GitHub source repository and Release asset are updated in the same user-authorized GitHub flow.
+
 ## 0.1.7 — installed skill details (local build)
 
 - Every installed-skill card now has an explicit **Details** action and the card body is clickable, so the detail dialog no longer depends on finding the small skill name link.

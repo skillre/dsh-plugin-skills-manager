@@ -38,5 +38,5 @@ export declare class WellKnownSource {
         warnings: string[];
     }>;
     digest(sourceBaseUrl: string, name: string, signal: AbortSignal): Promise<string | undefined>;
-    download(sourceBaseUrl: string, name: string, signal: AbortSignal): Promise<WellKnownDownload>;
+    download(sourceBaseUrl: string, name: string, signal: AbortSignal, onProgress?: (phase: 'download' | 'verify', ratio?: number) => void): Promise<WellKnownDownload>;
 }

@@ -41,7 +41,7 @@ export declare function installEntry(store: WriteStore, entry: string, files: re
 export declare function changeEntry(store: WriteStore, entry: string, name: string, action: Backup['action'], expectedFingerprint: string, config: ManagerConfig, source: Provenance | undefined, replacement?: {
     files: BundleFile[];
     source: Provenance;
-}, signal?: AbortSignal): Promise<Backup>;
+}, signal?: AbortSignal, onStage?: (stage: 'backup' | 'install' | 'done') => void): Promise<Backup>;
 export declare function renameEntry(store: WriteStore, from: string, to: string, expectedFingerprint: string, config: ManagerConfig, signal?: AbortSignal): Promise<void>;
 export declare function deleteEntryPermanent(store: WriteStore, entry: string, expectedFingerprint: string, config: ManagerConfig, signal?: AbortSignal): Promise<void>;
 export declare function purgeBackup(store: WriteStore, backupId: string, signal?: AbortSignal): Promise<Backup>;

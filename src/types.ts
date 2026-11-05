@@ -123,6 +123,45 @@ export interface MutationResult {
   digest?: string
   warning?: string
 }
+export type JobKind = 'update' | 'update-batch'
+export type JobStatus = 'running' | 'completed' | 'failed' | 'cancelled'
+export type JobItemStatus = 'pending' | 'running' | 'updated' | 'failed' | 'skipped' | 'cancelled'
+export type JobPhase = 'queued' | 'resolve' | 'download' | 'verify' | 'backup' | 'install' | 'done'
+export type UpdateProgressPhase = 'resolve' | 'download' | 'verify' | 'backup' | 'install'
+export interface UpdateJobItem {
+  id: string
+  rootId: string
+  entry: string
+  name: string
+  status: JobItemStatus
+  phase?: JobPhase
+  progress: number
+  message?: string
+  error?: string
+  backupId?: string
+  commit?: string
+  startedAt?: string
+  finishedAt?: string
+}
+export interface UpdateJob {
+  id: string
+  kind: JobKind
+  status: JobStatus
+  createdAt: string
+  startedAt?: string
+  finishedAt?: string
+  workspaceId?: string
+  cancelRequested?: boolean
+  items: UpdateJobItem[]
+  total: number
+  finished: number
+  succeeded: number
+  failed: number
+  skipped: number
+  cancelled: number
+  progress: number
+}
+export interface StartJobResult { jobId: string }
 export interface RequestBase { workspaceId?: string }
 export type ManagerRequest = RequestBase & (
   | { action: 'list' }
@@ -134,6 +173,11 @@ export type ManagerRequest = RequestBase & (
   | { action: 'install'; rootId: string; source: string; ref?: string; commit: string; skillPath: string }
   | { action: 'update'; id: string; expectedFingerprint: string; commit?: string; overwriteModified?: boolean }
   | { action: 'update-batch'; ids: string[]; overwriteModified?: boolean }
+  | { action: 'update-start'; id: string; expectedFingerprint: string; commit?: string; overwriteModified?: boolean }
+  | { action: 'update-batch-start'; ids: string[]; overwriteModified?: boolean }
+  | { action: 'job-list' }
+  | { action: 'job-get'; id: string }
+  | { action: 'job-cancel'; id: string }
   | { action: 'diff'; id: string }
   | { action: 'remove'; id: string; expectedFingerprint: string; permanent?: boolean }
   | { action: 'backups' }
@@ -146,6 +190,6 @@ export type ManagerRequest = RequestBase & (
   | { action: 'well-known-inspect'; source: string }
   | { action: 'well-known-install'; rootId: string; source: string; name: string }
 )
-export type ManagerValue = Catalog | SkillDetail | SkillDiff | SearchResults | RepositoryInfo | RemotePreview | UpdateCheck[] | BatchUpdateResult | PurgeResult | WellKnownInspect | Backup[] | MutationResult
+export type ManagerValue = Catalog | SkillDetail | SkillDiff | SearchResults | RepositoryInfo | RemotePreview | UpdateCheck[] | BatchUpdateResult | PurgeResult | WellKnownInspect | Backup[] | MutationResult | UpdateJob | UpdateJob[] | StartJobResult
 export type RpcResult<T> = { ok: true; value: T } | { ok: false; error: { code: string; message: string; details: object } }
-export const MUTATING_ACTIONS = new Set<ManagerRequest['action']>(['install', 'install-local', 'well-known-install', 'update', 'update-batch', 'remove', 'restore', 'restore-to', 'move', 'purge-backup', 'purge-backups'])
+export const MUTATING_ACTIONS = new Set<ManagerRequest['action']>(['install', 'install-local', 'well-known-install', 'update', 'update-batch', 'update-start', 'update-batch-start', 'remove', 'restore', 'restore-to', 'move', 'purge-backup', 'purge-backups'])

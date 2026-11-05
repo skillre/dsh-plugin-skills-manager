@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "repo": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager",
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.2.0",
+  "result": "passed",
+  "artifact": {
+    "filename": "skillre-dsh-plugin-skills-manager-0.2.0.tgz",
+    "sha256": "b93b3ff76c9ce462ddd06f56036b601981d603ac2f6cf310e0865a298589e37b",
+    "sizeBytes": 90245,
+    "entryCount": 37
+  },
+  "publication": {
+    "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
+    "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.2.0",
+    "asset": "https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.2.0/skillre-dsh-plugin-skills-manager-0.2.0.tgz",
+    "npmPublished": false
+  },
+  "filesChanged": [
+    "src/types.ts",
+    "src/config.ts",
+    "src/manager.ts",
+    "src/fs-store.ts",
+    "src/github.ts",
+    "src/well-known.ts",
+    "src/index.ts",
+    "src/client/index.tsx",
+    "src/client/dialogs.tsx",
+    "src/client/components.tsx",
+    "src/client/jobs.tsx",
+    "src/client/messages.ts",
+    "src/client/styles.css",
+    "tests/manager.spec.ts",
+    "package.json",
+    "package-lock.json",
+    "CHANGELOG.md",
+    "compatibility.json",
+    "README.md",
+    "README.en.md",
+    "docs/architecture.md",
+    "docs/verification/check-0.2.0.log",
+    "docs/verification/pre-final-mount-0.2.0-gateway.json",
+    "docs/verification/pre-final-mount-0.2.0-gateway.log",
+    "docs/verification/isolated-mount-0.2.0.json",
+    "docs/verification/isolated-mount-0.2.0.log",
+    "docs/verification/final-pack-0.2.0.json",
+    "docs/verification/final-artifact-0.2.0.json",
+    "docs/verification/handoff-0.2.0.json",
+    "skillre-dsh-plugin-skills-manager-0.2.0.tgz"
+  ],
+  "testsRun": [
+    {
+      "command": "npm run check",
+      "exitCode": 0,
+      "detail": "71 tests, 37 packed files, committed lib verified"
+    },
+    {
+      "command": "pre-final isolated mount",
+      "exitCode": 0,
+      "detail": "19 checks passed on DSH 0.2.2-rc.1"
+    },
+    {
+      "command": "final isolated mount (foreground bounded)",
+      "exitCode": 0,
+      "detail": "exact release tarball: 19 checks, tarball unchanged, cleanup verified"
+    }
+  ],
+  "dsh": "0.2.2-rc.1",
+  "cordis": "4.1.0",
+  "risks": [
+    "Real Web/Electron visual acceptance remains user-deferred; the jobs tab, progress bars and status rows were verified through packed Client delivery, not an Electron window check.",
+    "Job history lives in Host memory only; a Host restart clears it (in-flight skill transactions stay journaled).",
+    "Only one update job can run at a time; cooperative cancel skips not-yet-started skills and lets the current skill finish."
+  ],
+  "followUps": [
+    "User updates to 0.2.0, restarts if prompted, starts a single and a batch update, and verifies the background jobs tab, per-skill progress, statuses, cancel and retry."
+  ]
+}

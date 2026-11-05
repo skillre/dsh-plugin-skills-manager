@@ -47,7 +47,7 @@ export class WellKnownSource {
   private readonly indexes = new Map<string, Promise<Map<string, WellKnownEntry>>>()
   constructor(private readonly config: ManagerConfig, private readonly doFetch: Fetcher = (input, init) => fetch(input, init)) {}
   clear(): void { this.indexes.clear() }
-  private async bytes(url: string, limit: number, signal: AbortSignal, accept: string, updateCheck: boolean, timeoutMs = this.config.requestTimeoutMs): Promise<Uint8Array> {
+  private async bytes(url: string, limit: number, signal: AbortSignal, accept: string, updateCheck: boolean, timeoutMs = this.config.requestTimeoutMs, onBytes?: (received: number, total: number | undefined) => void): Promise<Uint8Array> {
     throwIfAborted(signal)
     const timeout = AbortSignal.timeout(timeoutMs)
     const response = await this.doFetch(url, {
@@ -64,6 +64,8 @@ export class WellKnownSource {
     }
     const declared = Number(response.headers.get('content-length'))
     if (Number.isFinite(declared) && declared > limit) { await response.body?.cancel().catch(() => {}); fail('limit', 'Source response exceeds the configured size limit.') }
+    const total = Number.isFinite(declared) ? declared : undefined
+    onBytes?.(0, total)
     if (!response.body) return new Uint8Array()
     const reader = response.body.getReader()
     const chunks: Uint8Array[] = []
@@ -76,6 +78,7 @@ export class WellKnownSource {
         size += item.value.length
         if (size > limit) fail('limit', 'Source download exceeds the configured size limit.')
         chunks.push(item.value)
+        onBytes?.(size, total)
       }
       const result = new Uint8Array(size)
       let offset = 0
@@ -125,7 +128,7 @@ export class WellKnownSource {
   async digest(sourceBaseUrl: string, name: string, signal: AbortSignal): Promise<string | undefined> {
     return (await this.entry(sourceBaseUrl, name, signal, true))?.entry.digest
   }
-  async download(sourceBaseUrl: string, name: string, signal: AbortSignal): Promise<WellKnownDownload> {
+  async download(sourceBaseUrl: string, name: string, signal: AbortSignal, onProgress?: (phase: 'download' | 'verify', ratio?: number) => void): Promise<WellKnownDownload> {
     this.clear()
     const found = await this.entry(sourceBaseUrl, name, signal, false)
     if (!found) fail('source-not-found', 'The well-known skill catalog no longer lists this skill.')
@@ -133,10 +136,13 @@ export class WellKnownSource {
     let archiveUrl: URL
     try { archiveUrl = new URL(found.entry.url, found.base.indexUrl) } catch { fail('invalid-source', 'The well-known catalog declares an invalid skill artifact URL.') }
     if (archiveUrl.protocol !== 'https:' || archiveUrl.origin !== new URL(found.base.indexUrl).origin || archiveUrl.username || archiveUrl.password) fail('invalid-source', 'Skill artifacts must stay on the same HTTPS origin as their catalog.')
-    const bytes = await this.bytes(archiveUrl.href, this.config.maxBundleBytes, signal, 'application/octet-stream', false, Math.max(this.config.requestTimeoutMs, this.config.operationTimeoutMs))
+    onProgress?.('download', 0)
+    const bytes = await this.bytes(archiveUrl.href, this.config.maxBundleBytes, signal, 'application/octet-stream', false, Math.max(this.config.requestTimeoutMs, this.config.operationTimeoutMs), (received, total) => onProgress?.('download', total === undefined ? undefined : Math.min(1, received / total)))
+    onProgress?.('verify', 0)
     const digest = `sha256:${sha256(bytes)}`
     if (digest !== found.entry.digest) fail('integrity', 'Downloaded skill archive did not match the catalog digest; no local files were changed.')
     const files = extractSkillBundle(bytes, { maxBytes: this.config.maxBundleBytes, maxFiles: this.config.maxBundleFiles, maxFileBytes: this.config.maxFileBytes }, signal)
+    onProgress?.('verify', 1)
     const skillFile = files.find(file => file.path === 'SKILL.md')
     if (!skillFile) fail('invalid-source', 'Archive does not contain SKILL.md at its root.')
     const metadata = parseSkill(new TextDecoder().decode(skillFile.bytes))

@@ -330,7 +330,7 @@ export async function installEntry(store: WriteStore, entry: string, files: read
     if (!(await pathExists(join(store.stateDir, 'journal.json')))) await removeOwned(store.stateDir, 'staging', stage.id)
   }
 }
-export async function changeEntry(store: WriteStore, entry: string, name: string, action: Backup['action'], expectedFingerprint: string, config: ManagerConfig, source: Provenance | undefined, replacement?: { files: BundleFile[]; source: Provenance }, signal?: AbortSignal): Promise<Backup> {
+export async function changeEntry(store: WriteStore, entry: string, name: string, action: Backup['action'], expectedFingerprint: string, config: ManagerConfig, source: Provenance | undefined, replacement?: { files: BundleFile[]; source: Provenance }, signal?: AbortSignal, onStage?: (stage: 'backup' | 'install' | 'done') => void): Promise<Backup> {
   const target = join(store.root.path, safeEntry(entry))
   assertInside(store.root.path, target)
   const current = await snapshotPath(target, config, signal)
@@ -350,12 +350,15 @@ export async function changeEntry(store: WriteStore, entry: string, name: string
     const final = await snapshotPath(target, config, signal)
     if (final.fingerprint !== expectedFingerprint) fail('stale', 'Local skill changed while preparing its backup.')
     await rename(target, backupPath); moved = true
+    onStage?.('backup')
     if (stage) { await publishNoReplace(stage.path, target); installed = true }
+    onStage?.('install')
     const records = { ...store.state.records }
     if (replacement) records[entry] = replacement.source
     else delete records[entry]
     await writeJson(store.stateDir, 'state.json', { ...store.state, records, backups: [...store.state.backups, backup] }); committed = true
     await clearJournal(store)
+    onStage?.('done')
     return backup
   } catch (error) {
     if (hasCode(error, 'recovery-required')) throw error

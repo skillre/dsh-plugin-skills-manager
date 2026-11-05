@@ -46,7 +46,7 @@ export declare class GitHubSource {
     private downloadArchive;
     inspect(source: string, ref: string | undefined, signal: AbortSignal): Promise<RepositoryInfo>;
     preview(source: string, ref: string | undefined, commit: string, skillPath: string, signal: AbortSignal): Promise<RemotePreview>;
-    download(source: string, ref: string | undefined, commit: string, skillPath: string, signal: AbortSignal): Promise<DownloadedSkill>;
+    download(source: string, ref: string | undefined, commit: string, skillPath: string, signal: AbortSignal, onProgress?: (phase: 'download' | 'verify', ratio?: number) => void): Promise<DownloadedSkill>;
     search(query: string, limit: number, signal: AbortSignal): Promise<SearchResults>;
 }
 export {};

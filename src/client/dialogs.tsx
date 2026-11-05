@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import type { Backup, BatchUpdateResult, Catalog, LocalSkill, MutationResult, RemotePreview, RepositoryInfo, RepositorySkill, SkillDetail, SkillDiff, UpdateCheck, WellKnownInspect, WellKnownSkillEntry } from '../types.js'
+import type { Backup, Catalog, LocalSkill, MutationResult, RemotePreview, RepositoryInfo, RepositorySkill, SkillDetail, SkillDiff, StartJobResult, UpdateCheck, WellKnownInspect, WellKnownSkillEntry } from '../types.js'
 import type { ClientApi } from './contracts.js'
 import type { Translate } from './messages.js'
 import { bytes, Dialog, errorText, Icon, Loader, Notice, rootLabel, StatusBadge, time } from './components.js'
@@ -10,11 +10,13 @@ interface CommonProps {
   locale: string
   catalog: Catalog
   workspaceId: string
+  jobActive?: boolean
   onClose(): void
   onBusy(busy: boolean, label?: string): void
   onMutated(result: MutationResult): void
   onError(message: string): void
   onSettled(): void
+  onJobStarted?(): void
 }
 const scope = (workspaceId: string) => workspaceId ? { workspaceId } : {}
 function SourceLink({ repository, revision, t }: { repository: string; revision?: string | undefined; t: Translate }): React.JSX.Element {
@@ -154,7 +156,12 @@ export function SkillDialog({ skill, initialAction, onMove, ...props }: CommonPr
     if (!detail || !detail.skill.writable || busy || mode === 'detail' || (mode === 'update' && detail.locallyModified && !overwrite)) return
     setBusy(mode === 'update' ? 'updating' : 'removing'); setError(''); props.onBusy(true, t(mode === 'update' ? 'updating' : 'removing'))
     try {
-      const result = await api.call<MutationResult>(mode === 'remove' ? { action: 'remove', id: skill.id, expectedFingerprint: detail.fingerprint, ...(permanent ? { permanent: true } : {}), ...scope(workspaceId) } : { action: 'update', id: skill.id, expectedFingerprint: detail.fingerprint, ...(detail.skill.check?.latestCommit ? { commit: detail.skill.check.latestCommit } : {}), overwriteModified: overwrite, ...scope(workspaceId) }, life.current.signal)
+      if (mode === 'update') {
+        await api.call<StartJobResult>({ action: 'update-start', id: skill.id, expectedFingerprint: detail.fingerprint, ...(detail.skill.check?.latestCommit ? { commit: detail.skill.check.latestCommit } : {}), ...(overwrite ? { overwriteModified: true } : {}), ...scope(workspaceId) }, life.current.signal)
+        if (alive.current) props.onJobStarted?.()
+        return
+      }
+      const result = await api.call<MutationResult>({ action: 'remove', id: skill.id, expectedFingerprint: detail.fingerprint, ...(permanent ? { permanent: true } : {}), ...scope(workspaceId) }, life.current.signal)
       props.onMutated(result)
     } catch (error) { const message = errorText(error); if (alive.current) setError(message); props.onError(message) }
     finally { if (alive.current) setBusy(''); props.onBusy(false); props.onSettled() }
@@ -162,7 +169,7 @@ export function SkillDialog({ skill, initialAction, onMove, ...props }: CommonPr
   const title = mode === 'remove' ? t('removeTitle') : mode === 'update' ? t('updateTitle') : `${t('details')} · ${skill.name}`
   const canUpdate = !!detail?.skill.source && detail.skill.writable && detail.skill.format === 'directory'
   return <Dialog title={title} t={t} onClose={close} alert={mode !== 'detail'} footer={<>
-    {mode !== 'detail' ? <><button type="button" className="skm-button skm-button-quiet" data-autofocus onClick={() => { if (!busy) { setMode('detail'); setOverwrite(false); setError('') } else close() }}>{t('cancel')}</button><button type="button" className={`skm-button ${mode === 'remove' ? 'skm-button-danger' : 'skm-button-primary'}`} disabled={!detail || !detail.skill.writable || !!busy || (mode === 'update' && !!detail.locallyModified && !overwrite) || (mode === 'update' && detail.skill.check?.status === 'latest' && !detail.locallyModified)} onClick={() => void mutate()}><Icon name={busy ? 'refresh' : mode === 'remove' ? 'trash' : 'up'} spin={!!busy}/>{busy ? t(busy) : t(mode === 'remove' ? 'confirmRemove' : 'confirmUpdate')}</button></> : <>
+    {mode !== 'detail' ? <><button type="button" className="skm-button skm-button-quiet" data-autofocus onClick={() => { if (!busy) { setMode('detail'); setOverwrite(false); setError('') } else close() }}>{t('cancel')}</button><button type="button" className={`skm-button ${mode === 'remove' ? 'skm-button-danger' : 'skm-button-primary'}`} disabled={!detail || !detail.skill.writable || !!busy || (mode === 'update' && !!props.jobActive) || (mode === 'update' && !!detail.locallyModified && !overwrite) || (mode === 'update' && detail.skill.check?.status === 'latest' && !detail.locallyModified)} onClick={() => void mutate()}><Icon name={busy ? 'refresh' : mode === 'remove' ? 'trash' : 'up'} spin={!!busy}/>{busy ? t(busy) : t(mode === 'remove' ? 'confirmRemove' : 'confirmUpdate')}</button></> : <>
       <button type="button" className="skm-button skm-button-quiet" onClick={close}>{t('close')}</button>
       {detail?.skill.writable && detail.skill.format !== 'registry' && onMove && <button type="button" className="skm-button" onClick={() => onMove(detail.skill)} disabled={!!busy}><Icon name="move" size={15}/>{t('moveButton')}</button>}
       {detail?.skill.writable && <button type="button" className="skm-button skm-button-danger" onClick={() => { setMode('remove'); setError('') }} disabled={!!busy}><Icon name="trash" size={15}/>{t('remove')}</button>}
@@ -175,6 +182,7 @@ export function SkillDialog({ skill, initialAction, onMove, ...props }: CommonPr
       <p className="skm-plain-text">{t(mode === 'remove' ? 'removeBody' : 'updateBody')}</p>
       <div className="skm-card"><div className="skm-card-mark"><Icon name="book"/></div><div className="skm-card-main"><strong className="skm-result-name">{detail.skill.name}</strong><p className="skm-description">{detail.skill.description}</p><div className="skm-meta"><span>{t('files', { count: detail.files.length })}</span><span>{bytes(detail.totalBytes)}</span></div><div className="skm-hint skm-mono">{detail.skill.path}</div></div></div>
       {mode === 'update' && (detail.skill.check?.latestCommit || detail.skill.check?.latestDigest) && <div className="skm-detail-grid"><div className="skm-detail-item"><div className="skm-detail-label">{t('source')}</div><div className="skm-detail-value skm-mono">{detail.skill.source?.repository}</div></div><div className="skm-detail-item"><div className="skm-detail-label">{t('revision')}</div><div className="skm-detail-value skm-mono">{detail.skill.check?.latestCommit ? detail.skill.check.latestCommit.slice(0, 12) : detail.skill.check?.latestDigest?.slice(7, 19) ?? ''}</div></div></div>}
+      {mode === 'update' && props.jobActive && <Notice text={t('jobActiveNotice')} kind="warning"/>}
       {mode === 'update' && detail.skill.check?.status === 'latest' && !detail.locallyModified && <Notice text={t('latest')} kind="success"/>}
       {mode === 'update' && detail.locallyModified && <><Notice text={`${t('modified')} · ${t('modifiedBody')}`} kind="warning"/><label className="skm-checkbox"><input type="checkbox" checked={overwrite} onChange={event => setOverwrite(event.target.checked)} disabled={!!busy}/><span>{t('overwrite')}</span></label></>}
       {mode === 'update' && diff && <><div className="skm-section-title">{t('diffTitle')}<span className="skm-hint">{t('diffAdded')} {diff.added} · {t('diffRemoved')} {diff.removed} · {t('diffChanged')} {diff.changed} · {t('diffUnchanged')} {diff.unchanged}</span></div>{diff.added + diff.removed + diff.changed === 0 ? <p className="skm-hint">{t('diffEmpty')}</p> : <ul className="skm-file-list">{diff.files.filter(file => file.status !== 'unchanged').slice(0, 200).map(file => <li key={file.path}><span className="skm-mono">{file.path}</span><span>{t(file.status === 'added' ? 'diffAdded' : file.status === 'removed' ? 'diffRemoved' : 'diffChanged')}</span></li>)}</ul>}</>}
@@ -263,7 +271,7 @@ export function MoveDialog({ skill, ...props }: CommonProps & { skill: LocalSkil
   </Dialog>
 }
 
-export function BatchUpdateDialog({ skills, onBatch, ...props }: CommonProps & { skills: LocalSkill[]; onBatch(result: BatchUpdateResult): void }): React.JSX.Element {
+export function BatchUpdateDialog({ skills, ...props }: CommonProps & { skills: LocalSkill[] }): React.JSX.Element {
   const { t } = props
   const [overwrite, setOverwrite] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -276,13 +284,13 @@ export function BatchUpdateDialog({ skills, onBatch, ...props }: CommonProps & {
     if (busy) return
     setBusy(true); setError(''); props.onBusy(true, t('batchRunning'))
     try {
-      const result = await props.api.call<BatchUpdateResult>({ action: 'update-batch', ids: skills.map(skill => skill.id), ...(overwrite ? { overwriteModified: true } : {}), ...scope(props.workspaceId) }, life.current.signal)
-      onBatch(result)
+      await props.api.call<StartJobResult>({ action: 'update-batch-start', ids: skills.map(skill => skill.id), ...(overwrite ? { overwriteModified: true } : {}), ...scope(props.workspaceId) }, life.current.signal)
+      if (alive.current) props.onJobStarted?.()
     } catch (error) { const message = errorText(error); if (alive.current) setError(message); props.onError(message) }
     finally { if (alive.current) setBusy(false); props.onBusy(false) }
   }
-  return <Dialog title={t('batchTitle')} t={t} alert onClose={close} footer={<><button type="button" className="skm-button skm-button-quiet" data-autofocus onClick={close}>{t('cancel')}</button><button type="button" className="skm-button skm-button-primary" disabled={busy || skills.length === 0} onClick={() => void run()}><Icon name={busy ? 'refresh' : 'up'} spin={busy}/>{t(busy ? 'batchRunning' : 'confirmUpdate')}</button></>}>
-    {error && <Notice text={error} kind="error"/>}<p className="skm-plain-text">{t('batchBody')}</p><ul className="skm-file-list">{skills.map(skill => <li key={skill.id}><span className="skm-mono">{skill.name}</span><span>{rootLabel(props.catalog.roots.find(root => root.id === skill.rootId), t)}</span></li>)}</ul>
+  return <Dialog title={t('batchTitle')} t={t} alert onClose={close} footer={<><button type="button" className="skm-button skm-button-quiet" data-autofocus onClick={close}>{t('cancel')}</button><button type="button" className="skm-button skm-button-primary" disabled={busy || skills.length === 0 || !!props.jobActive} onClick={() => void run()}><Icon name={busy ? 'refresh' : 'up'} spin={busy}/>{t(busy ? 'batchRunning' : 'confirmUpdate')}</button></>}>
+    {error && <Notice text={error} kind="error"/>}{props.jobActive && <Notice text={t('jobActiveNotice')} kind="warning"/>}<p className="skm-plain-text">{t('batchBody')}</p><ul className="skm-file-list">{skills.map(skill => <li key={skill.id}><span className="skm-mono">{skill.name}</span><span>{rootLabel(props.catalog.roots.find(root => root.id === skill.rootId), t)}</span></li>)}</ul>
     <label className="skm-checkbox"><input type="checkbox" checked={overwrite} onChange={event => setOverwrite(event.target.checked)} disabled={busy}/><span>{t('batchOverwrite')}</span></label>
   </Dialog>
 }

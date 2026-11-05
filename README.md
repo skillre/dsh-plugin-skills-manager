@@ -1,6 +1,6 @@
 # DSH 技能管理 · Skills Manager
 
-> `@skillre/dsh-plugin-skills-manager` · `0.1.7` · experimental
+> `@skillre/dsh-plugin-skills-manager` · `0.2.0` · experimental
 
 [English](<README.en.md>)
 
@@ -44,7 +44,7 @@ https://github.com/skillre/dsh-plugin-skills-manager
 
 仓库已提交构建产物（`lib/`），pnpm 不需要执行构建脚本，因此不受 `allowBuilds` 供应链限制；安装后重启 Desktop 即可。该方式跟随 `main` 最新提交，适合持续获取最新版。
 
-**方式 B：Release tarball（固定版本）** —— 从 [GitHub Release v0.1.7](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.1.7) 下载 [`skillre-dsh-plugin-skills-manager-0.1.7.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.1.7/skillre-dsh-plugin-skills-manager-0.1.7.tgz)，在 **Add plugin** 中输入它的**完整本地绝对路径**。
+**方式 B：Release tarball（固定版本）** —— 从 [GitHub Release v0.2.0](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.2.0) 下载 [`skillre-dsh-plugin-skills-manager-0.2.0.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.2.0/skillre-dsh-plugin-skills-manager-0.2.0.tgz)，在 **Add plugin** 中输入它的**完整本地绝对路径**。
 
 1. 打开 DSH 左侧 **Plugins / 插件**。
 2. 选择 **Add plugin / 添加插件**。
@@ -59,6 +59,9 @@ https://github.com/skillre/dsh-plugin-skills-manager
 - 「检查更新」仅发起检查，不自动更新。完成后摘要分别给出可更新、已是最新、无来源和检查失败的数量；可更新的入口显示更新操作。更新其中一个技能后，其余技能的更新结果会保留，不需要重新检查。
 - 列表工具栏左上角的刷新图标只重新扫描本地技能目录（不访问网络），适合手动改动文件后快速重读；页头的「检查更新」才会访问来源并对比上游。备份标签页中的刷新图标只重读备份记录。
 - 点击技能名称、卡片正文或卡片上的「详情」按钮查看完整详情：描述、位置与绝对路径（可一键复制）、来源与提交、更新状态、模型/用户调用权限、完整 `SKILL.md` 指令，以及资源文件清单；只读技能在文件可读取时也会列出资源。
+- 「更新」与「全部更新」都会转入后台任务：确认后立即返回，自动切到「更新任务」标签页；页头「更新任务」按钮会显示运行中任务的总体进度，任何时候都能回到进度视图。Host 运行期间任务历史保留（最多 20 条）；Host 重启后任务记录清空，但技能更新事务有日志保护，不会留下半更新状态。
+- 单个技能进度按阶段显示：解析来源 → 下载（真实字节/文件比例）→ 校验 → 备份旧版本 → 安装新版本，并给出大致百分比。批量任务额外显示整体进度和每个技能的状态（未更新 / 正在更新 / 更新完成 / 更新失败 / 已跳过 / 已取消）、时间、备份 ID、提交与失败原因。
+- 同一时间只允许一个更新任务在运行，期间「检查更新」和更新入口暂时禁用；可「停止剩余更新」（当前技能会完整完成，剩余项标记为已取消），失败项可一键重试。任务结束后自动刷新技能列表与可用更新状态。
 - 「技能检索」输入任务或技术关键词；「查看并安装」先检查来源，安装前必须勾选信任确认。
 - 「从仓库安装」支持 `owner/repo` 或 `https://github.com/owner/repo`；分支/标签选填，默认 `HEAD`。
 - 删除和更新会生成「备份记录」。备份持续保留，不自动清除；恢复时原位置必须空闲。
@@ -161,15 +164,15 @@ https://github.com/skillre/dsh-plugin-skills-manager
 
 ## 验证与限制
 
-已在 **2026-11-03** 重新 Inspect 并实挂当前 DSH **0.2.1-rc.5**。本地类型检查、构建、publint、打包检查和 **65 项自动化测试**通过（含 **20 项真实 ConnectionRegistry 运输层回归**、**7 项 well-known/归档回归**、**9 项批量/备份/移动/安装/对比回归**、**1 项大技能 commit tarball 下载回归**）。自有临时非 Desktop profile 的预最终包验证了全部 **37 个 packed 文件**的字节、真实 Gateway `settings/describe` 与 Desktop welcome 实际调用 `llm/listConfigurableProviders`、插件 list/detail/check/remove/restore 的实际文件与指纹、仍安装插件时真实 Host 重启后的欢迎方法与 fixture 保留、卸载后依赖/选择/组合/插件路径缺失，以及再次启动后两个 Gateway 方法继续成功。10 个自有 CLI 进程真实关闭并核实组 `ESRCH` 后，确认 owner/UID/规范路径才删除测试 root，最终核实 `ENOENT`。旧版只测插件自身 RPC 的记录不是本版本兼容证明。
+已在 **2026-11-05** 重新 Inspect 并实挂当前 DSH **0.2.2-rc.1**（cordis 4.1.0）。本地类型检查、构建、publint、打包检查和 **71 项自动化测试**通过（含 **20 项真实 ConnectionRegistry 运输层回归**、**7 项 well-known/归档回归**、**9 项批量/备份/移动/安装/对比回归**、**1 项大技能 commit tarball 下载回归**、**5 项后台更新任务/进度/取消回归**）。自有临时非 Desktop profile 的预最终包验证了全部 **37 个 packed 文件**的字节、真实 Gateway `settings/describe` 与 Desktop welcome 实际调用 `llm/listConfigurableProviders`、插件 list/detail/check/remove/restore 的实际文件与指纹、仍安装插件时真实 Host 重启后的欢迎方法与 fixture 保留、卸载后依赖/选择/组合/插件路径缺失，以及再次启动后两个 Gateway 方法继续成功。10 个自有 CLI 进程真实关闭并核实组 `ESRCH` 后，确认 owner/UID/规范路径才删除测试 root，最终核实 `ENOENT`。旧版只测插件自身 RPC 的记录不是本版本兼容证明。
 
-安装包中的 [兼容记录](<compatibility.json>) 只引用本版本 [已通过的预最终实挂证据](<docs/verification/pre-final-mount-0.1.7-gateway.json>)。补入文档/兼容元数据后必须重新打包并安装**精确最终文件**；全部 packed payload、SHA256、Gateway/插件检查与清理结果以 [最终实挂记录](<docs/verification/isolated-mount-0.1.7.json>)、[日志](<docs/verification/isolated-mount-0.1.7.log>) 和 [最终文件摘要](<docs/verification/final-artifact-0.1.7.json>) 为准。精确 tarball 哈希保留在外部证据中，避免安装包自引用自己的哈希。
+安装包中的 [兼容记录](<compatibility.json>) 只引用本版本 [已通过的预最终实挂证据](<docs/verification/pre-final-mount-0.2.0-gateway.json>)。补入文档/兼容元数据后必须重新打包并安装**精确最终文件**；全部 packed payload、SHA256、Gateway/插件检查与清理结果以 [最终实挂记录](<docs/verification/isolated-mount-0.2.0.json>)、[日志](<docs/verification/isolated-mount-0.2.0.log>) 和 [最终文件摘要](<docs/verification/final-artifact-0.2.0.json>) 为准。精确 tarball 哈希保留在外部证据中，避免安装包自引用自己的哈希。
 
 **实际 Web/Electron 视觉与交互、用户日常 Desktop 重启验收尚未完成**：本轮不配置浏览器/扩展，也未安装、关闭或卸载日常 profile 的既有插件。隔离 CLI/Web Host 的真实重启、认证 RPC 与 Client 资源可加载不等于 Electron 窗口、主题或交互验收；发布准备保留 UI 证据门禁。
 
 该路由使用 `buffered` 请求体；上限属于 DSH Connection HTTP 承载层的 `maxRequestBodyBytes`（当前默认 300 MiB），不是本插件 adapter 或直接 `shared.fetch` 的独立 cap。本轮未新增 carrier overflow 测试。
 
-其他限制：安装来源为公共 GitHub、本地归档与 well-known archive；本地归档为无来源技能（不可自动更新）；匿名 API 或第三方站点会限流；well-known 仅 `type: archive` 可安装/更新；由外部工具安装的技能在插件首次成功更新前无法判断本地修改（首次更新会保留备份）；批量更新默认跳过无法判断的本地修改，可用勾选覆盖；移动跨文件系统时会走复制+备份路径；无来源/平面文件/不支持的旧锁无法自动更新；不保证其他 DSH 版本兼容，不自动更新、不永久清除备份、不提供技能编辑器。
+其他限制：安装来源为公共 GitHub、本地归档与 well-known archive；本地归档为无来源技能（不可自动更新）；匿名 API 或第三方站点会限流；well-known 仅 `type: archive` 可安装/更新；由外部工具安装的技能在插件首次成功更新前无法判断本地修改（首次更新会保留备份）；批量更新默认跳过无法判断的本地修改，可用勾选覆盖；移动跨文件系统时会走复制+备份路径；无来源/平面文件/不支持的旧锁无法自动更新；不保证其他 DSH 版本兼容，不自动更新、不永久清除备份、不提供技能编辑器。更新任务状态仅保存在 Host 内存（最多 20 条），Host 重启会清空任务历史；同一时间只允许一个更新任务，取消只停止尚未开始的技能，当前技能会完整完成事务。
 
 ## 开发验证
 

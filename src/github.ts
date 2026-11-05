@@ -37,7 +37,7 @@ export class GitHubSource {
   private readonly immutableTrees = new Map<string, RepositoryTree>()
   constructor(private readonly config: ManagerConfig, private readonly doFetch: Fetcher = (input, init) => fetch(input, init)) {}
   clear(): void { this.immutableTrees.clear() }
-  private async bytes(url: string, limit: number, signal: AbortSignal, github = false, redirect: RequestRedirect = 'error', timeoutMs = this.config.requestTimeoutMs): Promise<Uint8Array> {
+  private async bytes(url: string, limit: number, signal: AbortSignal, github = false, redirect: RequestRedirect = 'error', timeoutMs = this.config.requestTimeoutMs, onBytes?: (received: number, total: number | undefined) => void): Promise<Uint8Array> {
     throwIfAborted(signal)
     const timeout = AbortSignal.timeout(timeoutMs)
     const response = await this.doFetch(url, { signal: AbortSignal.any([signal, timeout]), redirect, credentials: 'omit', headers: { 'User-Agent': 'skillre-dsh-skills-manager', ...(github ? { Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' } : {}) } })
@@ -49,6 +49,8 @@ export class GitHubSource {
     }
     const declared = Number(response.headers.get('content-length'))
     if (Number.isFinite(declared) && declared > limit) { await response.body?.cancel().catch(() => {}); fail('limit', 'Source response exceeds the configured download limit.') }
+    const total = Number.isFinite(declared) ? declared : undefined
+    onBytes?.(0, total)
     if (!response.body) return new Uint8Array()
     const reader = response.body.getReader()
     const chunks: Uint8Array[] = []
@@ -61,6 +63,7 @@ export class GitHubSource {
         size += item.value.length
         if (size > limit) fail('limit', 'Source download exceeds the configured byte limit.')
         chunks.push(item.value)
+        onBytes?.(size, total)
       }
       throwIfAborted(signal)
       const result = new Uint8Array(size)
@@ -131,9 +134,9 @@ export class GitHubSource {
     if (gitBlobHash(bytes) !== node.sha) fail('integrity', 'Downloaded resource did not match its Git blob hash; no local files were changed.')
     return bytes
   }
-  private async downloadArchive(tree: RepositoryTree, nodes: TreeNode[], skillPath: string, signal: AbortSignal): Promise<BundleFile[]> {
+  private async downloadArchive(tree: RepositoryTree, nodes: TreeNode[], skillPath: string, signal: AbortSignal, onBytes?: (received: number, total: number | undefined) => void): Promise<BundleFile[]> {
     const archiveLimit = Math.min(this.config.maxBundleBytes * 3, 256 * 1024 * 1024)
-    const bytes = await this.bytes(`https://codeload.github.com/${tree.repository}/tar.gz/${tree.commit}`, Math.min(this.config.maxBundleBytes * 2, archiveLimit), signal, false, 'follow', Math.max(this.config.requestTimeoutMs, this.config.operationTimeoutMs))
+    const bytes = await this.bytes(`https://codeload.github.com/${tree.repository}/tar.gz/${tree.commit}`, Math.min(this.config.maxBundleBytes * 2, archiveLimit), signal, false, 'follow', Math.max(this.config.requestTimeoutMs, this.config.operationTimeoutMs), onBytes)
     const entries = extractRepositoryFiles(bytes, { maxBytes: archiveLimit, maxFiles: this.config.maxRepositoryEntries, maxFileBytes: this.config.maxFileBytes }, signal)
     const repoFiles = new Map<string, Uint8Array>()
     for (const entry of entries) {
@@ -185,23 +188,30 @@ export class GitHubSource {
     const prefix = posix.dirname(skillPath) === '.' ? '' : `${posix.dirname(skillPath)}/`
     return { repository: tree.repository, ref: tree.ref, commit: tree.commit, skill: { name: metadata.name, description: metadata.description, skillPath, treeHash: this.folderHash(tree, skillPath) }, content, files: nodes.map(item => ({ path: item.path.slice(prefix.length), bytes: item.size ?? 0 })), totalBytes: nodes.reduce((sum, item) => sum + (item.size ?? 0), 0) }
   }
-  async download(source: string, ref: string | undefined, commit: string, skillPath: string, signal: AbortSignal): Promise<DownloadedSkill> {
+  async download(source: string, ref: string | undefined, commit: string, skillPath: string, signal: AbortSignal, onProgress?: (phase: 'download' | 'verify', ratio?: number) => void): Promise<DownloadedSkill> {
     const tree = await this.tree(source, ref, signal, commit)
     const nodes = this.selectedFiles(tree, skillPath)
     const prefix = posix.dirname(skillPath) === '.' ? '' : `${posix.dirname(skillPath)}/`
     let files: BundleFile[]
     if (nodes.length > 64) {
-      files = await this.downloadArchive(tree, nodes, skillPath, signal)
+      onProgress?.('download', 0)
+      files = await this.downloadArchive(tree, nodes, skillPath, signal, (received, total) => onProgress?.('download', total === undefined ? undefined : Math.min(1, received / total)))
     } else {
       let totalBytes = 0
+      let fetched = 0
+      onProgress?.('download', 0)
       files = await mapLimit(nodes, this.config.checkConcurrency, async node => {
         const bytes = await this.file(tree, node, signal)
         totalBytes += bytes.length
+        fetched += 1
+        onProgress?.('download', fetched / nodes.length)
         if (totalBytes > this.config.maxBundleBytes) fail('limit', 'Downloaded skill exceeds the configured total-size limit.')
         return { path: node.path.slice(prefix.length), bytes, executable: node.mode === '100755' }
       }, signal)
     }
+    onProgress?.('verify', 0)
     if (gitTreeHash(files) !== this.folderHash(tree, skillPath)) fail('integrity', 'Downloaded skill did not reconstruct the selected Git tree; no local files were changed.')
+    onProgress?.('verify', 1)
     const skillFile = files.find(file => file.path === 'SKILL.md')
     if (!skillFile) fail('invalid-skill', 'Selected bundle has no root SKILL.md.')
     const content = new TextDecoder().decode(skillFile.bytes)

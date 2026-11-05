@@ -3,7 +3,9 @@ import { mkdir, mkdtemp, readFile, realpath, rm, symlink, writeFile } from 'node
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
-import type { Backup, Catalog, MutationResult, RepositoryInfo, SkillDetail, UpdateCheck } from '../src/types.js'
+import type { Backup, Catalog, MutationResult, RepositoryInfo, SkillDetail, StartJobResult, UpdateCheck, UpdateJob } from '../src/types.js'
+import { SkillsManager } from '../src/manager.js'
+import type { SourceProvider } from '../src/manager.js'
 import { bundleFingerprint, pathExists, publishNoReplace, readState } from '../src/fs-store.js'
 import { fixture, skillText, versionFiles, writeBundle } from './helpers.js'
 
@@ -204,5 +206,120 @@ describe('real filesystem skill lifecycle', () => {
       expect((await g.manager.execute({ action: 'check' }) as UpdateCheck[])[0]?.status).toBe('untracked')
       expect(g.remote.calls).toHaveLength(0)
     } finally { await g.cleanup() }
+  })
+})
+
+function delayedSource(f: Awaited<ReturnType<typeof fixture>>, delayMs: number): SourceProvider {
+  return {
+    search: (query, limit, signal) => f.source.search(query, limit, signal),
+    inspect: (source, ref, signal) => f.source.inspect(source, ref, signal),
+    preview: (source, ref, commit, skillPath, signal) => f.source.preview(source, ref, commit, skillPath, signal),
+    tree: (repository, ref, signal, commit) => f.source.tree(repository, ref, signal, commit),
+    folderHashFor: (tree, skillPath) => f.source.folderHashFor(tree, skillPath),
+    download: async (source, ref, commit, skillPath, signal, onProgress) => {
+      await new Promise(resolve => setTimeout(resolve, delayMs))
+      return f.source.download(source, ref, commit, skillPath, signal, onProgress)
+    },
+    clear: () => { f.source.clear() },
+  }
+}
+async function waitForJob(manager: SkillsManager, jobId: string, timeoutMs = 10000): Promise<UpdateJob> {
+  const deadline = Date.now() + timeoutMs
+  for (;;) {
+    const job = await manager.execute({ action: 'job-get', id: jobId }) as UpdateJob
+    if (job.status !== 'running') return job
+    if (Date.now() > deadline) throw new Error(`Background job did not finish in time: ${JSON.stringify(job)}`)
+    await new Promise(resolve => setTimeout(resolve, 25))
+  }
+}
+
+describe('background update jobs', () => {
+  it('runs a single update in the background and exposes its progress and result', async () => {
+    const f = await fixture()
+    const manager = new SkillsManager(f.config, {}, delayedSource(f, 40), f.wellKnown)
+    try {
+      await install(f)
+      f.remote.setLatest(2)
+      const skill = (await catalog(f)).skills.find(item => item.entry === 'demo')!
+      const before = await manager.execute({ action: 'detail', id: skill.id }) as SkillDetail
+      const started = await manager.execute({ action: 'update-start', id: skill.id, expectedFingerprint: before.fingerprint }) as StartJobResult
+      const snapshot = await manager.execute({ action: 'job-get', id: started.jobId }) as UpdateJob
+      expect(snapshot.kind).toBe('update')
+      expect(snapshot.status).toBe('running')
+      const finished = await waitForJob(manager, started.jobId)
+      expect(finished.status).toBe('completed')
+      expect(finished.progress).toBe(100)
+      expect(finished.items[0]).toMatchObject({ status: 'updated', progress: 100 })
+      expect(finished.items[0]?.backupId).toBeTruthy()
+      expect(await readFile(join(f.skillRoot, 'demo', 'SKILL.md'), 'utf8')).toContain('two')
+      expect((await manager.execute({ action: 'job-list' }) as UpdateJob[]).some(job => job.id === started.jobId)).toBe(true)
+    } finally { await manager.dispose(); await f.cleanup() }
+  })
+  it('exposes live item progress while a job is running', async () => {
+    const f = await fixture()
+    const manager = new SkillsManager(f.config, {}, delayedSource(f, 200), f.wellKnown)
+    try {
+      await install(f)
+      f.remote.setLatest(2)
+      const skill = (await catalog(f)).skills.find(item => item.entry === 'demo')!
+      const before = await manager.execute({ action: 'detail', id: skill.id }) as SkillDetail
+      const started = await manager.execute({ action: 'update-start', id: skill.id, expectedFingerprint: before.fingerprint }) as StartJobResult
+      await new Promise(resolve => setTimeout(resolve, 80))
+      const snapshot = await manager.execute({ action: 'job-get', id: started.jobId }) as UpdateJob
+      expect(snapshot.status).toBe('running')
+      expect(snapshot.items[0]?.status).toBe('running')
+      expect(snapshot.items[0]?.progress).toBeGreaterThan(0)
+      expect(snapshot.progress).toBeLessThan(100)
+      const finished = await waitForJob(manager, started.jobId)
+      expect(finished.progress).toBe(100)
+    } finally { await manager.dispose(); await f.cleanup() }
+  })
+  it('reports per-skill status for a batch job', async () => {
+    const f = await fixture()
+    try {
+      await install(f)
+      f.remote.setLatest(2)
+      const skill = (await catalog(f)).skills.find(item => item.entry === 'demo')!
+      const started = await f.manager.execute({ action: 'update-batch-start', ids: [skill.id, 'user-agents::missing'] }) as StartJobResult
+      const finished = await waitForJob(f.manager, started.jobId)
+      expect(finished.kind).toBe('update-batch')
+      expect(finished.total).toBe(2)
+      expect(finished.succeeded).toBe(1)
+      expect(finished.failed).toBe(1)
+      expect(finished.status).toBe('failed')
+      expect(finished.items[0]).toMatchObject({ status: 'updated' })
+      expect(finished.items[1]).toMatchObject({ status: 'failed' })
+      expect(finished.items[1]?.error).toContain('no longer present')
+    } finally { await f.cleanup() }
+  })
+  it('allows only one running job at a time', async () => {
+    const f = await fixture()
+    const manager = new SkillsManager(f.config, {}, delayedSource(f, 40), f.wellKnown)
+    try {
+      await install(f)
+      f.remote.setLatest(2)
+      const skill = (await catalog(f)).skills.find(item => item.entry === 'demo')!
+      const before = await manager.execute({ action: 'detail', id: skill.id }) as SkillDetail
+      const first = manager.execute({ action: 'update-start', id: skill.id, expectedFingerprint: before.fingerprint })
+      await expect(manager.execute({ action: 'update-start', id: skill.id, expectedFingerprint: before.fingerprint })).rejects.toMatchObject({ code: 'busy' })
+      const started = await first as StartJobResult
+      expect((await waitForJob(manager, started.jobId)).status).toBe('completed')
+    } finally { await manager.dispose(); await f.cleanup() }
+  })
+  it('cancels the remaining skills while the current skill finishes atomically', async () => {
+    const f = await fixture()
+    const manager = new SkillsManager(f.config, {}, delayedSource(f, 150), f.wellKnown)
+    try {
+      await install(f)
+      f.remote.setLatest(2)
+      const skill = (await catalog(f)).skills.find(item => item.entry === 'demo')!
+      const started = await manager.execute({ action: 'update-batch-start', ids: [skill.id, 'user-agents::missing'] }) as StartJobResult
+      await manager.execute({ action: 'job-cancel', id: started.jobId })
+      const finished = await waitForJob(manager, started.jobId)
+      expect(finished.status).toBe('cancelled')
+      expect(finished.items[0]).toMatchObject({ status: 'updated' })
+      expect(finished.items[1]).toMatchObject({ status: 'cancelled' })
+      expect(await readFile(join(f.skillRoot, 'demo', 'SKILL.md'), 'utf8')).toContain('two')
+    } finally { await manager.dispose(); await f.cleanup() }
   })
 })

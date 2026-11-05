@@ -27,6 +27,10 @@ export declare class SkillsManager {
     private readonly active;
     private readonly checks;
     private readonly checkKeys;
+    private readonly jobs;
+    private readonly jobTasks;
+    private activeJobId;
+    private jobSeq;
     private mutationEpoch;
     private closed;
     readonly source: SourceProvider;
@@ -47,6 +51,16 @@ export declare class SkillsManager {
     private applyUpdate;
     private rememberLatest;
     private batchUpdate;
+    private startJob;
+    private jobItemFor;
+    private runJob;
+    private settleJobItem;
+    private jobItemProgress;
+    private recomputeJob;
+    private listJobs;
+    private getJob;
+    private cancelJob;
+    private pruneJobs;
     private diffSkill;
     private moveSkill;
     private installLocal;
