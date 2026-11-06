@@ -1,6 +1,6 @@
 # DSH Skills Manager
 
-> `@skillre/dsh-plugin-skills-manager` · `0.2.0` · experimental
+> `@skillre/dsh-plugin-skills-manager` · `0.2.1` · experimental
 
 [中文](<README.md>)
 
@@ -22,6 +22,7 @@ A native Host + React Client bundle with a **Skills** entry in the DSH sidebar. 
 - File-level update diff: the update dialog shows added/removed/changed/unchanged files before confirmation.
 - Wider install sources: local `.tar.gz`/`.tgz`/`.zip` archives (strict in-memory parsing, never executed), well-known HTTPS catalogs and cross-root backup restore.
 - The `skills_manager` Agent tool uses the same core operations. Mutations require a logged, one-time user approval, not a model-supplied authorization flag.
+- **Hot enable/disable**: switching the bundle off and back on unmounts and remounts the Client sidebar entry and main panel with the plugin Fiber; 0.2.1 fixes the previous re-enable that lost the entry until the page reloaded.
 - English/Chinese text, DSH theme colors, responsive layout, loading/error feedback and modal focus management.
 
 ## 0.1.0 startup failure and upgrade
@@ -44,7 +45,7 @@ https://github.com/skillre/dsh-plugin-skills-manager
 
 The repository commits its built output under `lib/`, so pnpm does not need to execute build scripts and the `allowBuilds` supply-chain policy does not block the install. Restart Desktop afterwards. This follows the latest `main` commit.
 
-**Option B: Release tarball (pinned version)** — download [`skillre-dsh-plugin-skills-manager-0.2.0.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.2.0/skillre-dsh-plugin-skills-manager-0.2.0.tgz) from the [GitHub Release v0.2.0](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.2.0) and enter its **full absolute local path** in **Add plugin**.
+**Option B: Release tarball (pinned version)** — download [`skillre-dsh-plugin-skills-manager-0.2.1.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.2.1/skillre-dsh-plugin-skills-manager-0.2.1.tgz) from the [GitHub Release v0.2.1](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.2.1) and enter its **full absolute local path** in **Add plugin**.
 
 1. Open **Plugins → Add plugin** in DSH.
 2. Paste the Git URL or the tarball's absolute path, review the trust notice and initiate installation yourself.
@@ -144,11 +145,11 @@ Downloads are commit-pinned and checked against every Git blob and the complete 
 
 ## Verification and limits
 
-DSH **0.2.2-rc.1** (cordis 4.1.0) was re-inspected and mounted on **2026-11-05**. Type checking, build, publint, package checks and **71 automated tests** pass, including **20 real ConnectionRegistry transport regressions**, **7 well-known/archive regressions** and **9 batch/backup/move/install/diff regressions** **1 large-skill commit-tarball download regression** and **5 background update job/progress/cancellation regressions**. The pre-final packed test in an owned temporary non-Desktop profile compared all **37 packed files** byte-for-byte and exercised real Gateway `settings/describe` and Desktop welcome `llm/listConfigurableProviders`, plugin list/detail/check/remove/restore with filesystem/fingerprint checks, a real Host restart while the plugin remained installed, dependency/selection/composition/plugin-route absence after uninstall, and both Gateway methods after another startup. Ten owned CLI processes closed and every recorded group returned `ESRCH` before canonical owner/UID-root removal and explicit `ENOENT`. The previous build's plugin-RPC-only checks are not this version's compatibility proof.
+DSH **0.2.2-rc.1** (cordis 4.1.0) was re-inspected and mounted on **2026-11-06**. Type checking, build, publint, package checks and **73 automated tests** pass, including **20 real ConnectionRegistry transport regressions**, **7 well-known/archive regressions**, **9 batch/backup/move/install/diff regressions**, **1 large-skill commit-tarball download regression**, **5 background update job/progress/cancellation regressions** and **1 Client lifecycle/hot-reload regression**. The pre-final packed test in an owned temporary non-Desktop profile compared all **37 packed files** byte-for-byte and exercised real Gateway `settings/describe` and Desktop welcome `llm/listConfigurableProviders`, plugin list/detail/check/remove/restore with filesystem/fingerprint checks, a real Host restart while the plugin remained installed, dependency/selection/composition/plugin-route absence after uninstall, and both Gateway methods after another startup. Ten owned CLI processes closed and every recorded group returned `ESRCH` before canonical owner/UID-root removal and explicit `ENOENT`. Hot enable/disable was additionally verified in a real DSH Web page (owned temporary non-Desktop profile, real Chrome/CDP): two off/on cycles restored the sidebar entry and main panel with a clean console. The previous build's plugin-RPC-only checks are not this version's compatibility proof.
 
-The shipped [compatibility record](<compatibility.json>) references only this version's [passed pre-final mount evidence](<docs/verification/pre-final-mount-0.2.0-gateway.json>). After adding documentation/compatibility metadata, repack and reinstall the **exact final file**; every packed file, SHA256, Gateway/plugin checks and cleanup outcome are recorded in the external [final mount report](<docs/verification/isolated-mount-0.2.0.json>), [log](<docs/verification/isolated-mount-0.2.0.log>) and [artifact summary](<docs/verification/final-artifact-0.2.0.json>). Keeping the exact tarball hash outside the package avoids a self-referential hash.
+The shipped [compatibility record](<compatibility.json>) references only this version's [passed pre-final mount evidence](<docs/verification/pre-final-mount-0.2.1-gateway.json>). After adding documentation/compatibility metadata, repack and reinstall the **exact final file**; every packed file, SHA256, Gateway/plugin checks and cleanup outcome are recorded in the external [final mount report](<docs/verification/isolated-mount-0.2.1.json>), [log](<docs/verification/isolated-mount-0.2.1.log>) and [artifact summary](<docs/verification/final-artifact-0.2.1.json>). Keeping the exact tarball hash outside the package avoids a self-referential hash.
 
-**Real Web/Electron visual/interaction acceptance and the user's daily Desktop restart remain unverified.** This task configures no browser/extension and does not install, disable or remove existing daily-profile plugins. A real isolated CLI/Web Host restart, authenticated RPC and Client asset delivery are not Electron-window, theme or interaction acceptance; release preparation retains its UI-evidence gate.
+**Electron Desktop visual/interaction acceptance and the user's daily Desktop restart belong to the user.** A real isolated CLI/Web Host restart, authenticated RPC and Client asset delivery are not Electron-window, theme or interaction acceptance. The 0.2.1 Client hot enable/disable fix was verified in a real DSH Web page and recorded as the `web-ui-hot-reenable` compatibility check.
 
 The route uses a `buffered` body. Its limit belongs to DSH Connection's HTTP carrier `maxRequestBodyBytes` (current default 300 MiB), not an independent adapter/direct `shared.fetch` cap. No new carrier-overflow test is claimed.
 

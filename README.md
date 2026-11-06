@@ -1,6 +1,6 @@
 # DSH 技能管理 · Skills Manager
 
-> `@skillre/dsh-plugin-skills-manager` · `0.2.0` · experimental
+> `@skillre/dsh-plugin-skills-manager` · `0.2.1` · experimental
 
 [English](<README.en.md>)
 
@@ -22,6 +22,7 @@
 - **更新前文件对比**：更新对话框展示新增/删除/修改/未变的文件列表。
 - **扩展安装来源**：支持本地 `.tar.gz`/`.tgz`/`.zip` 归档（内存严格解析、不执行脚本）、well-known HTTPS 目录安装，以及把备份恢复到其他可写位置。
 - **模型工具**：提供 `skills_manager`，与界面调用同一核心服务；写操作必须取得本次用户批准，不接受授权布尔参数。
+- **热启停**：在 Plugins 中关闭再重新启用插件时，Client 侧栏入口与主面板随插件 Fiber 正确卸载和重挂载；0.2.1 修复了此前重新启用后入口消失、必须刷新页面的问题。
 - 中英文文案、DSH 主题颜色、响应式布局、加载与失败状态、对话框焦点管理。
 
 ## 0.1.0 启动故障与升级
@@ -44,7 +45,7 @@ https://github.com/skillre/dsh-plugin-skills-manager
 
 仓库已提交构建产物（`lib/`），pnpm 不需要执行构建脚本，因此不受 `allowBuilds` 供应链限制；安装后重启 Desktop 即可。该方式跟随 `main` 最新提交，适合持续获取最新版。
 
-**方式 B：Release tarball（固定版本）** —— 从 [GitHub Release v0.2.0](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.2.0) 下载 [`skillre-dsh-plugin-skills-manager-0.2.0.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.2.0/skillre-dsh-plugin-skills-manager-0.2.0.tgz)，在 **Add plugin** 中输入它的**完整本地绝对路径**。
+**方式 B：Release tarball（固定版本）** —— 从 [GitHub Release v0.2.1](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.2.1) 下载 [`skillre-dsh-plugin-skills-manager-0.2.1.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.2.1/skillre-dsh-plugin-skills-manager-0.2.1.tgz)，在 **Add plugin** 中输入它的**完整本地绝对路径**。
 
 1. 打开 DSH 左侧 **Plugins / 插件**。
 2. 选择 **Add plugin / 添加插件**。
@@ -164,11 +165,11 @@ https://github.com/skillre/dsh-plugin-skills-manager
 
 ## 验证与限制
 
-已在 **2026-11-05** 重新 Inspect 并实挂当前 DSH **0.2.2-rc.1**（cordis 4.1.0）。本地类型检查、构建、publint、打包检查和 **71 项自动化测试**通过（含 **20 项真实 ConnectionRegistry 运输层回归**、**7 项 well-known/归档回归**、**9 项批量/备份/移动/安装/对比回归**、**1 项大技能 commit tarball 下载回归**、**5 项后台更新任务/进度/取消回归**）。自有临时非 Desktop profile 的预最终包验证了全部 **37 个 packed 文件**的字节、真实 Gateway `settings/describe` 与 Desktop welcome 实际调用 `llm/listConfigurableProviders`、插件 list/detail/check/remove/restore 的实际文件与指纹、仍安装插件时真实 Host 重启后的欢迎方法与 fixture 保留、卸载后依赖/选择/组合/插件路径缺失，以及再次启动后两个 Gateway 方法继续成功。10 个自有 CLI 进程真实关闭并核实组 `ESRCH` 后，确认 owner/UID/规范路径才删除测试 root，最终核实 `ENOENT`。旧版只测插件自身 RPC 的记录不是本版本兼容证明。
+已在 **2026-11-06** 重新 Inspect 并实挂当前 DSH **0.2.2-rc.1**（cordis 4.1.0）。本地类型检查、构建、publint、打包检查和 **73 项自动化测试**通过（含 **20 项真实 ConnectionRegistry 运输层回归**、**7 项 well-known/归档回归**、**9 项批量/备份/移动/安装/对比回归**、**1 项大技能 commit tarball 下载回归**、**5 项后台更新任务/进度/取消回归**、**1 项 Client 生命周期/热重载回归**）。自有临时非 Desktop profile 的预最终包验证了全部 **37 个 packed 文件**的字节、真实 Gateway `settings/describe` 与 Desktop welcome 实际调用 `llm/listConfigurableProviders`、插件 list/detail/check/remove/restore 的实际文件与指纹、仍安装插件时真实 Host 重启后的欢迎方法与 fixture 保留、卸载后依赖/选择/组合/插件路径缺失，以及再次启动后两个 Gateway 方法继续成功。10 个自有 CLI 进程真实关闭并核实组 `ESRCH` 后，确认 owner/UID/规范路径才删除测试 root，最终核实 `ENOENT`。另在真实 DSH Web 页面（自有临时非 Desktop profile + 真实 Chrome/CDP）验证热启停：关闭再启用插件两轮，侧栏入口与主面板都正常恢复，控制台无错误。旧版只测插件自身 RPC 的记录不是本版本兼容证明。
 
-安装包中的 [兼容记录](<compatibility.json>) 只引用本版本 [已通过的预最终实挂证据](<docs/verification/pre-final-mount-0.2.0-gateway.json>)。补入文档/兼容元数据后必须重新打包并安装**精确最终文件**；全部 packed payload、SHA256、Gateway/插件检查与清理结果以 [最终实挂记录](<docs/verification/isolated-mount-0.2.0.json>)、[日志](<docs/verification/isolated-mount-0.2.0.log>) 和 [最终文件摘要](<docs/verification/final-artifact-0.2.0.json>) 为准。精确 tarball 哈希保留在外部证据中，避免安装包自引用自己的哈希。
+安装包中的 [兼容记录](<compatibility.json>) 只引用本版本 [已通过的预最终实挂证据](<docs/verification/pre-final-mount-0.2.1-gateway.json>)。补入文档/兼容元数据后必须重新打包并安装**精确最终文件**；全部 packed payload、SHA256、Gateway/插件检查与清理结果以 [最终实挂记录](<docs/verification/isolated-mount-0.2.1.json>)、[日志](<docs/verification/isolated-mount-0.2.1.log>) 和 [最终文件摘要](<docs/verification/final-artifact-0.2.1.json>) 为准。精确 tarball 哈希保留在外部证据中，避免安装包自引用自己的哈希。
 
-**实际 Web/Electron 视觉与交互、用户日常 Desktop 重启验收尚未完成**：本轮不配置浏览器/扩展，也未安装、关闭或卸载日常 profile 的既有插件。隔离 CLI/Web Host 的真实重启、认证 RPC 与 Client 资源可加载不等于 Electron 窗口、主题或交互验收；发布准备保留 UI 证据门禁。
+**Electron Desktop 视觉/交互与用户日常 Desktop 重启验收仍由用户完成**：隔离 CLI/Web Host 的真实重启、认证 RPC 与 Client 资源可加载不等于 Electron 窗口、主题或交互验收。0.2.1 的 Client 热启停已在真实 DSH Web 页面验证，并作为 `web-ui-hot-reenable` 记录在兼容证据中。
 
 该路由使用 `buffered` 请求体；上限属于 DSH Connection HTTP 承载层的 `maxRequestBodyBytes`（当前默认 300 MiB），不是本插件 adapter 或直接 `shared.fetch` 的独立 cap。本轮未新增 carrier overflow 测试。
 

@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "repo": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager",
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.2.1",
+  "result": "passed",
+  "artifact": {
+    "filename": "skillre-dsh-plugin-skills-manager-0.2.1.tgz",
+    "sha256": "acba46a2eb44e64cd589974fd3b584f85479542d5d26bdc074c19130e78cab94",
+    "sizeBytes": 91112,
+    "entryCount": 37
+  },
+  "publication": {
+    "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
+    "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.2.1",
+    "asset": "https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.2.1/skillre-dsh-plugin-skills-manager-0.2.1.tgz",
+    "npmPublished": false
+  },
+  "filesChanged": [
+    "CHANGELOG.md",
+    "README.en.md",
+    "README.md",
+    "compatibility.json",
+    "docs/verification/browser-hot-reenable-0.2.1.json",
+    "docs/verification/browser-hot-reenable-0.2.1.log",
+    "docs/verification/check-0.2.1.log",
+    "docs/verification/final-artifact-0.2.1.json",
+    "docs/verification/handoff-0.2.1.json",
+    "docs/verification/isolated-mount-0.2.1.json",
+    "docs/verification/isolated-mount-0.2.1.log",
+    "docs/verification/pre-final-mount-0.2.1-gateway.json",
+    "docs/verification/pre-final-mount-0.2.1-gateway.log",
+    "lib/client.js",
+    "package-lock.json",
+    "package.json",
+    "scripts/verify-hot-reenable.mjs",
+    "src/client/contracts.ts",
+    "src/client/index.tsx",
+    "tests/client-lifecycle.spec.ts"
+  ],
+  "testsRun": [
+    {
+      "command": "npm run check",
+      "exitCode": 0,
+      "detail": "9 test files, 73 tests, 37 packed files, committed lib verified"
+    },
+    {
+      "command": "pre-final isolated mount",
+      "exitCode": 0,
+      "detail": "19 checks passed on DSH 0.2.2-rc.1 (pre-final tarball sha256 63cd5811…c6000e6)"
+    },
+    {
+      "command": "browser hot re-enable (real DSH Web + Chrome/CDP)",
+      "exitCode": 0,
+      "detail": "16 checks, two bundle off/on cycles, sidebar entry and panel restored, console clean"
+    },
+    {
+      "command": "final isolated mount",
+      "exitCode": 0,
+      "detail": "19 checks passed on the exact final tarball; cleanup and tarball-unchanged verified"
+    },
+    {
+      "command": "npm run release:prepare",
+      "exitCode": 0,
+      "detail": "release artifact integrity matches the mounted tarball"
+    }
+  ],
+  "dsh": "0.2.2-rc.1",
+  "cordis": "4.1.0",
+  "evidence": {
+    "preFinalMount": "docs/verification/pre-final-mount-0.2.1-gateway.json",
+    "finalMount": "docs/verification/isolated-mount-0.2.1.json",
+    "browserHotReenable": "docs/verification/browser-hot-reenable-0.2.1.json",
+    "finalArtifact": "docs/verification/final-artifact-0.2.1.json"
+  },
+  "risks": [
+    "Electron Desktop visual/interaction acceptance remains user-deferred; the hot enable/disable check ran in a real DSH Web page through headless Chrome/CDP, not an Electron window.",
+    "Job history lives in Host memory only (unchanged); a Host restart clears history while in-flight skill transactions stay journaled.",
+    "The market index is a separate publish; Discover may serve the previous index for a short time after the GitHub Pages deployment.",
+    "A page that already hit the 0.2.0 re-enable failure may keep its stale Client state until one reload, even after updating."
+  ],
+  "followUps": [
+    "User updates to 0.2.1 from Discover (after the market index refresh) or by the Git source, then switches the plugin off and on to verify the sidebar entry returns without a page reload."
+  ]
+}

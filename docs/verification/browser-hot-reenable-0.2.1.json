@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.2.1",
+  "dsh": "0.2.2-rc.1",
+  "verifiedAt": "2026-11-06",
+  "result": "passed",
+  "checks": [
+    "profile-created",
+    "profile-tarball-install",
+    "dump-config",
+    "bounded-host-startup",
+    "browser-launched",
+    "web-ui-boot",
+    "web-ui-hot-disable-1",
+    "web-ui-hot-enable-1",
+    "web-ui-hot-disable-2",
+    "web-ui-hot-enable-2",
+    "web-ui-hot-reenable",
+    "web-ui-panel-opens",
+    "web-ui-console-clean",
+    "tarball-unchanged",
+    "owned-processes-stopped",
+    "owned-process-and-profile-cleanup"
+  ],
+  "cleanupVerified": true,
+  "cleanup": {
+    "ownedRoot": "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-browser-0xkjcg",
+    "owner": "browser-0.2.1-45063-1793956860063",
+    "profile": "skills-manager-browser-56860063",
+    "userProfileTouched": false,
+    "processesStopped": true,
+    "rootRemoved": true
+  },
+  "consoleErrors": [],
+  "tarball": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/skillre-dsh-plugin-skills-manager-0.2.1.tgz",
+  "tarballSha256": "acba46a2eb44e64cd589974fd3b584f85479542d5d26bdc074c19130e78cab94"
+}

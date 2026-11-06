@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.1 — hot re-enable fix (local build)
+
+- Fix **hot re-enable**: turning the plugin off and back on left the sidebar entry and main panel missing until the page reloaded. The Client half registered its zh/en dictionaries without owning the registration, so the next activation failed on the locale service's duplicate-dictionary check before it reached the sidebar/main slot registrations.
+- Register both dictionaries in one Fiber-owned `ctx.effect` (and own the two slot injections the same way), so every re-enable mounts exactly one fresh Client instance. Verified in a real DSH Web page: bundle off → sidebar entry removed; bundle on → sidebar entry and panel return, across two consecutive cycles with a clean console.
+- Add a Client lifecycle regression test that unmounts and remounts the fake Client Fiber (73 tests total); rebuild the committed `lib/`.
+
+No npm publication or user-profile change is included; the GitHub source repository and Release asset are updated in the same user-authorized GitHub flow.
+
 ## 0.2.0 — background updates with live progress (local build)
 
 - Single and batch updates now run as Host-side **background jobs**: confirming an update closes the dialog, switches to the new **Update jobs** tab and keeps running while you use the rest of the plugin. A header button shows the running job and its overall progress, so progress is reachable at any time.

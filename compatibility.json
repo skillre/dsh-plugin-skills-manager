@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "package": "@skillre/dsh-plugin-skills-manager",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "withdrawnVersions": [
     {
       "version": "0.1.0",
@@ -11,6 +11,44 @@
     }
   ],
   "verified": [
+    {
+      "dsh": "0.2.2-rc.1",
+      "verifiedAt": "2026-11-06",
+      "result": "passed",
+      "checks": [
+        "profile-tarball-install",
+        "dump-config",
+        "packed-package-identity",
+        "packed-payload-bytes",
+        "full-packed-payload-bytes",
+        "packed-display-resources",
+        "unauthenticated-request-refused",
+        "gateway-settings-describe",
+        "gateway-llm-list-configurable-providers",
+        "authenticated-rpc-lifecycle",
+        "bounded-startup",
+        "client-bundle-delivery",
+        "web-ui-hot-reenable",
+        "gateway-welcome-apis-after-plugin-restart",
+        "packed-plugin-restart",
+        "profile-uninstall-absence",
+        "gateway-welcome-apis-after-uninstall",
+        "uninstalled-plugin-route-absent",
+        "owned-process-and-profile-cleanup",
+        "tarball-unchanged"
+      ],
+      "cleanupVerified": true,
+      "ui": "web-ui-hot-reenable-verified",
+      "evidence": "docs/verification/pre-final-mount-0.2.1-gateway.json",
+      "finalArtifactEvidence": "docs/verification/isolated-mount-0.2.1.json",
+      "notes": [
+        "This record consumes the successful frozen pre-final packed test on DSH 0.2.2-rc.1 (cordis 4.1.0) built from the client-lifecycle fix. Its complete payload and SHA256 remain in external final-artifact evidence to avoid a self-referential hash.",
+        "The hot re-enable fix was verified in a real DSH Web page: an owned temporary non-Desktop web profile booted the packed tarball, a real Chrome connected through CDP, and the bundle was switched off and on twice. The sidebar entry disappeared on disable and returned with its main panel on enable in both cycles, with no console or page-local sync errors. This is not an Electron Desktop visual acceptance check.",
+        "Mount checks and Gateway coverage are the same as the 0.2.0 record: real Gateway settings/describe and Desktop welcome llm/listConfigurableProviders, plugin list/detail/check/remove/restore with actual filesystem/fingerprint checks, a real owned Host restart while installed, dependency/selection/composition/plugin-route absence after uninstall, and owned-process/profile cleanup verification.",
+        "A new Client lifecycle regression test unmounts and remounts a fake Client Fiber and asserts that the locale dictionaries and both slot registrations are owned by, and released with, the plugin Fiber (73 tests total).",
+        "Only current DSH 0.2.2-rc.1 on the macOS isolated non-Desktop CLI/Web carrier was mounted. Desktop shell exact-Fetch dispatch is supported by the inspected SDK and real registry tests, not a live Electron acceptance check. The user's daily profile and Desktop restart remain user-owned and unverified."
+      ]
+    },
     {
       "dsh": "0.2.2-rc.1",
       "verifiedAt": "2026-11-05",

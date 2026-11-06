@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.2.1",
+  "dsh": "0.2.2-rc.1",
+  "verifiedAt": "2026-11-06",
+  "result": "passed",
+  "publication": {
+    "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
+    "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.2.1",
+    "asset": "https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.2.1/skillre-dsh-plugin-skills-manager-0.2.1.tgz",
+    "npmPublished": false
+  },
+  "artifact": {
+    "path": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/skillre-dsh-plugin-skills-manager-0.2.1.tgz",
+    "filename": "skillre-dsh-plugin-skills-manager-0.2.1.tgz",
+    "sha256": "acba46a2eb44e64cd589974fd3b584f85479542d5d26bdc074c19130e78cab94",
+    "sha1": "d6c65210cd53d016e85d1e15981787ad3ce6a8f8",
+    "integrity": "sha512-MZrJOhQJ/6mqxIAN0KH4fk3e4SxNFz/GHXTjkVge2BPBjW6uZWMwmll7rvykDea3Hm4yvzOFa9Q4zIm7ybrpjA==",
+    "sizeBytes": 91112,
+    "unpackedBytes": 415619,
+    "entryCount": 37
+  },
+  "tests": {
+    "command": "npm run check",
+    "log": "docs/verification/check-0.2.1.log",
+    "exitCode": 0,
+    "testFiles": 9,
+    "testsPassed": 73,
+    "realRegistryTests": 20,
+    "managementTests": 9,
+    "backgroundJobTests": 5,
+    "clientLifecycleTests": 2,
+    "typecheck": "passed",
+    "build": "passed",
+    "publint": "passed",
+    "packDryRun": "passed",
+    "finalPackedMount": "passed"
+  },
+  "verification": {
+    "report": "docs/verification/isolated-mount-0.2.1.json",
+    "log": "docs/verification/isolated-mount-0.2.1.log",
+    "result": "passed",
+    "checks": 19,
+    "cleanupVerified": true,
+    "tarballSha256": "acba46a2eb44e64cd589974fd3b584f85479542d5d26bdc074c19130e78cab94",
+    "packedClientSha256": "5b272f26ca98072523a28967f8f9646de2fbed8018944e73388d7e2d9e4bf3fe",
+    "clientDelivery": {
+      "status": 200,
+      "containsPackedClient": true
+    },
+    "browser": {
+      "report": "docs/verification/browser-hot-reenable-0.2.1.json",
+      "log": "docs/verification/browser-hot-reenable-0.2.1.log",
+      "result": "passed",
+      "checks": [
+        "profile-created",
+        "profile-tarball-install",
+        "dump-config",
+        "bounded-host-startup",
+        "browser-launched",
+        "web-ui-boot",
+        "web-ui-hot-disable-1",
+        "web-ui-hot-enable-1",
+        "web-ui-hot-disable-2",
+        "web-ui-hot-enable-2",
+        "web-ui-hot-reenable",
+        "web-ui-panel-opens",
+        "web-ui-console-clean",
+        "tarball-unchanged",
+        "owned-processes-stopped",
+        "owned-process-and-profile-cleanup"
+      ],
+      "consoleErrors": 0,
+      "cleanupVerified": true,
+      "method": "owned disposable non-Desktop DSH Web profile from the exact tarball + real Google Chrome via CDP: two bundle off/on cycles, sidebar entry and panel restored, clean console"
+    }
+  }
+}
