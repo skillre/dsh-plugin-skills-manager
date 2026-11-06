@@ -5,6 +5,8 @@ import { ENDPOINT } from '../types.js'
 import type { Translate } from './messages.js'
 
 export interface ClientLocale {
+  /** Combined registration; one disposer removes every dictionary it added. */
+  register(namespace: string, dictionaries: Record<string, Record<string, string>>): () => void
   register(namespace: string, locale: string, dictionary: Record<string, string>): () => void
   bind(namespace: string): Translate
   getSnapshot(): { active: string; revision: number }

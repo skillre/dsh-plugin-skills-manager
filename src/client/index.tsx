@@ -208,10 +208,12 @@ export function apply(rawContext: Context): void {
   const ctx = rawContext as unknown as ClientContext
   const lifetime = new AbortController()
   ctx.effect(() => () => lifetime.abort())
-  ctx.locale.register(LOCALE_NAMESPACE, 'en', en)
-  ctx.locale.register(LOCALE_NAMESPACE, 'zh', zh)
+  // Dictionaries must leave with the plugin Fiber: the locale service refuses a
+  // second registration for the same namespace and locale, so a leaked first
+  // registration makes every later activation of this plugin fail.
+  ctx.effect(() => ctx.locale.register(LOCALE_NAMESPACE, { en, zh }), 'skillre-skills-manager client dictionaries')
   const t = ctx.locale.bind(LOCALE_NAMESPACE)
   const api = createApi(ctx, lifetime.signal)
-  ctx.slots.inject('sidebar.panellist', () => ctx.slots.register({ name: 'sidebar.panellist', id: PANEL_ID, order: 24, label: () => t('nav') }, ({ size }: { size: number; active: boolean }) => <Icon name="book" size={size}/>))
-  ctx.slots.inject('main', () => ctx.slots.register({ name: 'main', key: PANEL_ID }, () => <SkillsPage api={api} localeService={ctx.locale} t={t}/>))
+  ctx.effect(() => ctx.slots.inject('sidebar.panellist', () => ctx.slots.register({ name: 'sidebar.panellist', id: PANEL_ID, order: 24, label: () => t('nav') }, ({ size }: { size: number; active: boolean }) => <Icon name="book" size={size}/>)), 'skillre-skills-manager sidebar entry')
+  ctx.effect(() => ctx.slots.inject('main', () => ctx.slots.register({ name: 'main', key: PANEL_ID }, () => <SkillsPage api={api} localeService={ctx.locale} t={t}/>)), 'skillre-skills-manager main panel')
 }
