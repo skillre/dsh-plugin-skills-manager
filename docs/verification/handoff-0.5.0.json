@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "repo": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager",
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.5.0",
+  "result": "passed",
+  "artifact": {
+    "filename": "skillre-dsh-plugin-skills-manager-0.5.0.tgz",
+    "sha256": "d6ed075cfb51b80171986cfb7a402c8fee891a41443b0c86ba6242c3d9a74149",
+    "sizeBytes": 111063,
+    "entryCount": 42
+  },
+  "publication": {
+    "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
+    "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.5.0",
+    "asset": "https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.5.0/skillre-dsh-plugin-skills-manager-0.5.0.tgz",
+    "npmPublished": false,
+    "note": "Recorded before the reviewed OIDC dispatch: the npm block, registry tarball sha256 and Release asset identity are filled in after the protected npm-publish environment approves the workflow. CI repacks the same committed sources, so the CI tarball differs in tar metadata only; extracted file contents are identical."
+  },
+  "display": {
+    "detailDocuments": [
+      "docs/DETAIL.md",
+      "docs/DETAIL.zh.md"
+    ],
+    "previewImages": [
+      "docs/preview.svg",
+      "docs/preview.zh.svg"
+    ],
+    "cardMeta": {
+      "en": {
+        "title": "Skills Manager",
+        "description": "Discover, install, check and update DSH skills, with safe removal and restorable backups.",
+        "detail": "docs/DETAIL.md"
+      },
+      "zh": {
+        "title": "技能管理",
+        "description": "检索、安装、检查和更新 DSH 技能，支持安全删除与备份恢复。",
+        "detail": "docs/DETAIL.zh.md"
+      }
+    },
+    "previewCheck": "preview: OK (0 warning(s))",
+    "packed": true
+  },
+  "evidence": {
+    "preFinalMount": "docs/verification/pre-final-mount-0.5.0-gateway.json",
+    "finalMount": "docs/verification/isolated-mount-0.5.0.json",
+    "browser": "docs/verification/browser-hot-reenable-0.5.0.json",
+    "finalArtifact": "docs/verification/final-artifact-0.5.0.json",
+    "checkLog": "docs/verification/check-0.5.0.log",
+    "npmRegistryMount": "docs/verification/npm-registry-mount-0.5.0.json",
+    "screenshots": [
+      "docs/verification/settings-ui-0.5.0.png",
+      "docs/verification/settings-ui-filter-0.5.0.png"
+    ]
+  },
+  "userActions": [
+    "Approve the npm-publish environment for the dispatched Release workflow; the publish job then runs the verified tarball through OIDC and creates the v0.5.0 tag/Release.",
+    "Update 技能管理 from Plugins once 0.5.0 is on npm (the Versions section appears for npm installs) or install it from Discover, then refresh the page once.",
+    "Open 设置 → 技能管理: the three number cards are clickable filters and the page shares the rest of the Settings surface; Electron Desktop visual acceptance is still yours."
+  ],
+  "residue": []
+}

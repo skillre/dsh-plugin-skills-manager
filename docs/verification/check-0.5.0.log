@@ -1,0 +1,283 @@
+
+> @skillre/dsh-plugin-skills-manager@0.5.0 check
+> npm run preview:check && npm run typecheck && npm test && npm run pack:check && git diff --exit-code -- lib
+
+
+> @skillre/dsh-plugin-skills-manager@0.5.0 preview:check
+> node scripts/preview.mjs check
+
+preview: OK (0 warning(s)).
+
+> @skillre/dsh-plugin-skills-manager@0.5.0 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> @skillre/dsh-plugin-skills-manager@0.5.0 test
+> vitest run
+
+
+ RUN  v4.1.12 /Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager
+
+ ✓ tests/client-choices.spec.ts (5 tests) 3ms
+ ✓ tests/boundaries.spec.ts (6 tests) 14ms
+ ✓ tests/client-lifecycle.spec.ts (3 tests) 4ms
+ ✓ tests/plugin.spec.ts (1 test) 2ms
+ ✓ tests/github.spec.ts (14 tests) 80ms
+ ✓ tests/wellknown.spec.ts (7 tests) 253ms
+ ✓ tests/transport.spec.ts (20 tests) 360ms
+ ✓ tests/management.spec.ts (10 tests) 1467ms
+     ✓ updates several checked skills with backups, skips latest and honours local-modification policy  426ms
+ ✓ tests/manager.spec.ts (15 tests) 1954ms
+     ✓ installs verified resources, updates with a backup, removes and restores without overwriting  318ms
+     ✓ exposes live item progress while a job is running  328ms
+ ✓ tests/lifecycle.spec.ts (7 tests) 2156ms
+     ✓ deadline preserves ordinary cancellation semantics  1005ms
+     ✓ deadline preserves recovery-required semantics  1002ms
+
+ Test Files  10 passed (10)
+      Tests  88 passed (88)
+   Start at  22:43:28
+   Duration  2.52s (transform 986ms, setup 0ms, import 2.17s, tests 6.29s, environment 1ms)
+
+
+> @skillre/dsh-plugin-skills-manager@0.5.0 pack:check
+> npm run build && publint && npm pack --dry-run --json --ignore-scripts
+
+
+> @skillre/dsh-plugin-skills-manager@0.5.0 build
+> npm run clean && tsc -p tsconfig.build.json && node scripts/build-client.mjs
+
+
+> @skillre/dsh-plugin-skills-manager@0.5.0 clean
+> node scripts/clean.mjs
+
+Running publint v0.3.25 for @skillre/dsh-plugin-skills-manager...
+Packing files with `npm pack`...
+Linting...
+All good!
+[
+  {
+    "id": "@skillre/dsh-plugin-skills-manager@0.5.0",
+    "name": "@skillre/dsh-plugin-skills-manager",
+    "version": "0.5.0",
+    "size": 111063,
+    "unpackedSize": 502406,
+    "shasum": "e89cac53fb8916aac80c4182a3807faa36817bc6",
+    "integrity": "sha512-8bjdZPOQQNw20ygqYDZVCt8/80HkcZYZD9QMbe5rIgrk3wkWv07tMqBmZyn3RPRlYMjCtV7LZEMBThZMKIv92g==",
+    "filename": "skillre-dsh-plugin-skills-manager-0.5.0.tgz",
+    "files": [
+      {
+        "path": "LICENSE",
+        "size": 1064,
+        "mode": 420
+      },
+      {
+        "path": "README.en.md",
+        "size": 26852,
+        "mode": 420
+      },
+      {
+        "path": "README.md",
+        "size": 26204,
+        "mode": 420
+      },
+      {
+        "path": "UNINSTALL.md",
+        "size": 5071,
+        "mode": 420
+      },
+      {
+        "path": "compatibility.json",
+        "size": 40092,
+        "mode": 420
+      },
+      {
+        "path": "cordis.patch.yml",
+        "size": 192,
+        "mode": 420
+      },
+      {
+        "path": "docs/DETAIL.md",
+        "size": 156,
+        "mode": 420
+      },
+      {
+        "path": "docs/DETAIL.zh.md",
+        "size": 180,
+        "mode": 420
+      },
+      {
+        "path": "docs/PREVIEW.md",
+        "size": 909,
+        "mode": 420
+      },
+      {
+        "path": "docs/preview.svg",
+        "size": 7511,
+        "mode": 420
+      },
+      {
+        "path": "docs/preview.zh.svg",
+        "size": 7554,
+        "mode": 420
+      },
+      {
+        "path": "icon.svg",
+        "size": 886,
+        "mode": 420
+      },
+      {
+        "path": "lib/archive.d.ts",
+        "size": 1117,
+        "mode": 420
+      },
+      {
+        "path": "lib/archive.js",
+        "size": 12360,
+        "mode": 420
+      },
+      {
+        "path": "lib/client.js",
+        "size": 186813,
+        "mode": 420
+      },
+      {
+        "path": "lib/config.d.ts",
+        "size": 5721,
+        "mode": 420
+      },
+      {
+        "path": "lib/config.js",
+        "size": 5016,
+        "mode": 420
+      },
+      {
+        "path": "lib/errors.d.ts",
+        "size": 403,
+        "mode": 420
+      },
+      {
+        "path": "lib/errors.js",
+        "size": 687,
+        "mode": 420
+      },
+      {
+        "path": "lib/fs-store.d.ts",
+        "size": 3102,
+        "mode": 420
+      },
+      {
+        "path": "lib/fs-store.js",
+        "size": 33569,
+        "mode": 420
+      },
+      {
+        "path": "lib/github.d.ts",
+        "size": 2715,
+        "mode": 420
+      },
+      {
+        "path": "lib/github.js",
+        "size": 30794,
+        "mode": 420
+      },
+      {
+        "path": "lib/index.d.ts",
+        "size": 516,
+        "mode": 420
+      },
+      {
+        "path": "lib/index.js",
+        "size": 8703,
+        "mode": 420
+      },
+      {
+        "path": "lib/manager.d.ts",
+        "size": 2292,
+        "mode": 420
+      },
+      {
+        "path": "lib/manager.js",
+        "size": 54248,
+        "mode": 420
+      },
+      {
+        "path": "lib/skill-metadata.d.ts",
+        "size": 244,
+        "mode": 420
+      },
+      {
+        "path": "lib/skill-metadata.js",
+        "size": 2124,
+        "mode": 420
+      },
+      {
+        "path": "lib/transport.d.ts",
+        "size": 729,
+        "mode": 420
+      },
+      {
+        "path": "lib/transport.js",
+        "size": 3133,
+        "mode": 420
+      },
+      {
+        "path": "lib/types.d.ts",
+        "size": 8446,
+        "mode": 420
+      },
+      {
+        "path": "lib/types.js",
+        "size": 397,
+        "mode": 420
+      },
+      {
+        "path": "lib/utils.d.ts",
+        "size": 169,
+        "mode": 420
+      },
+      {
+        "path": "lib/utils.js",
+        "size": 768,
+        "mode": 420
+      },
+      {
+        "path": "lib/well-known.d.ts",
+        "size": 1530,
+        "mode": 420
+      },
+      {
+        "path": "lib/well-known.js",
+        "size": 10096,
+        "mode": 420
+      },
+      {
+        "path": "lib/zip.d.ts",
+        "size": 319,
+        "mode": 420
+      },
+      {
+        "path": "lib/zip.js",
+        "size": 6182,
+        "mode": 420
+      },
+      {
+        "path": "locale/en.json",
+        "size": 194,
+        "mode": 420
+      },
+      {
+        "path": "locale/zh.json",
+        "size": 189,
+        "mode": 384
+      },
+      {
+        "path": "package.json",
+        "size": 3159,
+        "mode": 420
+      }
+    ],
+    "entryCount": 42,
+    "bundled": []
+  }
+]

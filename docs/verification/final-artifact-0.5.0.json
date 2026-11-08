@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.5.0",
+  "dsh": "0.2.2-rc.1",
+  "verifiedAt": "2026-11-08",
+  "result": "passed",
+  "publication": {
+    "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
+    "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.5.0",
+    "asset": "https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.5.0/skillre-dsh-plugin-skills-manager-0.5.0.tgz",
+    "npmPublished": false,
+    "note": "Recorded before the reviewed OIDC dispatch: the npm block, registry tarball sha256 and Release asset identity are filled in after the protected npm-publish environment approves the workflow. CI repacks the same committed sources, so the CI tarball differs in tar metadata only; extracted file contents are identical."
+  },
+  "artifact": {
+    "path": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/release-artifact/skillre-dsh-plugin-skills-manager-0.5.0.tgz",
+    "filename": "skillre-dsh-plugin-skills-manager-0.5.0.tgz",
+    "sha256": "d6ed075cfb51b80171986cfb7a402c8fee891a41443b0c86ba6242c3d9a74149",
+    "sha1": "e89cac53fb8916aac80c4182a3807faa36817bc6",
+    "integrity": "sha512-8bjdZPOQQNw20ygqYDZVCt8/80HkcZYZD9QMbe5rIgrk3wkWv07tMqBmZyn3RPRlYMjCtV7LZEMBThZMKIv92g==",
+    "sizeBytes": 111063,
+    "packedPayloadBytes": 502406,
+    "entryCount": 42
+  },
+  "display": {
+    "detailDocuments": [
+      "docs/DETAIL.md",
+      "docs/DETAIL.zh.md"
+    ],
+    "previewImages": [
+      "docs/preview.svg",
+      "docs/preview.zh.svg"
+    ],
+    "cardMeta": {
+      "en": {
+        "title": "Skills Manager",
+        "description": "Discover, install, check and update DSH skills, with safe removal and restorable backups.",
+        "detail": "docs/DETAIL.md"
+      },
+      "zh": {
+        "title": "技能管理",
+        "description": "检索、安装、检查和更新 DSH 技能，支持安全删除与备份恢复。",
+        "detail": "docs/DETAIL.zh.md"
+      }
+    },
+    "previewCheck": "preview: OK (0 warning(s))",
+    "packed": true
+  },
+  "tests": {
+    "command": "npm run check",
+    "log": "docs/verification/check-0.5.0.log",
+    "exitCode": 0,
+    "testFiles": 10,
+    "testsPassed": 88,
+    "displayContractCheck": "passed",
+    "typecheck": "passed",
+    "build": "passed",
+    "publint": "passed",
+    "packDryRun": "passed",
+    "finalPackedMount": "passed"
+  },
+  "verification": {
+    "report": "docs/verification/isolated-mount-0.5.0.json",
+    "log": "docs/verification/isolated-mount-0.5.0.log",
+    "result": "passed",
+    "checks": 19,
+    "cleanupVerified": true,
+    "tarballSha256": "d6ed075cfb51b80171986cfb7a402c8fee891a41443b0c86ba6242c3d9a74149",
+    "packedClientSha256": "705d6a4df1e49517d63226405f39fe644d7677ec2725ad0626c2e406881021d8",
+    "clientDelivery": {
+      "status": 200,
+      "containsPackedClient": true
+    },
+    "browser": {
+      "report": "docs/verification/browser-hot-reenable-0.5.0.json",
+      "log": "docs/verification/browser-hot-reenable-0.5.0.log",
+      "result": "passed",
+      "checks": [
+        "profile-created",
+        "profile-tarball-install",
+        "dump-config",
+        "bounded-host-startup",
+        "browser-launched",
+        "web-ui-boot",
+        "web-ui-no-sidebar-entry",
+        "web-ui-settings-page",
+        "web-ui-settings-unified",
+        "web-ui-overview-tiles",
+        "web-ui-settings-screenshot",
+        "web-ui-discover-results",
+        "web-ui-discover-review",
+        "web-ui-detail-preview-image",
+        "web-ui-hot-disable-1",
+        "web-ui-hot-enable-1",
+        "web-ui-hot-disable-2",
+        "web-ui-hot-enable-2",
+        "web-ui-hot-reenable",
+        "web-ui-console-clean",
+        "tarball-unchanged",
+        "owned-processes-stopped",
+        "owned-process-and-profile-cleanup"
+      ],
+      "consoleErrors": 0,
+      "cleanupVerified": true,
+      "screenshots": [
+        "docs/verification/settings-ui-0.5.0.png",
+        "docs/verification/settings-ui-filter-0.5.0.png"
+      ],
+      "method": "Owned disposable non-Desktop DSH Web profile booted from the exact release tarball plus a real Google Chrome over CDP: no left-rail skills entry, the Settings rail label equals the page heading, host Settings typography/card radius/hairline border are asserted, the three overview number cards are buttons and filter/clear the installed list, a real skills.sh hit resolves into the full repository review, the plugin detail page renders the shipped 640x300 preview banner, two bundle off/on cycles restore the Settings row and page, and the console stays clean."
+    }
+  }
+}
