@@ -14,8 +14,27 @@
     "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
     "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.4.0",
     "asset": "https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.4.0/skillre-dsh-plugin-skills-manager-0.4.0.tgz",
-    "npmPublished": false,
-    "note": "Published through the reviewed OIDC workflow after this evidence was recorded; GitHub tag/Release are created by the workflow after the registry publish."
+    "npmPublished": true,
+    "note": "Published through the reviewed OIDC workflow after this evidence was recorded; GitHub tag/Release are created by the workflow after the registry publish.",
+    "npm": {
+      "package": "@skillre/dsh-plugin-skills-manager",
+      "version": "0.4.0",
+      "distTag": "latest",
+      "integrity": "sha512-dQnsGCHutdYKD/fliI8Ow/7Aa+ykvp7Z7dXauLwCWj+IzP8OGVAGdUOUlnIniKDVL8FVQyZLm71e7kriqpUmqg==",
+      "shasum": "13d22954a3500c0b2f4ef5d96b662eae6fe21139",
+      "registryTarballSha256": "252a0fdbbf2b970e1cf2cb3f9f974ed15eac4a62650070469f024a003988468e",
+      "sizeBytes": 106806,
+      "attestations": "https://registry.npmjs.org/-/npm/v1/attestations/@skillre%2fdsh-plugin-skills-manager@0.4.0",
+      "publishedAt": "2026-11-08T13:07:50Z",
+      "channel": "GitHub Actions release.yml, npm Trusted Publishing (OIDC), protected npm-publish environment approved by the human reviewer",
+      "verifiedAt": "2026-11-08T21:10:00+08:00"
+    },
+    "releaseAsset": {
+      "name": "skillre-dsh-plugin-skills-manager-0.4.0.tgz",
+      "sha256": "252a0fdbbf2b970e1cf2cb3f9f974ed15eac4a62650070469f024a003988468e",
+      "sizeBytes": 106806,
+      "identicalToRegistryTarball": true
+    }
   },
   "display": {
     "detailDocuments": [
@@ -46,7 +65,8 @@
     "finalMount": "docs/verification/isolated-mount-0.4.0.json",
     "browser": "docs/verification/browser-hot-reenable-0.4.0.json",
     "finalArtifact": "docs/verification/final-artifact-0.4.0.json",
-    "checkLog": "docs/verification/check-0.4.0.log"
+    "checkLog": "docs/verification/check-0.4.0.log",
+    "npmRegistryMount": "docs/verification/npm-registry-mount-0.4.0.json"
   },
   "userActions": [
     "Approve the npm-publish environment for the dispatched Release workflow; the publish job then runs the verified tarball through OIDC and creates the v0.4.0 tag/Release.",
