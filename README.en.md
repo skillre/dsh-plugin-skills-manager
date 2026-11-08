@@ -36,23 +36,33 @@ For an existing installation, first disable or uninstall 0.1.0 in **Plugins**, c
 
 ## User installation
 
-The source lives at [github.com/skillre/dsh-plugin-skills-manager](https://github.com/skillre/dsh-plugin-skills-manager). It is **not published to npm**. DSH Plugins accepts two sources:
+The source lives at [github.com/skillre/dsh-plugin-skills-manager](https://github.com/skillre/dsh-plugin-skills-manager) and the package is published to npm: **`@skillre/dsh-plugin-skills-manager@0.3.0`**.
 
-**Option A: Git repository URL (tracks the default branch)** — paste this directly into **Add plugin**:
+**Option A: npm package name (recommended, updated in place)** — enter this in **Add plugin**:
+
+```
+@skillre/dsh-plugin-skills-manager
+```
+
+or pin it as `@skillre/dsh-plugin-skills-manager@0.3.0`. An npm install shows the **Versions** section and can be upgraded from Plugins, and it is the source listed in the user's own market index for **Discover**.
+
+**Option B: Git repository URL (tracks the default branch)** — paste this into **Add plugin**:
 
 ```
 https://github.com/skillre/dsh-plugin-skills-manager
 ```
 
-The repository commits its built output under `lib/`, so pnpm does not need to execute build scripts and the `allowBuilds` supply-chain policy does not block the install. Restart Desktop afterwards. This follows the latest `main` commit.
+The repository commits its built output under `lib/`, so pnpm does not need to execute build scripts and the `allowBuilds` supply-chain policy does not block the install. This follows the latest `main` commit. Note that a Git install has **no Versions section**: it can only be removed and reinstalled, never upgraded in place.
 
-**Option B: Release tarball (pinned version)** — download [`skillre-dsh-plugin-skills-manager-0.3.0.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.3.0/skillre-dsh-plugin-skills-manager-0.3.0.tgz) from the [GitHub Release v0.3.0](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.3.0) and enter its **full absolute local path** in **Add plugin**.
+**Option C: Release tarball (pinned version)** — download [`skillre-dsh-plugin-skills-manager-0.3.0.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.3.0/skillre-dsh-plugin-skills-manager-0.3.0.tgz) from the [GitHub Release v0.3.0](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.3.0) and enter its **full absolute local path** in **Add plugin**. It is byte-identical to the npm publication (same registry integrity).
 
 1. Open **Plugins → Add plugin** in DSH.
-2. Paste the Git URL or the tarball's absolute path, review the trust notice and initiate installation yourself.
+2. Paste the npm package name, the Git URL or the tarball's absolute path, review the trust notice and initiate installation yourself.
 3. Enable it, open **Settings** (the sidebar-foot account menu → Settings, or ⌘, on macOS), and choose **Skills** in the Settings sidebar. The left rail gains no skills button.
 
-Final installation belongs to the user. Do not use an unpublished npm spec or source directory; use the Option B Release asset (the exact verified file) when pinning a version.
+To move an existing `github:` install to the npm install: remove the Git entry in Plugins first, then add the npm package name. Skill files, provenance records and backups live outside the profile and are unaffected.
+
+Final installation belongs to the user. Pin a version with an explicit npm version or the Option C Release asset (the same verified bytes).
 
 ## Usage and scope
 
@@ -167,7 +177,7 @@ npm pack --json --ignore-scripts
 DSH_TEST_CLI=/path/to/current/dsh npm run test:integration -- /absolute/path/to/package.tgz
 ```
 
-The repository commits its built `lib/` output so that Option A Git-URL installs need no build scripts; after changing `src/`, run `npm run build` and commit `lib/` — CI enforces this with `git diff --exit-code -- lib`. Run the runner in a **bounded foreground shell with sufficient time**. It creates a new owned non-Desktop home/profile, installs the packed artifact, inspects composition, exercises authenticated RPC and Client delivery, uninstalls, then waits for actual owned-process closure and verifies group/root absence in `finally`. `EPERM` or uncertain cleanup is a failure, never proof of exit/removal; owner/PID and failure evidence are retained. It must never target a user's profile; source/link deployment is forbidden. Keep the tarball, built files and metadata unchanged during verification; do not repack concurrently.
+The repository commits its built `lib/` output so that Option B Git-URL installs need no build scripts; after changing `src/`, run `npm run build` and commit `lib/` — CI enforces this with `git diff --exit-code -- lib`. Run the runner in a **bounded foreground shell with sufficient time**. It creates a new owned non-Desktop home/profile, installs the packed artifact, inspects composition, exercises authenticated RPC and Client delivery, uninstalls, then waits for actual owned-process closure and verifies group/root absence in `finally`. `EPERM` or uncertain cleanup is a failure, never proof of exit/removal; owner/PID and failure evidence are retained. It must never target a user's profile; source/link deployment is forbidden. Keep the tarball, built files and metadata unchanged during verification; do not repack concurrently.
 
 See [uninstall and recovery](<UNINSTALL.md>). Removing the plugin does not delete user skills or backups.
 

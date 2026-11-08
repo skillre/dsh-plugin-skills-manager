@@ -12,7 +12,7 @@
 - Discover results show their canonical skills.sh link, long skill descriptions are clamped in the review dialog, and the Discover toolbar no longer duplicates the header's install action.
 - Add regression tests for search-hit resolution, install-collision decisions and the new `install` directory override, plus GitHub token scoping, rate-limit messaging, ref caching and archive-fallback equivalence (**88 tests total**). Rebuild the committed `lib/`.
 
-No npm publication or user-profile change is included; the GitHub source repository and Release asset are updated in the same user-authorized GitHub flow.
+0.3.0 is now published on npm as `@skillre/dsh-plugin-skills-manager@0.3.0` (first publish, manual login + 2FA; registry integrity `sha512-vy6XupXAKH9k9WXaLT/TcM8iakSVzkGOMqEnkmIkQSt5KlxE4IdTZlhLd6CWSWGoZeH1xuxxQ8Gj0kzJG/wszw==` matches the Release asset byte-for-byte). The package therefore appears in the user's market index with the npm source and can be updated in place; the GitHub source repository and Release asset remain available for pinned installs.
 
 ## 0.2.1 — hot re-enable fix (local build)
 

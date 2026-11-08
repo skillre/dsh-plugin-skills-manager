@@ -36,24 +36,34 @@
 
 ## 用户安装
 
-源码托管在 [github.com/skillre/dsh-plugin-skills-manager](https://github.com/skillre/dsh-plugin-skills-manager)。**尚未发布 npm**。DSH Plugins 支持两种安装来源：
+源码托管在 [github.com/skillre/dsh-plugin-skills-manager](https://github.com/skillre/dsh-plugin-skills-manager)，并已发布到 npm：**`@skillre/dsh-plugin-skills-manager@0.3.0`**。
 
-**方式 A：Git 仓库地址（跟随默认分支）** —— 在 **Add plugin / 添加插件** 输入框直接输入：
+**方式 A：npm 包名（推荐，可原地升级）** —— 在 **Add plugin / 添加插件** 输入：
+
+```
+@skillre/dsh-plugin-skills-manager
+```
+
+或固定版本 `@skillre/dsh-plugin-skills-manager@0.3.0`。npm 安装会显示「版本」区块，之后可直接在 Plugins 中升级，也可从 **Discover** 安装（本插件已列入用户自建市场索引，源为 npm）。
+
+**方式 B：Git 仓库地址（跟随默认分支）** —— 在 **Add plugin** 输入：
 
 ```
 https://github.com/skillre/dsh-plugin-skills-manager
 ```
 
-仓库已提交构建产物（`lib/`），pnpm 不需要执行构建脚本，因此不受 `allowBuilds` 供应链限制；安装后重启 Desktop 即可。该方式跟随 `main` 最新提交，适合持续获取最新版。
+仓库已提交构建产物（`lib/`），pnpm 不需要执行构建脚本，因此不受 `allowBuilds` 供应链限制；该方式跟随 `main` 最新提交。注意：**Git 安装没有「版本」区块，只能卸载重装，无法原地升级**。
 
-**方式 B：Release tarball（固定版本）** —— 从 [GitHub Release v0.3.0](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.3.0) 下载 [`skillre-dsh-plugin-skills-manager-0.3.0.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.3.0/skillre-dsh-plugin-skills-manager-0.3.0.tgz)，在 **Add plugin** 中输入它的**完整本地绝对路径**。
+**方式 C：Release tarball（固定版本）** —— 从 [GitHub Release v0.3.0](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.3.0) 下载 [`skillre-dsh-plugin-skills-manager-0.3.0.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.3.0/skillre-dsh-plugin-skills-manager-0.3.0.tgz)，在 **Add plugin** 中输入它的**完整本地绝对路径**。该文件与 npm 发布内容完全一致（registry integrity 相同）。
 
 1. 打开 DSH 左侧 **Plugins / 插件**。
 2. 选择 **Add plugin / 添加插件**。
-3. 粘贴 Git 仓库地址或 tarball 的本地绝对路径，查看信任提示并自行确认安装。
+3. 粘贴 npm 包名、Git 仓库地址或 tarball 的本地绝对路径，查看信任提示并自行确认安装。
 4. 启用后，打开 **设置**（左侧栏底部「更多 / More」→ 设置，或快捷键 ⌘,），在设置侧栏中选择「**技能 / Skills**」。左侧栏不会新增技能按钮。
 
-最终安装由用户发起。不要输入尚未发布的 npm 包名或源码目录；若要固定版本，请使用方式 B 的 Release 资产（该文件经过精确验证）。
+从旧的 `github:` 安装升级到 npm 安装：先在 Plugins 中移除旧的 Git 条目，再用方式 A 安装 npm 包名（技能文件、来源记录与备份都在 profile 之外，不受影响）。
+
+最终安装由用户发起。固定版本请使用方式 A 的显式版本号或方式 C 的 Release 资产（同一份已验证内容）。
 
 ## 使用
 
@@ -187,7 +197,7 @@ npm pack --json --ignore-scripts
 DSH_TEST_CLI=/path/to/current/dsh npm run test:integration -- /absolute/path/to/package.tgz
 ```
 
-仓库提交了 `lib/` 构建产物，以支持方式 A 的 Git 地址安装；修改 `src/` 后必须执行 `npm run build` 并提交 `lib/`，CI 会通过 `git diff --exit-code -- lib` 校验两者一致。隔离脚本必须在给足时限的**前景有界 shell** 中运行。它创建新的非 Desktop 自有测试 home/profile，验证真实安装、组合、RPC、Client 资源及卸载，最后等待全部自有进程真实关闭并核实进程组与目录缺失。`EPERM` 或其他不明清理状态是失败，不会被当成已退出/已清理；会保留 owner/PID 与失败证据。严禁将测试脚本指向用户 profile，严禁源码 `link:` 部署。检查期间保持同一 tarball、构建文件与元数据不变，不并发重包。
+仓库提交了 `lib/` 构建产物，以支持方式 B 的 Git 地址安装；修改 `src/` 后必须执行 `npm run build` 并提交 `lib/`，CI 会通过 `git diff --exit-code -- lib` 校验两者一致。隔离脚本必须在给足时限的**前景有界 shell** 中运行。它创建新的非 Desktop 自有测试 home/profile，验证真实安装、组合、RPC、Client 资源及卸载，最后等待全部自有进程真实关闭并核实进程组与目录缺失。`EPERM` 或其他不明清理状态是失败，不会被当成已退出/已清理；会保留 owner/PID 与失败证据。严禁将测试脚本指向用户 profile，严禁源码 `link:` 部署。检查期间保持同一 tarball、构建文件与元数据不变，不并发重包。
 
 ## 卸载与回滚
 

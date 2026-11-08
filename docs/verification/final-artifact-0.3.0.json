@@ -9,7 +9,26 @@
     "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
     "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.3.0",
     "asset": "https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.3.0/skillre-dsh-plugin-skills-manager-0.3.0.tgz",
-    "npmPublished": false
+    "npmPublished": true,
+    "npm": {
+      "package": "@skillre/dsh-plugin-skills-manager",
+      "version": "0.3.0",
+      "distTag": "latest",
+      "integrity": "sha512-vy6XupXAKH9k9WXaLT/TcM8iakSVzkGOMqEnkmIkQSt5KlxE4IdTZlhLd6CWSWGoZeH1xuxxQ8Gj0kzJG/wszw==",
+      "shasum": "86b45fcfb9aa7a3a769edf648702eff68bacacbe",
+      "fileCount": 37,
+      "unpackedSize": 456944,
+      "publishedAt": "2026-11-08T06:46:06.677Z",
+      "verifiedAt": "2026-11-08T14:49:38+08:00",
+      "firstPublish": true
+    },
+    "marketIndex": {
+      "hosted": "https://skillre.github.io/dsh-plugin-market/index.json",
+      "listed": true,
+      "source": "npm",
+      "hostedIndexSha256": "d6daed9c30a780b21cfd05223d51f115e4586c2e55a02dddacf15d735102ca44",
+      "marketCommit": "ed1e914e50937511db1b38dc4706d0f942299444"
+    }
   },
   "artifact": {
     "path": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/release-artifact/skillre-dsh-plugin-skills-manager-0.3.0.tgz",
