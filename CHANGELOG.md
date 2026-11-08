@@ -10,6 +10,8 @@
 - **Preview banner and detail page stay honest**: both previews now show the unified page (技能管理 rail entry, clickable number cards, full tab labels) and the DETAIL alt text describes the new surface. `npm run preview:check` still passes with 0 warnings.
 - Verified on DSH 0.2.2-rc.1 (cordis 4.1.0) with the complete 88-test suite, the packed-package mount checks, and a real DSH Web page run that now also asserts the heading repeats the rail label, the host Settings typography/card radius/hairline border, three clickable overview buttons, and filter + clear behaviour (`web-ui-settings-unified`, `web-ui-overview-tiles`, with screenshots recorded as evidence). Bump to 0.5.0.
 
+0.5.0 is now published on npm as `@skillre/dsh-plugin-skills-manager@0.5.0` through the reviewed OIDC workflow (workflow run 42491291002; registry integrity `sha512-0jiG42ajgu1udIeeznncoDYmPV7Dznpjji1KTJlt484xNSKm2DTUBDT7G1HjjD/WcE2mVBXAR1v4Qq0fMISpHw==`; the GitHub Release asset is byte-identical to the registry tarball). The user's market index lists 0.5.0 from npm.
+
 ## 0.4.0 — the detail page is a picture (display contract)
 
 - **The plugin detail page is now one preview image, not a manual.** `locale/en.json` and `locale/zh.json` gained `meta.detail` pointing at `docs/DETAIL.md` / `docs/DETAIL.zh.md`, and each DETAIL document contains exactly one image reference. DSH no longer falls back to the README for the detail page; the README stays the full developer document (install, configuration, permissions, rollback, evidence).
