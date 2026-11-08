@@ -6,7 +6,7 @@ import { createApi } from './contracts.js'
 import type { ClientApi, ClientContext, ClientLocale } from './contracts.js'
 import { en, zh } from './messages.js'
 import type { Translate } from './messages.js'
-import { bytes, Empty, errorText, Icon, Loader, Notice, rootLabel, time } from './components.js'
+import { bytes, Empty, errorText, Icon, Loader, Notice, ProgressBar, rootLabel, time } from './components.js'
 import { BackupsPanel, DiscoverPanel, SkillCard } from './panels.js'
 import { BatchUpdateDialog, InstallDialog, LocalInstallDialog, MoveDialog, PurgeDialog, RestoreDialog, SkillDialog, WellKnownInstallDialog } from './dialogs.js'
 import { JobsPanel } from './jobs.js'
@@ -16,17 +16,27 @@ export const name = 'skillre-skills-manager-client'
 export const inject = ['slots', 'locale', 'connection']
 interface PageProps { api: ClientApi; localeService: ClientLocale; t: Translate }
 type Tab = 'local' | 'discover' | 'updates' | 'jobs' | 'backups'
+type Overview = 'all' | 'updates' | 'readonly'
 interface InstallRequest { source: string; name: string; skillId?: string }
+
+const TABS: Tab[] = ['local', 'discover', 'updates', 'jobs', 'backups']
 
 /**
  * The manager is a Settings section, not a sidebar panel: DSH's left rail keeps
  * its own navigation and every skill operation lives one Settings click away.
+ *
+ * The surface deliberately reuses the Settings design language of the running
+ * DSH build: one heading that matches the navigation label, a tertiary intro,
+ * settings cards (--dsw-alias-settings-card-*), underline tabs and native
+ * buttons/inputs. Nothing here invents a second visual system next to the
+ * shell it is rendered in.
  */
 export function SkillsPage({ api, localeService, t }: PageProps): React.JSX.Element {
   const localeState = useSyncExternalStore(listener => localeService.subscribe(listener), () => localeService.getSnapshot(), () => localeService.getSnapshot())
   const locale = localeState.active
   const [catalog, setCatalog] = useState<Catalog | null>(null)
   const [tab, setTab] = useState<Tab>('local')
+  const [overview, setOverview] = useState<Overview>('all')
   const [workspaceId, setWorkspaceId] = useState('')
   const [location, setLocation] = useState('all')
   const [filter, setFilter] = useState('')
@@ -50,6 +60,8 @@ export function SkillsPage({ api, localeService, t }: PageProps): React.JSX.Elem
   const backupSequence = useRef(0)
   const jobsRef = useRef<UpdateJob[]>([])
   const wasRunning = useRef(false)
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const readonlyOnly = overview === 'readonly'
   const scope = workspaceId ? { workspaceId } : {}
   const readBackups = useCallback(async () => {
     const seq = ++backupSequence.current
@@ -109,9 +121,37 @@ export function SkillsPage({ api, localeService, t }: PageProps): React.JSX.Elem
   const writable = !!catalog?.roots.some(root => root.writable)
   const updates = catalog?.skills.filter(skill => skill.check?.status === 'update') ?? []
   const anyChecked = catalog?.skills.some(skill => !!skill.check) ?? false
+  const readOnlyCount = catalog ? catalog.skills.filter(skill => !skill.writable).length : 0
   const runningJob = jobs.find(job => job.status === 'running')
   const jobActive = !!runningJob
-  const visible = (catalog?.skills ?? []).filter(skill => (tab !== 'updates' || skill.check?.status === 'update') && (location === 'all' || skill.rootId === location) && `${skill.name} ${skill.description} ${skill.source?.repository ?? ''}`.toLowerCase().includes(filter.toLowerCase().trim()))
+  const visible = (catalog?.skills ?? []).filter(skill => (tab !== 'updates' || skill.check?.status === 'update') && (!readonlyOnly || !skill.writable) && (location === 'all' || skill.rootId === location) && `${skill.name} ${skill.description} ${skill.source?.repository ?? ''}`.toLowerCase().includes(filter.toLowerCase().trim()))
+  const filtered = !!filter.trim() || location !== 'all' || readonlyOnly
+  function resetView(): void { setFilter(''); setLocation('all'); setOverview('all') }
+  function showOverview(next: Overview): void {
+    if (!catalog) return
+    if (next === 'updates') { setOverview('all'); setFilter(''); setTab('updates'); return }
+    if (next === 'readonly') { setOverview('readonly'); setFilter(''); setLocation('all'); setTab('local'); return }
+    resetView()
+    setTab('local')
+  }
+  function selectTab(next: Tab): void {
+    if (next !== 'local') setOverview('all')
+    setTab(next)
+  }
+  function onTabKeyDown(event: React.KeyboardEvent<HTMLButtonElement>, index: number): void {
+    let nextIndex: number
+    switch (event.key) {
+      case 'ArrowRight': nextIndex = (index + 1) % TABS.length; break
+      case 'ArrowLeft': nextIndex = (index - 1 + TABS.length) % TABS.length; break
+      case 'Home': nextIndex = 0; break
+      case 'End': nextIndex = TABS.length - 1; break
+      default: return
+    }
+    event.preventDefault()
+    const next = TABS[nextIndex] as Tab
+    selectTab(next)
+    tabRefs.current[nextIndex]?.focus()
+  }
   async function checkUpdates(): Promise<void> {
     if (busy || loading || jobActive) return
     setBusy(t('checking')); setNotice(null)
@@ -126,7 +166,7 @@ export function SkillsPage({ api, localeService, t }: PageProps): React.JSX.Elem
   function revealSkill(name: string): void {
     // A freshly installed skill must be visible immediately: jump to the list
     // that contains it and narrow the filter to its name.
-    setTab('local'); setFilter(name); setLocation('all')
+    setTab('local'); setOverview('all'); setFilter(name); setLocation('all')
   }
   function mutated(result: MutationResult): void {
     if (!alive.current) return
@@ -166,45 +206,62 @@ export function SkillsPage({ api, localeService, t }: PageProps): React.JSX.Elem
   }
   function settled(): void { if (alive.current) { void reload(); if (tab === 'backups') void readBackups() } }
   const common = catalog ? { api, t, locale, catalog, workspaceId, jobActive, onJobStarted: jobStarted, onBusy: (value: boolean, label?: string) => { if (alive.current) setBusy(value ? label ?? t('loading') : '') }, onMutated: mutated, onError: (text: string) => { if (alive.current) setNotice({ text, kind: 'error' }) }, onSettled: settled } : null
+  const checking = busy === t('checking')
   return <section className="skm-page" aria-label={t('title')}><style>{css}</style><div className="skm-wrap">
     <header className="skm-header">
       <div className="skm-heading">
-        <h1 className="skm-title">{t('title')}</h1>
-        <p className="skm-subtitle">{t('settingsIntro')}</p>
+        <h2 className="skm-title">{t('title')}</h2>
+        <p className="skm-intro">{t('settingsIntro')}</p>
       </div>
       <div className="skm-actions">
-        <button className="skm-button" type="button" disabled={disabled || modalOpen || !catalog || jobActive} onClick={() => void checkUpdates()}><Icon name="refresh" spin={busy === t('checking')}/>{busy === t('checking') ? t('checking') : t('check')}</button>
-        {jobs.length > 0 && <button className="skm-button" type="button" disabled={disabled || modalOpen} onClick={() => setTab('jobs')}><Icon name="list" size={15}/>{t('jobs')}{runningJob ? ` · ${t('jobProgress', { percent: runningJob.progress })}` : ''}</button>}
-        {updates.length > 0 && <button className="skm-button skm-button-primary" type="button" disabled={disabled || modalOpen || !writable || jobActive} onClick={() => setPendingBatch(updates)}><Icon name="up" size={15}/>{t('updateAll')} ({updates.length})</button>}
-        <button className="skm-button" type="button" disabled={disabled || modalOpen || !writable} onClick={() => setLocal(true)}><Icon name="down" size={16}/>{t('fromLocal')}</button>
-        <button className="skm-button skm-button-primary" type="button" disabled={disabled || modalOpen || !writable} onClick={() => setInstall({ source: '', name: '' })}><Icon name="plus" size={16}/>{t('fromRepo')}</button>
+        <button className="skm-button" type="button" disabled={disabled || modalOpen || !catalog || jobActive} onClick={() => void checkUpdates()}><Icon name="refresh" size={15} spin={checking}/>{checking ? t('checking') : t('check')}</button>
+        <button className="skm-button" type="button" disabled={disabled || modalOpen || !writable} onClick={() => setLocal(true)}><Icon name="down" size={15}/>{t('fromLocal')}</button>
+        <button className="skm-button skm-button-primary" type="button" disabled={disabled || modalOpen || !writable} onClick={() => setInstall({ source: '', name: '' })}><Icon name="plus" size={15}/>{t('fromRepo')}</button>
       </div>
     </header>
-    <div className="skm-stats" aria-label={t('metadata')}>
-      <div className="skm-stat"><span className="skm-stat-label">{t('found')}</span><span className="skm-stat-value">{catalog ? catalog.skills.length : '—'}</span></div>
-      <div className="skm-stat skm-stat-accent"><span className="skm-stat-label">{t('available')}</span><span className="skm-stat-value">{anyChecked ? updates.length : '—'}</span></div>
-      <div className="skm-stat"><span className="skm-stat-label">{t('readonly')}</span><span className="skm-stat-value">{catalog ? catalog.skills.filter(skill => !skill.writable).length : '—'}</span></div>
+    <div className="skm-overview" role="group" aria-label={t('overview')}>
+      <button className={`skm-tile${tab === 'local' && !readonlyOnly ? ' skm-tile-active' : ''}`} type="button" aria-pressed={tab === 'local' && !readonlyOnly} disabled={!catalog} onClick={() => showOverview('all')}>
+        <span className="skm-tile-value">{catalog ? catalog.skills.length : '—'}</span>
+        <span className="skm-tile-label">{t('found')}</span>
+      </button>
+      <button className={`skm-tile${tab === 'updates' ? ' skm-tile-active' : ''}`} type="button" aria-pressed={tab === 'updates'} disabled={!catalog} onClick={() => showOverview('updates')}>
+        <span className={`skm-tile-value${updates.length && anyChecked ? ' skm-tile-accent' : ''}`}>{anyChecked ? updates.length : '—'}</span>
+        <span className="skm-tile-label">{t('available')}</span>
+      </button>
+      <button className={`skm-tile${tab === 'local' && readonlyOnly ? ' skm-tile-active' : ''}`} type="button" aria-pressed={tab === 'local' && readonlyOnly} disabled={!catalog} onClick={() => showOverview('readonly')}>
+        <span className="skm-tile-value">{catalog ? readOnlyCount : '—'}</span>
+        <span className="skm-tile-label">{t('readonly')}</span>
+      </button>
     </div>
-    <div className="skm-tabs" role="tablist" aria-label={t('title')}>{(['local', 'discover', 'updates', 'jobs', 'backups'] as Tab[]).map(item => <button type="button" className="skm-tab" id={`skm-tab-${item}`} key={item} role="tab" aria-selected={tab === item} aria-controls={`skm-panel-${item}`} onClick={() => setTab(item)}>{t(item)}{item === 'updates' && updates.length > 0 && <span className="skm-count">{updates.length}</span>}{item === 'jobs' && runningJob && <span className="skm-count">{t('jobProgress', { percent: runningJob.progress })}</span>}</button>)}</div>
+    {runningJob && <div className="skm-status" role="status"><Icon name="refresh" size={14} spin/><span className="skm-status-text">{t('jobStatusRunning')} · {t('jobProgress', { percent: runningJob.progress })}</span><ProgressBar value={runningJob.progress} label={t('jobProgress', { percent: runningJob.progress })}/></div>}
+    <div className="skm-tabs" role="tablist" aria-label={t('title')}>{TABS.map((item, index) => <button type="button" className="skm-tab" id={`skm-tab-${item}`} key={item} role="tab" aria-selected={tab === item} aria-controls="skm-panel" tabIndex={tab === item ? 0 : -1} ref={element => { tabRefs.current[index] = element }} onClick={() => selectTab(item)} onKeyDown={event => onTabKeyDown(event, index)}>{t(item)}{item === 'jobs' && runningJob && <span className="skm-tab-meta">{t('jobProgress', { percent: runningJob.progress })}</span>}</button>)}</div>
     {notice && <Notice text={notice.text} kind={notice.kind} onClose={() => setNotice(null)}/>}
     {catalog && !catalog.mutationsAllowed && <Notice text={t('readOnlyMode')}/>}
     {catalog?.warnings.length ? <details className="skm-notice skm-notice-warning"><summary>{t('warningTitle')} · {catalog.warnings.length}</summary><ul className="skm-warning-list">{catalog.warnings.map((warning, index) => <li key={index}>{warning}</li>)}</ul></details> : null}
     {catalog?.truncated && <Notice text={t('truncated')} kind="warning"/>}
-    <div role="tabpanel" id={`skm-panel-${tab}`} aria-labelledby={`skm-tab-${tab}`}>
+    <div role="tabpanel" id="skm-panel" aria-labelledby={`skm-tab-${tab}`} className="skm-panel">
       {(tab === 'local' || tab === 'updates' || tab === 'backups') && <div className="skm-toolbar">
-        <button className="skm-button skm-button-quiet skm-rescan" type="button" aria-label={t('rescan')} title={t('rescanHint')} disabled={disabled || modalOpen} onClick={() => { if (tab === 'backups') void readBackups(); else void reload() }}><Icon name="refresh" size={16}/></button>
-        {tab !== 'backups' && <input className="skm-input skm-filter" value={filter} onChange={event => setFilter(event.target.value)} placeholder={t('filter')} aria-label={t('filter')}/>}
-        <select className="skm-select skm-scope" value={workspaceId} onChange={event => setWorkspaceId(event.target.value)} disabled={!!busy || modalOpen || loading} aria-label={t('scope')}><option value="">{t('global')}</option>{catalog?.workspaces.map(workspace => <option key={workspace.id} value={workspace.id}>{workspace.title}</option>)}</select>
+        {tab !== 'backups' && <label className="skm-search"><Icon name="search" size={16}/><input className="skm-search-input" value={filter} onChange={event => setFilter(event.target.value)} placeholder={t('filter')} aria-label={t('filter')}/></label>}
         {tab !== 'backups' && <select className="skm-select skm-location" value={location} onChange={event => setLocation(event.target.value)} aria-label={t('location')}><option value="all">{t('allRoots')}</option>{catalog?.roots.map(root => <option key={root.id} value={root.id}>{rootLabel(root, t)}</option>)}</select>}
+        <select className="skm-select skm-scope" value={workspaceId} onChange={event => setWorkspaceId(event.target.value)} disabled={!!busy || modalOpen || loading} aria-label={t('scope')}><option value="">{t('global')}</option>{catalog?.workspaces.map(workspace => <option key={workspace.id} value={workspace.id}>{workspace.title}</option>)}</select>
+        {readonlyOnly && tab === 'local' && <button type="button" className="skm-chip" onClick={() => setOverview('all')} aria-label={`${t('clearFilter')}: ${t('readonly')}`}>{t('readonly')}<Icon name="close" size={11}/></button>}
+        {tab === 'updates' && updates.length > 0 && <button className="skm-button skm-button-primary skm-toolbar-primary" type="button" disabled={disabled || modalOpen || !writable || jobActive} onClick={() => setPendingBatch(updates)}><Icon name="up" size={14}/>{t('updateAll')} ({updates.length})</button>}
+        <button className="skm-icon-button skm-toolbar-refresh" type="button" aria-label={t('rescan')} title={t('rescanHint')} disabled={disabled || modalOpen} onClick={() => { if (tab === 'backups') void readBackups(); else void reload() }}><Icon name="refresh" size={16}/></button>
       </div>}
       {(tab === 'local' || tab === 'updates') && <>
-        {loading && !catalog ? <Loader text={t('loading')}/> : !catalog ? <Empty title={t('requestFailed')} body={t('retry')}><button className="skm-button" onClick={() => void reload()}>{t('retry')}</button></Empty> : visible.length ? <div className="skm-list" aria-busy={loading || !!busy}>{visible.map(skill => <SkillCard key={skill.id} skill={skill} root={catalog.roots.find(root => root.id === skill.rootId)} t={t} disabled={disabled || modalOpen} jobActive={jobActive} onOpen={action => setSelected({ skill, action })}/>)}</div> : <Empty title={filter || location !== 'all' ? t('noMatches') : t(tab === 'updates' ? 'updatesEmpty' : 'empty')} body={t(tab === 'updates' ? 'updatesEmptyBody' : 'emptyBody')} icon={tab === 'updates' ? 'refresh' : 'book'}>{writable && tab === 'local' && !filter && <button className="skm-button skm-button-primary" onClick={() => setInstall({ source: '', name: '' })}>{t('install')}</button>}</Empty>}
+        {loading && !catalog ? <Loader text={t('loading')}/> : !catalog ? <Empty title={t('requestFailed')} body={t('retry')}><button className="skm-button" type="button" onClick={() => void reload()}>{t('retry')}</button></Empty> : visible.length ? <div className="skm-list" aria-busy={loading || !!busy}>{visible.map(skill => <SkillCard key={skill.id} skill={skill} root={catalog.roots.find(root => root.id === skill.rootId)} t={t} disabled={disabled || modalOpen} jobActive={jobActive} onOpen={action => setSelected({ skill, action })}/>)}</div> : <div className="skm-empty">
+          <p className="skm-empty-title">{t(filtered ? 'noMatches' : tab === 'updates' ? 'updatesEmpty' : 'empty')}</p>
+          <p className="skm-empty-body">{t(filtered ? 'noMatches' : tab === 'updates' ? 'updatesEmptyBody' : 'emptyBody')}</p>
+          {tab === 'local' && writable && !filter && location === 'all' && !readonlyOnly && <button className="skm-add-button" type="button" onClick={() => setInstall({ source: '', name: '' })}><Icon name="plus" size={16}/>{t('fromRepo')}</button>}
+          {tab === 'updates' && <button className="skm-button" type="button" disabled={disabled || modalOpen || jobActive} onClick={() => void checkUpdates()}><Icon name="refresh" size={15} spin={checking}/>{t('check')}</button>}
+          {readonlyOnly && <button className="skm-button" type="button" onClick={() => setOverview('all')}>{t('clearFilter')}</button>}
+        </div>}
       </>}
       {tab === 'discover' && <DiscoverPanel t={t} locale={locale} writable={writable} disabled={disabled} modalOpen={modalOpen} search={search} onReview={hit => setInstall(hit)} onWellKnown={() => setWellKnown(true)} onError={text => setNotice({ text, kind: 'error' })}/>}
       {tab === 'jobs' && <JobsPanel jobs={jobs} roots={catalog?.roots ?? []} t={t} locale={locale} onCancel={id => void cancelJob(id)} onRetry={job => void retryJob(job)} onOpenSkill={openJobSkill}/>}
       {tab === 'backups' && <BackupsPanel t={t} locale={locale} catalog={catalog} backups={backups} loading={backupLoading} disabled={disabled} modalOpen={modalOpen} onRestore={backup => setRestore(backup)} onPurge={value => setPurge(value)}/>}
     </div>
-    <footer className="skm-footer"><Icon name="lock" size={12}/><span>{t('safeNote')}</span></footer>
+    <p className="skm-hint skm-safety">{t('safeNote')}</p>
   </div>
     {install && common && <InstallDialog {...common} initialSource={install.source} preferredName={install.name} preferredSkillId={install.skillId} onOpenInstalled={skill => { setInstall(null); setSelected({ skill, action: 'detail' }) }} onClose={() => setInstall(null)}/>}
     {selected && common && <SkillDialog {...common} skill={selected.skill} initialAction={selected.action} onClose={() => setSelected(null)} onMove={skill => { setSelected(null); setMove(skill) }}/>}

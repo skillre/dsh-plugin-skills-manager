@@ -1,10 +1,10 @@
 # DSH 技能管理 · Skills Manager
 
-> `@skillre/dsh-plugin-skills-manager` · `0.4.0` · experimental
+> `@skillre/dsh-plugin-skills-manager` · `0.5.0` · experimental
 
 [English](<README.en.md>)
 
-在 DSH **设置**侧栏中提供一个「**技能**」管理页（不再占用左侧栏面板入口），以原生 React 页面管理技能，不使用 iframe 或独立网页。
+在 DSH **设置**侧栏中提供「**技能管理**」页（不再占用左侧栏面板入口），以原生 React 页面管理技能，不使用 iframe 或独立网页。页面与设置页共享同一套设计语言：导航名与页面标题一致、原生卡片/下划线标签页/按钮/输入框/焦点环，对话框也沿用宿主对话框契约。
 
 ## 功能
 
@@ -23,7 +23,9 @@
 - **更新前文件对比**：更新对话框展示新增/删除/修改/未变的文件列表。
 - **扩展安装来源**：支持本地 `.tar.gz`/`.tgz`/`.zip` 归档（内存严格解析、不执行脚本）、well-known HTTPS 目录安装，以及把备份恢复到其他可写位置。
 - **模型工具**：提供 `skills_manager`，与界面调用同一核心服务；写操作必须取得本次用户批准，不接受授权布尔参数。
-- **热启停**：在 Plugins 中关闭再重新启用插件时，设置侧栏中的「技能」条目与其页面随插件 Fiber 正确卸载和重挂载；0.3.0 起不再注册左侧栏面板入口。
+- **热启停**：在 Plugins 中关闭再重新启用插件时，设置侧栏中的「技能管理」条目与其页面随插件 Fiber 正确卸载和重挂载；0.3.0 起不再注册左侧栏面板入口。
+- **统一设置页外观**：页面复用宿主 DSH 设置页的设计语言（`--dsw-alias-settings-card-*` 卡片、下划线标签页、原生按钮/输入框/焦点环、宿主对话框外观），导航名「技能管理」与页面标题一致，不再另起一套视觉系统。
+- **数量卡片即筛选器**：顶部三个数量卡片是真实按钮，点击分别查看全部技能、可用更新、只读技能；只读筛选会显示可清除的标签，卡片本身用 `aria-pressed` 标出当前视图。
 - **详情页是一张图**：插件详情页由中英双语预览图承担（`docs/preview.svg` / `docs/preview.zh.svg`，640×300 横幅），不再把 README 当详情正文；卡片文案（标题 + 一句话描述）来自 `locale/*.json` 的 `meta`，README 继续作为完整开发者文档。
 - 中英文文案、DSH 主题颜色、响应式布局、加载与失败状态、对话框焦点管理。
 
@@ -36,7 +38,7 @@ DSH 的插件卡片与详情页读取的是包内元数据，不是 README：
 | 卡片标题 | `locale/en.json`、`locale/zh.json` 的 `meta.title` | `Skills Manager` / `技能管理` |
 | 卡片描述 | 同上的 `meta.description`（一句话，≤120 字符） | 中英各一句，说明「是什么 + 给你什么」 |
 | 详情页 | 同上的 `meta.detail` → `docs/DETAIL.md` / `docs/DETAIL.zh.md` | **只有一行预览图引用**，无任何长文 |
-| 详情图 | `docs/preview.svg` / `docs/preview.zh.svg` | 640×300 双语横幅：设置页真实界面、检索→审阅→安装流程、可更新状态 |
+| 详情图 | `docs/preview.svg` / `docs/preview.zh.svg` | 640×300 双语横幅：统一的设置页界面（可点击数量卡片、技能卡片列表）、检索→审阅→安装流程 |
 | 图标 | `icon.svg`（包根） | 技能管理图标 |
 
 - 预览图的编辑源约定为飞书画板，仓库里的 SVG 是导出快照；画板登记见 [docs/PREVIEW.md](<docs/PREVIEW.md>)，同步命令为 `node scripts/preview.mjs push|pull --lang zh|en`。当前两张图直接手写维护，画板待建。
@@ -53,7 +55,7 @@ DSH 的插件卡片与详情页读取的是包内元数据，不是 README：
 
 ## 用户安装
 
-源码托管在 [github.com/skillre/dsh-plugin-skills-manager](https://github.com/skillre/dsh-plugin-skills-manager)，并已发布到 npm：**`@skillre/dsh-plugin-skills-manager@0.4.0`**。
+源码托管在 [github.com/skillre/dsh-plugin-skills-manager](https://github.com/skillre/dsh-plugin-skills-manager)，并已发布到 npm：**`@skillre/dsh-plugin-skills-manager@0.5.0`**。
 
 **方式 A：npm 包名（推荐，可原地升级）** —— 在 **Add plugin / 添加插件** 输入：
 
@@ -61,7 +63,7 @@ DSH 的插件卡片与详情页读取的是包内元数据，不是 README：
 @skillre/dsh-plugin-skills-manager
 ```
 
-或固定版本 `@skillre/dsh-plugin-skills-manager@0.4.0`。npm 安装会显示「版本」区块，之后可直接在 Plugins 中升级，也可从 **Discover** 安装（本插件已列入用户自建市场索引，源为 npm）。
+或固定版本 `@skillre/dsh-plugin-skills-manager@0.5.0`。npm 安装会显示「版本」区块，之后可直接在 Plugins 中升级，也可从 **Discover** 安装（本插件已列入用户自建市场索引，源为 npm）。
 
 **方式 B：Git 仓库地址（跟随默认分支）** —— 在 **Add plugin** 输入：
 
@@ -71,12 +73,12 @@ https://github.com/skillre/dsh-plugin-skills-manager
 
 仓库已提交构建产物（`lib/`），pnpm 不需要执行构建脚本，因此不受 `allowBuilds` 供应链限制；该方式跟随 `main` 最新提交。注意：**Git 安装没有「版本」区块，只能卸载重装，无法原地升级**。
 
-**方式 C：Release tarball（固定版本）** —— 从 [GitHub Release v0.4.0](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.4.0) 下载 [`skillre-dsh-plugin-skills-manager-0.4.0.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.4.0/skillre-dsh-plugin-skills-manager-0.4.0.tgz)，在 **Add plugin** 中输入它的**完整本地绝对路径**。该文件与 npm 发布内容完全一致（registry integrity 相同）。
+**方式 C：Release tarball（固定版本）** —— 从 [GitHub Release v0.5.0](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.5.0) 下载 [`skillre-dsh-plugin-skills-manager-0.5.0.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.5.0/skillre-dsh-plugin-skills-manager-0.5.0.tgz)，在 **Add plugin** 中输入它的**完整本地绝对路径**。该文件与 npm 发布内容完全一致（registry integrity 相同）。
 
 1. 打开 DSH 左侧 **Plugins / 插件**。
 2. 选择 **Add plugin / 添加插件**。
 3. 粘贴 npm 包名、Git 仓库地址或 tarball 的本地绝对路径，查看信任提示并自行确认安装。
-4. 启用后，打开 **设置**（左侧栏底部「更多 / More」→ 设置，或快捷键 ⌘,），在设置侧栏中选择「**技能 / Skills**」。左侧栏不会新增技能按钮。
+4. 启用后，打开 **设置**（左侧栏底部「更多 / More」→ 设置，或快捷键 ⌘,），在设置侧栏中选择「**技能管理 / Skills Manager**」。左侧栏不会新增技能按钮。
 
 从旧的 `github:` 安装升级到 npm 安装：先在 Plugins 中移除旧的 Git 条目，再用方式 A 安装 npm 包名（技能文件、来源记录与备份都在 profile 之外，不受影响）。
 
@@ -195,11 +197,11 @@ https://github.com/skillre/dsh-plugin-skills-manager
 
 ## 验证与限制
 
-已在 **2026-11-08** 重新 Inspect 并实挂当前 DSH **0.2.2-rc.1**（cordis 4.1.0），并迁移到「详情页一张图」的展示契约。本地类型检查、构建、publint、打包检查和 **88 项自动化测试**通过（含 **20 项真实 ConnectionRegistry 运输层回归**、**14 项 GitHub 来源/限流/归档兜底回归**、**7 项 well-known/归档回归**、**10 项批量/备份/移动/安装/对比回归**、**5 项检索命中与安装冲突决策回归**、**3 项 Client 设置页注册/生命周期回归**等）。自有临时非 Desktop profile 的预最终包逐字节核对了全部 **42 个 packed 文件**，并验证真实 Gateway `settings/describe` 与 Desktop welcome 实际调用 `llm/listConfigurableProviders`、插件 list/detail/check/remove/restore 的实际文件与指纹、仍安装插件时真实 Host 重启后的欢迎方法与 fixture 保留、卸载后依赖/选择/组合/插件路径缺失，以及再次启动后两个 Gateway 方法继续成功；所有自有 CLI 进程真实关闭并核实组 `ESRCH` 后，才按 owner/UID/规范路径删除测试 root 并核实 `ENOENT`。另在真实 DSH Web 页面（自有临时非 Desktop profile + 真实 Chrome/CDP）验证：左侧栏**不存在**技能入口；设置侧栏出现「技能」并提供图标与管理页；「技能检索」→「查看并安装」一步进入完整审阅（自动解析仓库、展示 `SKILL.md`、资源与安装位置）；关闭再启用插件两轮后设置条目与页面都恢复，控制台无错误。旧版只测插件自身 RPC 的记录不是本版本兼容证明。
+已在 **2026-11-08** 重新 Inspect 并实挂当前 DSH **0.2.2-rc.1**（cordis 4.1.0），并把设置页统一到宿主设置页设计语言；详情页继续使用「一张图」展示契约。本地类型检查、构建、publint、打包检查和 **88 项自动化测试**通过（含 **20 项真实 ConnectionRegistry 运输层回归**、**14 项 GitHub 来源/限流/归档兜底回归**、**7 项 well-known/归档回归**、**10 项批量/备份/移动/安装/对比回归**、**5 项检索命中与安装冲突决策回归**、**3 项 Client 设置页注册/生命周期回归**等）。自有临时非 Desktop profile 的预最终包逐字节核对了全部 **42 个 packed 文件**，并验证真实 Gateway `settings/describe` 与 Desktop welcome 实际调用 `llm/listConfigurableProviders`、插件 list/detail/check/remove/restore 的实际文件与指纹、仍安装插件时真实 Host 重启后的欢迎方法与 fixture 保留、卸载后依赖/选择/组合/插件路径缺失，以及再次启动后两个 Gateway 方法继续成功；所有自有 CLI 进程真实关闭并核实组 `ESRCH` 后，才按 owner/UID/规范路径删除测试 root 并核实 `ENOENT`。另在真实 DSH Web 页面（自有临时非 Desktop profile + 真实 Chrome/CDP）验证：左侧栏**不存在**技能入口；设置侧栏出现「技能管理」并提供图标与管理页；页面标题与导航名一致、卡片/标签页/标题使用宿主设置页尺寸与圆角、三个数量卡片是可点击按钮且点击后正确筛选（只读筛选带可清除标签）；「技能检索」→「查看并安装」一步进入完整审阅（自动解析仓库、展示 `SKILL.md`、资源与安装位置）；关闭再启用插件两轮后设置条目与页面都恢复，控制台无错误。旧版只测插件自身 RPC 的记录不是本版本兼容证明。
 
-安装包中的 [兼容记录](<compatibility.json>) 只引用本版本[已通过的预最终实挂证据](<docs/verification/pre-final-mount-0.4.0-gateway.json>)。补入兼容元数据后必须重新打包并安装**精确最终文件**；全部 packed payload、SHA256、Gateway/插件检查与清理结果以 [最终实挂记录](<docs/verification/isolated-mount-0.4.0.json>)、[日志](<docs/verification/isolated-mount-0.4.0.log>) 和 [最终文件摘要](<docs/verification/final-artifact-0.4.0.json>) 为准。真实 Web UI 检查的证据在 [浏览器验证记录](<docs/verification/browser-hot-reenable-0.4.0.json>)。精确 tarball 哈希保留在外部证据中，避免安装包自引用自己的哈希。
+安装包中的 [兼容记录](<compatibility.json>) 只引用本版本[已通过的预最终实挂证据](<docs/verification/pre-final-mount-0.5.0-gateway.json>)。补入兼容元数据后必须重新打包并安装**精确最终文件**；全部 packed payload、SHA256、Gateway/插件检查与清理结果以 [最终实挂记录](<docs/verification/isolated-mount-0.5.0.json>)、[日志](<docs/verification/isolated-mount-0.5.0.log>) 和 [最终文件摘要](<docs/verification/final-artifact-0.5.0.json>) 为准。真实 Web UI 检查的证据在 [浏览器验证记录](<docs/verification/browser-hot-reenable-0.5.0.json>)。精确 tarball 哈希保留在外部证据中，避免安装包自引用自己的哈希。
 
-**Electron Desktop 视觉/交互与用户日常 Desktop 重启验收仍由用户完成**：隔离 CLI/Web Host 的真实重启、认证 RPC 与 Client 资源可加载不等于 Electron 窗口、主题或交互验收。0.4.0 的 Settings 入口、检索→审阅流程、热启停与**详情页预览图**已在真实 DSH Web 页面验证，并分别作为 `web-ui-settings-section`、`web-ui-discover-review`、`web-ui-hot-reenable`、`web-ui-detail-preview-image` 记录在兼容证据中。Desktop Electron 窗口内的同流程视觉验收仍待用户完成。
+**Electron Desktop 视觉/交互与用户日常 Desktop 重启验收仍由用户完成**：隔离 CLI/Web Host 的真实重启、认证 RPC 与 Client 资源可加载不等于 Electron 窗口、主题或交互验收。0.5.0 的 Settings 入口、统一设置页外观与可点击数量卡片、检索→审阅流程、热启停与**详情页预览图**已在真实 DSH Web 页面验证，并分别作为 `web-ui-settings-section`、`web-ui-settings-unified`、`web-ui-overview-tiles`、`web-ui-discover-review`、`web-ui-hot-reenable`、`web-ui-detail-preview-image` 记录在兼容证据中（界面截图见 [设置页截图](<docs/verification/settings-ui-0.5.0.png>) 与 [筛选截图](<docs/verification/settings-ui-filter-0.5.0.png>)）。Desktop Electron 窗口内的同流程视觉验收仍待用户完成。
 
 该路由使用 `buffered` 请求体；上限属于 DSH Connection HTTP 承载层的 `maxRequestBodyBytes`（当前默认 300 MiB），不是本插件 adapter 或直接 `shared.fetch` 的独立 cap。本轮未新增 carrier overflow 测试。
 

@@ -1,1 +1,1 @@
-![The Skills page inside DSH Settings, beside the search, review and install flow, with two installed skills showing latest and update badges](preview.svg)
+![The Skills Manager settings page in DSH: three clickable number cards above the skill card list, beside the search, review and install flow](preview.svg)

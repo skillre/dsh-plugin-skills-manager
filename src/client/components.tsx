@@ -29,8 +29,8 @@ export function Icon({ name = 'book', size = 18, spin = false }: { name?: string
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={spin ? 'skm-spinner' : undefined}>{paths[name] ?? paths.book}</svg>
 }
 export function Loader({ text }: { text: string }): React.JSX.Element { return <div className="skm-loader" role="status"><Icon name="refresh" spin/>{text}</div> }
-export function Empty({ title, body, icon = 'book', children }: { title: string; body: string; icon?: string; children?: ReactNode }): React.JSX.Element {
-  return <div className="skm-empty"><div className="skm-empty-mark"><Icon name={icon} size={27}/></div><h2>{title}</h2><p>{body}</p>{children}</div>
+export function Empty({ title, body, children }: { title: string; body: string; children?: ReactNode }): React.JSX.Element {
+  return <div className="skm-empty"><p className="skm-empty-title">{title}</p><p className="skm-empty-body">{body}</p>{children}</div>
 }
 export function Notice({ text, kind = 'info', onClose }: { text: string; kind?: string; onClose?: () => void }): React.JSX.Element {
   return <div className={`skm-notice skm-notice-${kind}`} role={kind === 'error' ? 'alert' : 'status'}><Icon name={kind === 'success' ? 'check' : kind === 'error' || kind === 'warning' ? 'warning' : 'lock'} size={16}/><span className="skm-notice-message">{text}</span>{onClose && <button className="skm-close" type="button" aria-label="×" onClick={onClose}><Icon name="close" size={14}/></button>}</div>
@@ -61,7 +61,10 @@ export function Dialog({ title, t, children, footer, onClose, small = false, ale
   useEffect(() => {
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null
     const root = ref.current
-    const first = root?.querySelector<HTMLElement>('[data-autofocus], input:not(:disabled), button:not(:disabled)')
+    // Focus the first control of the body (or the element that asked for it);
+    // never park the ring on the close button just because it comes first.
+    const body = root?.querySelector<HTMLElement>('.skm-modal-body')
+    const first = body?.querySelector<HTMLElement>('[data-autofocus], input:not(:disabled), textarea:not(:disabled), select:not(:disabled), button:not(:disabled)') ?? root?.querySelector<HTMLElement>('[data-autofocus]')
     ;(first ?? root)?.focus()
     return () => { if (previous?.isConnected) previous.focus() }
   }, [])

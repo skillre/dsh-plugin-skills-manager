@@ -1,6 +1,6 @@
 {
   "name": "@skillre/dsh-plugin-skills-manager",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "DSH 技能管理：检索、安装、本地更新检查、更新与安全删除",
   "icon": "./icon.svg",
   "type": "module",

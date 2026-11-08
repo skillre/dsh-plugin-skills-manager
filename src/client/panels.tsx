@@ -6,7 +6,9 @@ import { bytes, Empty, Icon, Loader, Notice, rootLabel, StatusBadge, time } from
 /**
  * Panels that used to be inline JSX inside the page component. Splitting them
  * keeps the page an orchestrator (state, jobs, dialogs) and lets each panel own
- * the transient state it alone needs.
+ * the transient state it alone needs. Every card reuses the Settings card
+ * contract of the host build: one clickable content block plus a quiet action
+ * footer, so a list item never invents buttons on top of its own link.
  */
 
 export interface DiscoverPanelProps {
@@ -50,19 +52,28 @@ export function DiscoverPanel({ t, locale, writable, disabled, modalOpen, search
   }, [busy, onError, search])
   const blocked = disabled || modalOpen
   return <>
-    <div className="skm-toolbar">
+    <div className="skm-panel-actions">
       <button className="skm-button" type="button" disabled={blocked || !writable} onClick={onWellKnown}><Icon name="down" size={15}/>{t('fromWellKnown')}</button>
     </div>
-    <div className="skm-search-area">
-      <form className="skm-search-form" onSubmit={event => { event.preventDefault(); void run(query) }}>
-        <input className="skm-input" value={query} onChange={event => setQuery(event.target.value)} placeholder={t('searchPlaceholder')} aria-label={t('search')} maxLength={200}/>
-        <button type="submit" className="skm-button skm-button-primary" disabled={busy || !query.trim()}><Icon name={busy ? 'refresh' : 'search'} spin={busy}/>{t('searchButton')}</button>
+    <div className="skm-search-block">
+      <form className="skm-search-row" onSubmit={event => { event.preventDefault(); void run(query) }}>
+        <label className="skm-search skm-search-wide"><Icon name="search" size={16}/><input className="skm-search-input" value={query} onChange={event => setQuery(event.target.value)} placeholder={t('searchPlaceholder')} aria-label={t('search')} maxLength={200}/></label>
+        <button type="submit" className="skm-button skm-button-primary" disabled={busy || !query.trim()}><Icon name={busy ? 'refresh' : 'search'} size={15} spin={busy}/>{t('searchButton')}</button>
       </form>
       <p className="skm-hint">{t('searchHint')}</p>
       <div className="skm-examples"><span className="skm-hint">{t('popular')}</span>{EXAMPLES.map(value => <button type="button" className="skm-example" key={value} disabled={busy} onClick={() => void run(value)}>{value}</button>)}</div>
     </div>
     {error && <><Notice text={error} kind="error"/><p className="skm-hint">{t('searchUnavailable')}</p></>}
-    {busy ? <Loader text={`${t('search')}…`}/> : results ? results.items.length ? <div className="skm-results">{results.items.map((hit, index) => <article className="skm-result" key={`${hit.id}-${index}`}><div className="skm-card-head"><Icon name="book" size={17}/><strong className="skm-result-name">{hit.name}</strong></div><div className="skm-meta skm-mono">{hit.repository}</div><div className="skm-result-foot"><span className="skm-hint">{t('downloads', { count: new Intl.NumberFormat(locale).format(hit.installs) })}</span><div className="skm-result-actions"><a className="skm-source-link" href={hit.url} target="_blank" rel="noopener noreferrer">{t('resultOpen')} ↗</a><button className="skm-button skm-button-primary" type="button" disabled={blocked || !writable} onClick={() => onReview({ source: hit.repository, name: hit.name, ...(hit.skillId ? { skillId: hit.skillId } : {}) })}>{t('inspectInstall')}<Icon name="arrow" size={13}/></button></div></div></article>)}</div> : <Empty title={t('searchEmpty')} body={t('searchHint')} icon="search"/> : <Empty title={t('searchPrompt')} body={t('searchPromptBody')} icon="search"/>}
+    {busy ? <Loader text={`${t('search')}…`}/> : results ? results.items.length ? <div className="skm-list">{results.items.map((hit, index) => <article className="skm-card" key={`${hit.id}-${index}`}>
+      <div className="skm-card-body">
+        <div className="skm-card-head"><span className="skm-card-title">{hit.name}</span></div>
+        <div className="skm-card-meta"><span className="skm-identity">{hit.repository}</span><span className="skm-meta-text">{t('downloads', { count: new Intl.NumberFormat(locale).format(hit.installs) })}</span></div>
+      </div>
+      <div className="skm-card-foot">
+        <a className="skm-link-button skm-link" href={hit.url} target="_blank" rel="noopener noreferrer">{t('resultOpen')} ↗</a>
+        <button className="skm-button skm-button-primary skm-button-small" type="button" disabled={blocked || !writable} onClick={() => onReview({ source: hit.repository, name: hit.name, ...(hit.skillId ? { skillId: hit.skillId } : {}) })}>{t('inspectInstall')}<Icon name="arrow" size={13}/></button>
+      </div>
+    </article>)}</div> : <Empty title={t('searchEmpty')} body={t('searchHint')}/> : <Empty title={t('searchPrompt')} body={t('searchPromptBody')}/>}
   </>
 }
 
@@ -77,25 +88,23 @@ export interface SkillCardProps {
 
 export function SkillCard({ skill, root, t, disabled, jobActive, onOpen }: SkillCardProps): React.JSX.Element {
   const open = (action: 'detail' | 'update' | 'remove') => { if (!disabled) onOpen(action) }
-  return <article className="skm-card">
-    <div className="skm-card-mark"><Icon name={skill.writable ? 'book' : 'lock'} size={17}/></div>
-    <div className="skm-card-main skm-card-open" title={t('viewDetails')} onClick={() => open('detail')}>
-      <div className="skm-card-head">
-        <button type="button" className="skm-link-button" disabled={disabled} onClick={() => open('detail')}>{skill.name}</button>
-        <StatusBadge skill={skill} t={t}/>
+  return <article className="skm-card" data-invalid={skill.valid ? undefined : 'true'}>
+    <button type="button" className="skm-card-content" disabled={disabled} onClick={() => open('detail')} aria-label={`${t('viewDetails')} ${skill.name}`}>
+      <span className="skm-card-head"><span className="skm-card-title">{skill.name}</span><StatusBadge skill={skill} t={t}/></span>
+      <span className="skm-card-desc">{skill.description || skill.issue}</span>
+      <span className="skm-card-meta">
+        <span className="skm-meta-text">{rootLabel(root, t)}</span>
+        {skill.source && <span className="skm-identity">{skill.source.repository}</span>}
+        {skill.source?.commit && skill.source.commit !== 'unknown' && <span className="skm-identity">{skill.source.commit.slice(0, 8)}</span>}
+      </span>
+      {skill.check?.status === 'error' && <span className="skm-card-error" role="status">{skill.check.message}</span>}
+    </button>
+    <div className="skm-card-foot">
+      <div className="skm-card-actions">
+        <button type="button" className="skm-link-button" aria-label={`${t('viewDetails')} ${skill.name}`} disabled={disabled} onClick={() => open('detail')}>{t('viewDetails')}</button>
+        {skill.check?.status === 'update' && skill.writable && <button type="button" className="skm-link-button skm-link-accent" disabled={disabled || jobActive} onClick={() => open('update')}>{t('updateButton')}</button>}
+        {skill.writable && <button type="button" className="skm-link-button skm-link-danger" aria-label={`${t('remove')} ${skill.name}`} disabled={disabled} onClick={() => open('remove')}>{t('remove')}</button>}
       </div>
-      <p className="skm-description">{skill.description || skill.issue}</p>
-      <div className="skm-meta">
-        <span>{rootLabel(root, t)}</span>
-        {skill.source && <span className="skm-mono">{skill.source.repository}</span>}
-        {skill.source?.commit && skill.source.commit !== 'unknown' && <span className="skm-mono">{skill.source.commit.slice(0, 8)}</span>}
-      </div>
-      {skill.check?.status === 'error' && <p className="skm-hint" role="status">{skill.check.message}</p>}
-    </div>
-    <div className="skm-card-actions">
-      <button type="button" className="skm-button skm-button-quiet" aria-label={`${t('viewDetails')} ${skill.name}`} title={t('viewDetails')} disabled={disabled} onClick={() => open('detail')}><Icon name="info" size={15}/></button>
-      {skill.check?.status === 'update' && skill.writable && <button type="button" className="skm-button" disabled={disabled || jobActive} onClick={() => open('update')}><Icon name="up" size={13}/>{t('updateButton')}</button>}
-      {skill.writable && <button type="button" className="skm-button skm-button-quiet skm-button-danger" aria-label={`${t('remove')} ${skill.name}`} title={`${t('remove')} ${skill.name}`} disabled={disabled} onClick={() => open('remove')}><Icon name="trash" size={15}/></button>}
     </div>
   </article>
 }
@@ -114,29 +123,32 @@ export interface BackupsPanelProps {
 
 export function BackupsPanel({ t, locale, catalog, backups, loading, disabled, modalOpen, onRestore, onPurge }: BackupsPanelProps): React.JSX.Element {
   if (loading) return <Loader text={t('loading')}/>
-  if (!backups.length) return <><Empty title={t('backupEmpty')} body={t('backupEmptyBody')} icon="archive"/><p className="skm-hint">{t('preserved')}</p></>
+  if (!backups.length) return <><Empty title={t('backupEmpty')} body={t('backupEmptyBody')}/><p className="skm-hint">{t('preserved')}</p></>
   const blocked = disabled || modalOpen
   const singleRoot = new Set(backups.map(backup => backup.rootId)).size === 1
   return <>
+    {singleRoot && <div className="skm-panel-actions"><button className="skm-button" type="button" disabled={blocked} onClick={() => onPurge({ rootId: backups[0]!.rootId, count: backups.length })}><Icon name="trash" size={15}/>{t('purgeAllTitle')}</button></div>}
     <p className="skm-hint">{t('backupHint')}</p>
-    {singleRoot && <div className="skm-toolbar"><button className="skm-button" type="button" disabled={blocked} onClick={() => onPurge({ rootId: backups[0]!.rootId, count: backups.length })}><Icon name="trash" size={15}/>{t('purgeAllTitle')}</button></div>}
     <div className="skm-list">{backups.map(backup => {
       const root = catalog?.roots.find(item => item.id === backup.rootId)
       const backupPath = root ? `${root.path}/.skills-manager/backups/${backup.id}` : ''
       return <article className="skm-card" key={`${backup.rootId}-${backup.id}`}>
-        <div className="skm-card-mark skm-backup-icon"><Icon name="archive"/></div>
-        <div className="skm-card-main">
-          <div className="skm-card-head"><strong className="skm-result-name">{backup.name}</strong><span className="skm-badge">{t(backup.action === 'update' ? 'backupActionUpdate' : 'backupActionRemove')}</span></div>
-          <div className="skm-meta" style={{ marginTop: 7 }}>
-            <span>{time(backup.createdAt, locale)}</span>
-            <span>{rootLabel(root, t)}</span>
-            {typeof backup.sizeBytes === 'number' && <span>{bytes(backup.sizeBytes)} · {backup.fileCount ?? 0}</span>}
-            {backup.source && <span className="skm-mono">{backup.source.repository}</span>}
-            {backupPath && <span className="skm-mono skm-path-ellipsis" title={backupPath}>{backupPath}</span>}
+        <div className="skm-card-body">
+          <div className="skm-card-head"><span className="skm-card-title">{backup.name}</span><span className="skm-badge">{t(backup.action === 'update' ? 'backupActionUpdate' : 'backupActionRemove')}</span></div>
+          <div className="skm-card-meta">
+            <span className="skm-meta-text">{time(backup.createdAt, locale)}</span>
+            <span className="skm-meta-text">{rootLabel(root, t)}</span>
+            {typeof backup.sizeBytes === 'number' && <span className="skm-meta-text">{bytes(backup.sizeBytes)} · {t('files', { count: backup.fileCount ?? 0 })}</span>}
+            {backup.source && <span className="skm-identity">{backup.source.repository}</span>}
+          </div>
+          {backupPath && <p className="skm-card-path skm-mono" title={backupPath}>{backupPath}</p>}
+        </div>
+        <div className="skm-card-foot">
+          <div className="skm-card-actions">
+            <button className="skm-link-button skm-link-accent" type="button" disabled={blocked || !root?.writable} onClick={() => onRestore(backup)}>{t('restore')}</button>
+            <button className="skm-link-button skm-link-danger" type="button" aria-label={`${t('deleteBackup')} ${backup.name}`} disabled={blocked || !root?.writable} onClick={() => onPurge({ rootId: backup.rootId, backup, count: 1 })}>{t('deleteBackup')}</button>
           </div>
         </div>
-        <button className="skm-button" type="button" disabled={blocked || !root?.writable} onClick={() => onRestore(backup)}><Icon name="restore" size={15}/>{t('restore')}</button>
-        <button className="skm-button skm-button-quiet skm-button-danger" type="button" aria-label={`${t('deleteBackup')} ${backup.name}`} title={t('deleteBackup')} disabled={blocked || !root?.writable} onClick={() => onPurge({ rootId: backup.rootId, backup, count: 1 })}><Icon name="trash" size={15}/></button>
       </article>
     })}</div>
     <p className="skm-hint">{t('preserved')}</p>

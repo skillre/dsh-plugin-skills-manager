@@ -150,6 +150,12 @@ const localized = (zh, en) => `(function(){const labels=${JSON.stringify([zh, en
 try {
   await mkdir(home, { recursive: true })
   await mkdir(work, { recursive: true })
+  // Seed one owned skill before the host boots: the Settings card list and the
+  // overview number cards must be exercised with real catalog data, not just
+  // empty states. It lives inside the disposable home and dies with it.
+  const sampleSkill = join(home, 'agents', 'skills', 'ui-check')
+  await mkdir(sampleSkill, { recursive: true })
+  await writeFile(join(sampleSkill, 'SKILL.md'), '---\nname: ui-check\ndescription: Owned sample skill used to verify the Settings card list.\n---\n# UI check\n')
   await writeFile(join(owned, '.owned-by-skills-manager'), owner, { flag: 'wx', mode: 0o600 })
   await run('create-profile', cli, ['--profile', profile, '--from-default-profile', 'web', '--dump-config'])
   checks.push('profile-created')
@@ -183,7 +189,8 @@ try {
         await cdp.send('Page.enable')
         const evaluate = cdp.evaluate
         const bundleLabels = ['技能管理', 'Skills Manager']
-        const sectionLabels = ['技能', 'Skills']
+        const sectionLabels = ['技能管理', 'Skills Manager']
+        const legacySectionLabels = ['技能', 'Skills']
         const text = () => evaluate('document.body ? document.body.innerText : ""')
         const buttonQuery = `[...document.querySelectorAll('button')]`
         const click = expression => evaluate(`(() => { const element = ${expression}; if (!element) return false; element.click(); return true })()`)
@@ -233,14 +240,14 @@ try {
           return false
         }
         const closeSettings = () => click(`document.querySelector('[class*="_panel"] [class*="_close"]')`)
-        const sidebarEntryCount = () => evaluate(`(() => { const labels = ${JSON.stringify(sectionLabels)}; return [...document.querySelectorAll('button')].filter(button => labels.includes(button.getAttribute('aria-label') || '')).length })()`)
+        const sidebarEntryCount = () => evaluate(`(() => { const labels = ${JSON.stringify(legacySectionLabels)}; return [...document.querySelectorAll('button')].filter(button => labels.includes(button.getAttribute('aria-label') || '')).length })()`)
         const sectionNavCount = () => evaluate(`(() => { const labels = ${JSON.stringify(sectionLabels)}; return [...document.querySelectorAll('button')].filter(button => labels.includes((button.textContent || '').trim())).length })()`)
         const openSection = () => clickLabels(sectionLabels)
         const openPluginManager = () => clickLabels(['插件', 'Plugins'])
-        const openBundle = () => click(`${buttonQuery}.find(button => ${JSON.stringify(bundleLabels)}.includes(button.textContent.trim()))`)
+        const openBundle = () => click(`${buttonQuery}.find(button => ${JSON.stringify(bundleLabels)}.includes(button.textContent.trim()) && !button.closest('[class*="_panel"]'))`)
         const bundleSwitch = () => evaluate(`(() => { const switches = [...document.querySelectorAll('[role=switch]')]; if (switches.length === 0) return null; const first = switches[0]; return JSON.stringify({ checked: first.getAttribute('aria-checked'), disabled: first.disabled }) })()`)
         const clickBundleSwitch = () => click(`(() => { const switches = [...document.querySelectorAll('[role=switch]')]; return switches.length ? switches[0] : null })()`)
-        const setSearch = value => evaluate(`(() => { const target = document.querySelector('.skm-search-form input') || [...document.querySelectorAll('input')].find(input => input.getAttribute('maxlength') === '200'); if (!target) return false; const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set; setter.call(target, ${JSON.stringify(value)}); target.dispatchEvent(new Event('input', { bubbles: true })); return true })()`)
+        const setSearch = value => evaluate(`(() => { const target = document.querySelector('.skm-search-row input') || [...document.querySelectorAll('input')].find(input => input.getAttribute('maxlength') === '200'); if (!target) return false; const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set; setter.call(target, ${JSON.stringify(value)}); target.dispatchEvent(new Event('input', { bubbles: true })); return true })()`)
         const reviewOpen = () => evaluate(`document.querySelectorAll('.skm-code').length > 0 && (document.querySelector('.skm-code')?.textContent || '').length > 80`)
         const closeReview = () => click(`document.querySelector('.skm-modal-header button')`)
 
@@ -276,10 +283,44 @@ try {
         await waitFor(async () => { const body = await text(); return body.includes(bundleLabels[0]) || body.includes(bundleLabels[1]) ? body : undefined }, 45000, 'settings page content')
         checks.push('web-ui-settings-page')
 
+        // One surface with the shell: the page heading repeats the Settings
+        // navigation label, and tabs/cards use the host Settings typography.
+        const headingText = await evaluate(`(document.querySelector('.skm-title')?.textContent || '').trim()`)
+        const navLabel = await evaluate(`(() => { const labels = ${JSON.stringify(sectionLabels)}; const node = [...document.querySelectorAll('button')].find(button => labels.includes((button.textContent || '').trim())); return node ? (node.textContent || '').trim() : '' })()`)
+        assert.ok(headingText.length > 0 && headingText === navLabel, `the page heading must repeat the Settings navigation label, got "${headingText}" vs "${navLabel}"`)
+        const typography = JSON.parse(await evaluate(`(() => { const size = node => Number.parseFloat(getComputedStyle(node).fontSize) || 0; const radius = node => Number.parseFloat(getComputedStyle(node).borderTopLeftRadius) || 0; const border = node => Number.parseFloat(getComputedStyle(node).borderTopWidth) || 0; return JSON.stringify({ title: size(document.querySelector('.skm-title')), tab: size(document.querySelector('.skm-tab')), cardRadius: radius(document.querySelector('.skm-card')), cardBorder: border(document.querySelector('.skm-card')) }) })()`))
+        assert.ok(typography.title >= 16 && typography.title <= 18, `the heading must use the Settings heading size, got ${typography.title}px`)
+        assert.ok(typography.tab >= 12 && typography.tab <= 14, `the tabs must use the Settings tab size, got ${typography.tab}px`)
+        assert.ok(typography.cardRadius >= 8 && typography.cardRadius <= 14, `the cards must use the Settings card radius, got ${typography.cardRadius}px`)
+        assert.ok(typography.cardBorder > 0 && typography.cardBorder <= 1, `the cards must use the hairline Settings border, got ${typography.cardBorder}px`)
+        checks.push('web-ui-settings-unified')
+
+        const tiles = () => evaluate(`JSON.stringify([...document.querySelectorAll('.skm-tile')].map(tile => ({ tag: tile.tagName, pressed: tile.getAttribute('aria-pressed') })))`)
+        const cardTitles = () => evaluate(`JSON.stringify([...document.querySelectorAll('.skm-card-title')].map(node => (node.textContent || '').trim()))`)
+        const overview = JSON.parse(await tiles())
+        assert.equal(overview.length, 3, 'the overview must show three number cards')
+        overview.forEach(tile => assert.equal(tile.tag, 'BUTTON', 'every overview number card must be a real button'))
+        assert.ok(overview.some(tile => tile.pressed === 'true'), 'the overview must mark the active filter')
+        assert.deepEqual(JSON.parse(await cardTitles()), ['ui-check'], 'the seeded skill must render as a Settings card')
+        const evidenceDir = join(repo, 'docs/verification')
+        await mkdir(evidenceDir, { recursive: true })
+        await writeFile(join(evidenceDir, `settings-ui-${manifest.version}.png`), Buffer.from((await cdp.send('Page.captureScreenshot', { format: 'png' })).data, 'base64'))
+        // Clicking a number card filters the list; the chip clears the filter.
+        assert.equal(await click(`document.querySelectorAll('.skm-tile')[2]`), true, 'the read-only number card must be clickable')
+        await waitFor(async () => (await evaluate(`document.querySelectorAll('.skm-chip').length`)) === 1 ? true : undefined, 15000, 'read-only filter chip')
+        const filtered = JSON.parse(await tiles())
+        assert.equal(filtered[2].pressed, 'true', 'the read-only number card must become the active filter')
+        await writeFile(join(evidenceDir, `settings-ui-filter-${manifest.version}.png`), Buffer.from((await cdp.send('Page.captureScreenshot', { format: 'png' })).data, 'base64'))
+        assert.equal(await click(`document.querySelector('.skm-chip')`), true, 'the filter chip must clear the number-card filter')
+        await waitFor(async () => (await evaluate(`document.querySelectorAll('.skm-chip').length`)) === 0 ? true : undefined, 15000, 'read-only filter cleared')
+        assert.deepEqual(JSON.parse(await cardTitles()), ['ui-check'], 'clearing the filter must restore the installed card')
+        checks.push('web-ui-overview-tiles')
+        checks.push('web-ui-settings-screenshot')
+
         // Discover → search → review: the reported "cannot install / cannot see the
         // detail of a skill I want to install" path, driven read-only (no writes).
         assert.equal(await clickLabels(['技能检索', 'Discover']), true, 'the Discover tab must exist')
-        await waitFor(async () => evaluate(`document.querySelectorAll('.skm-search-form input').length > 0`) ? true : undefined, 20000, 'discover tab')
+        await waitFor(async () => evaluate(`document.querySelectorAll('.skm-search-row input').length > 0`) ? true : undefined, 20000, 'discover tab')
         assert.equal(await setSearch('browser'), true, 'the search field must accept input')
         assert.equal(await clickLabels(['搜索', 'Search']), true, 'the search button must exist')
         await waitFor(async () => (await text()).includes('查看并安装') || (await text()).includes('Review & install') ? true : undefined, 60000, 'search results')

@@ -1,10 +1,10 @@
 # DSH Skills Manager
 
-> `@skillre/dsh-plugin-skills-manager` · `0.4.0` · experimental
+> `@skillre/dsh-plugin-skills-manager` · `0.5.0` · experimental
 
 [中文](<README.md>)
 
-A native Host + React Client bundle that adds a **Skills** page to the DSH **Settings** sidebar. It no longer reserves a left-rail panel entry, and there is no iframe or replacement application shell.
+A native Host + React Client bundle that adds a **Skills Manager** page to the DSH **Settings** sidebar. It no longer reserves a left-rail panel entry, and there is no iframe or replacement application shell. The page shares the host Settings design language — the navigation label repeats the page heading, cards/tabs/buttons/inputs/focus ring are the host's, and dialogs follow the host dialog contract.
 
 ## Features
 
@@ -24,6 +24,8 @@ A native Host + React Client bundle that adds a **Skills** page to the DSH **Set
 - Wider install sources: local `.tar.gz`/`.tgz`/`.zip` archives (strict in-memory parsing, never executed), well-known HTTPS catalogs and cross-root backup restore.
 - The `skills_manager` Agent tool uses the same core operations. Mutations require a logged, one-time user approval, not a model-supplied authorization flag.
 - **Hot enable/disable**: switching the bundle off and back on unmounts and remounts the Settings section (and its navigation glyph) with the plugin Fiber. Since 0.3.0 it no longer registers a left-rail panel entry.
+- **One Settings design language**: the page reuses the host's Settings tokens (`--dsw-alias-settings-card-*` cards, underline tabs, native buttons/inputs/focus ring, host dialog surface) instead of inventing a second visual system, and the rail label **Skills Manager** matches the page heading.
+- **The number cards are filters**: the three overview cards are real buttons — all skills, updates available, read-only — with `aria-pressed` state; the read-only filter shows a removable chip and the cards switch the view in one click.
 - **The detail page is a picture**: the plugin detail page is carried by a bilingual preview banner (`docs/preview.svg` / `docs/preview.zh.svg`, 640×300) instead of the README manual; the card's title and one-sentence description come from `locale/*.json` `meta`, and the README stays the full developer document.
 - English/Chinese text, DSH theme colors, responsive layout, loading/error feedback and modal focus management.
 
@@ -36,7 +38,7 @@ DSH reads package metadata for the card and the detail page — not the README:
 | Card title | `locale/en.json` / `locale/zh.json` `meta.title` | `Skills Manager` / `技能管理` |
 | Card description | `meta.description` (one sentence, ≤120 chars) | one sentence per language: what it is and what it gives you |
 | Detail page | `meta.detail` → `docs/DETAIL.md` / `docs/DETAIL.zh.md` | **exactly one preview-image reference**, no long-form text |
-| Detail image | `docs/preview.svg` / `docs/preview.zh.svg` | 640×300 bilingual banner: the real Settings page, the search → review → install loop, update state |
+| Detail image | `docs/preview.svg` / `docs/preview.zh.svg` | 640×300 bilingual banner: the unified Settings page (clickable number cards, skill card list) and the search → review → install loop |
 | Icon | `icon.svg` at the package root | the skills manager glyph |
 
 - The editing source of truth is a Feishu whiteboard; the committed SVG is its exported snapshot. Board registration lives in [docs/PREVIEW.md](<docs/PREVIEW.md>) and the sync commands are `node scripts/preview.mjs push|pull --lang zh|en`. The two current banners are hand-authored until the boards exist.
@@ -53,7 +55,7 @@ For an existing installation, first disable or uninstall 0.1.0 in **Plugins**, c
 
 ## User installation
 
-The source lives at [github.com/skillre/dsh-plugin-skills-manager](https://github.com/skillre/dsh-plugin-skills-manager) and the package is published to npm: **`@skillre/dsh-plugin-skills-manager@0.4.0`**.
+The source lives at [github.com/skillre/dsh-plugin-skills-manager](https://github.com/skillre/dsh-plugin-skills-manager) and the package is published to npm: **`@skillre/dsh-plugin-skills-manager@0.5.0`**.
 
 **Option A: npm package name (recommended, updated in place)** — enter this in **Add plugin**:
 
@@ -61,7 +63,7 @@ The source lives at [github.com/skillre/dsh-plugin-skills-manager](https://githu
 @skillre/dsh-plugin-skills-manager
 ```
 
-or pin it as `@skillre/dsh-plugin-skills-manager@0.4.0`. An npm install shows the **Versions** section and can be upgraded from Plugins, and it is the source listed in the user's own market index for **Discover**.
+or pin it as `@skillre/dsh-plugin-skills-manager@0.5.0`. An npm install shows the **Versions** section and can be upgraded from Plugins, and it is the source listed in the user's own market index for **Discover**.
 
 **Option B: Git repository URL (tracks the default branch)** — paste this into **Add plugin**:
 
@@ -71,11 +73,11 @@ https://github.com/skillre/dsh-plugin-skills-manager
 
 The repository commits its built output under `lib/`, so pnpm does not need to execute build scripts and the `allowBuilds` supply-chain policy does not block the install. This follows the latest `main` commit. Note that a Git install has **no Versions section**: it can only be removed and reinstalled, never upgraded in place.
 
-**Option C: Release tarball (pinned version)** — download [`skillre-dsh-plugin-skills-manager-0.4.0.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.4.0/skillre-dsh-plugin-skills-manager-0.4.0.tgz) from the [GitHub Release v0.4.0](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.4.0) and enter its **full absolute local path** in **Add plugin**. It is byte-identical to the npm publication (same registry integrity).
+**Option C: Release tarball (pinned version)** — download [`skillre-dsh-plugin-skills-manager-0.5.0.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.5.0/skillre-dsh-plugin-skills-manager-0.5.0.tgz) from the [GitHub Release v0.5.0](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.5.0) and enter its **full absolute local path** in **Add plugin**. It is byte-identical to the npm publication (same registry integrity).
 
 1. Open **Plugins → Add plugin** in DSH.
 2. Paste the npm package name, the Git URL or the tarball's absolute path, review the trust notice and initiate installation yourself.
-3. Enable it, open **Settings** (the sidebar-foot account menu → Settings, or ⌘, on macOS), and choose **Skills** in the Settings sidebar. The left rail gains no skills button.
+3. Enable it, open **Settings** (the sidebar-foot account menu → Settings, or ⌘, on macOS), and choose **Skills Manager** in the Settings sidebar. The left rail gains no skills button.
 
 To move an existing `github:` install to the npm install: remove the Git entry in Plugins first, then add the npm package name. Skill files, provenance records and backups live outside the profile and are unaffected.
 
@@ -175,11 +177,11 @@ Downloads are commit-pinned and checked against every Git blob and the complete 
 
 ## Verification and limits
 
-DSH **0.2.2-rc.1** (cordis 4.1.0) was re-inspected and mounted on **2026-11-08**, with the Settings-section delivery and the picture-only detail page. The display-contract check, type checking, build, publint, package checks and **88 automated tests** pass, including **20 real ConnectionRegistry transport regressions**, **14 GitHub source/rate-limit/archive-fallback regressions**, **7 well-known/archive regressions**, **10 batch/backup/move/install/diff regressions**, **5 search-hit and install-conflict decision regressions** and **3 Client Settings-registration/lifecycle regressions**. The pre-final packed test in an owned temporary non-Desktop profile compared all packed files byte-for-byte and exercised real Gateway `settings/describe` and Desktop welcome `llm/listConfigurableProviders`, plugin list/detail/check/remove/restore with filesystem/fingerprint checks, a real Host restart while the plugin remained installed, dependency/selection/composition/plugin-route absence after uninstall, and both Gateway methods after another startup. Every owned CLI process closed and every recorded group returned `ESRCH` before canonical owner/UID-root removal and explicit `ENOENT`. The target UI was verified in a real DSH Web page (owned temporary non-Desktop profile, real Chrome/CDP): the left rail carries **no** skills entry, the Settings sidebar shows the **Skills** row with its own glyph and opens the manager page, a search hit's "Review & install" resolves the repository and shows the full review in one step, the plugin detail page rendered the shipped preview banner (640×300), and two off/on cycles of the bundle restored the Settings row and page with a clean console. The previous build's plugin-RPC-only checks are not this version's compatibility proof.
+DSH **0.2.2-rc.1** (cordis 4.1.0) was re-inspected and mounted on **2026-11-08**, with the Settings-surface unification and the picture-only detail page. The display-contract check, type checking, build, publint, package checks and **88 automated tests** pass, including **20 real ConnectionRegistry transport regressions**, **14 GitHub source/rate-limit/archive-fallback regressions**, **7 well-known/archive regressions**, **10 batch/backup/move/install/diff regressions**, **5 search-hit and install-conflict decision regressions** and **3 Client Settings-registration/lifecycle regressions**. The pre-final packed test in an owned temporary non-Desktop profile compared all packed files byte-for-byte and exercised real Gateway `settings/describe` and Desktop welcome `llm/listConfigurableProviders`, plugin list/detail/check/remove/restore with filesystem/fingerprint checks, a real Host restart while the plugin remained installed, dependency/selection/composition/plugin-route absence after uninstall, and both Gateway methods after another startup. Every owned CLI process closed and every recorded group returned `ESRCH` before canonical owner/UID-root removal and explicit `ENOENT`. The target UI was verified in a real DSH Web page (owned temporary non-Desktop profile, real Chrome/CDP): the left rail carries **no** skills entry, the Settings sidebar shows the **Skills Manager** row with its own glyph and opens the manager page, the page heading repeats that rail label, cards/tabs use the host Settings typography and hairline card border, and the three overview number cards are clickable buttons that filter the list (read-only filter shows a removable chip), a search hit's "Review & install" resolves the repository and shows the full review in one step, the plugin detail page rendered the shipped preview banner (640×300), and two off/on cycles of the bundle restored the Settings row and page with a clean console. The previous build's plugin-RPC-only checks are not this version's compatibility proof.
 
-The shipped [compatibility record](<compatibility.json>) references only this version's [passed pre-final mount evidence](<docs/verification/pre-final-mount-0.4.0-gateway.json>). After adding compatibility metadata, repack and reinstall the **exact final file**; every packed file, SHA256, Gateway/plugin checks and cleanup outcome are recorded in the external [final mount report](<docs/verification/isolated-mount-0.4.0.json>), [log](<docs/verification/isolated-mount-0.4.0.log>) and [artifact summary](<docs/verification/final-artifact-0.4.0.json>). The real-UI evidence is the [browser verification report](<docs/verification/browser-hot-reenable-0.4.0.json>). Keeping the exact tarball hash outside the package avoids a self-referential hash.
+The shipped [compatibility record](<compatibility.json>) references only this version's [passed pre-final mount evidence](<docs/verification/pre-final-mount-0.5.0-gateway.json>). After adding compatibility metadata, repack and reinstall the **exact final file**; every packed file, SHA256, Gateway/plugin checks and cleanup outcome are recorded in the external [final mount report](<docs/verification/isolated-mount-0.5.0.json>), [log](<docs/verification/isolated-mount-0.5.0.log>) and [artifact summary](<docs/verification/final-artifact-0.5.0.json>). The real-UI evidence is the [browser verification report](<docs/verification/browser-hot-reenable-0.5.0.json>). Keeping the exact tarball hash outside the package avoids a self-referential hash.
 
-**Electron Desktop visual/interaction acceptance and the user's daily Desktop restart belong to the user.** A real isolated CLI/Web Host restart, authenticated RPC and Client asset delivery are not Electron-window, theme or interaction acceptance. The 0.4.0 Settings entry, search-to-review flow, hot enable/disable and picture-only detail page were verified in a real DSH Web page and recorded as the `web-ui-settings-section`, `web-ui-discover-review`, `web-ui-hot-reenable` and `web-ui-detail-preview-image` compatibility checks. The same flow inside the Electron Desktop window remains a user-side visual acceptance.
+**Electron Desktop visual/interaction acceptance and the user's daily Desktop restart belong to the user.** A real isolated CLI/Web Host restart, authenticated RPC and Client asset delivery are not Electron-window, theme or interaction acceptance. The 0.5.0 Settings entry, unified Settings surface with clickable overview cards, search-to-review flow, hot enable/disable and picture-only detail page were verified in a real DSH Web page and recorded as the `web-ui-settings-section`, `web-ui-settings-unified`, `web-ui-overview-tiles`, `web-ui-discover-review`, `web-ui-hot-reenable` and `web-ui-detail-preview-image` compatibility checks (screenshots: [Settings page](<docs/verification/settings-ui-0.5.0.png>), [filter state](<docs/verification/settings-ui-filter-0.5.0.png>)). The same flow inside the Electron Desktop window remains a user-side visual acceptance.
 
 The route uses a `buffered` body. Its limit belongs to DSH Connection's HTTP carrier `maxRequestBodyBytes` (current default 300 MiB), not an independent adapter/direct `shared.fetch` cap. No new carrier-overflow test is claimed.
 
