@@ -89,7 +89,7 @@ export interface SkillCardProps {
 export function SkillCard({ skill, root, t, disabled, jobActive, onOpen }: SkillCardProps): React.JSX.Element {
   const open = (action: 'detail' | 'update' | 'remove') => { if (!disabled) onOpen(action) }
   return <article className="skm-card" data-invalid={skill.valid ? undefined : 'true'}>
-    <button type="button" className="skm-card-content" disabled={disabled} onClick={() => open('detail')} aria-label={`${t('viewDetails')} ${skill.name}`}>
+    <button type="button" className="skm-card-content" disabled={disabled} onClick={() => open('detail')}>
       <span className="skm-card-head"><span className="skm-card-title">{skill.name}</span><StatusBadge skill={skill} t={t}/></span>
       <span className="skm-card-desc">{skill.description || skill.issue}</span>
       <span className="skm-card-meta">
@@ -97,8 +97,8 @@ export function SkillCard({ skill, root, t, disabled, jobActive, onOpen }: Skill
         {skill.source && <span className="skm-identity">{skill.source.repository}</span>}
         {skill.source?.commit && skill.source.commit !== 'unknown' && <span className="skm-identity">{skill.source.commit.slice(0, 8)}</span>}
       </span>
-      {skill.check?.status === 'error' && <span className="skm-card-error" role="status">{skill.check.message}</span>}
     </button>
+    {skill.check?.status === 'error' && <p className="skm-card-error skm-card-error-outside" role="status">{skill.check.message}</p>}
     <div className="skm-card-foot">
       <div className="skm-card-actions">
         <button type="button" className="skm-link-button" aria-label={`${t('viewDetails')} ${skill.name}`} disabled={disabled} onClick={() => open('detail')}>{t('viewDetails')}</button>

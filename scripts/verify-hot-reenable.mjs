@@ -8,7 +8,7 @@
 import assert from 'node:assert/strict'
 import { spawn, spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { access, mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises'
+import { access, mkdir, mkdtemp, readFile, realpath, rm, symlink, writeFile } from 'node:fs/promises'
 import { constants } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
@@ -156,6 +156,12 @@ try {
   const sampleSkill = join(home, 'agents', 'skills', 'ui-check')
   await mkdir(sampleSkill, { recursive: true })
   await writeFile(join(sampleSkill, 'SKILL.md'), '---\nname: ui-check\ndescription: Owned sample skill used to verify the Settings card list.\n---\n# UI check\n')
+  // A second seeded entry is a symlink: the manager marks linked entries as
+  // read-only, so the read-only overview card has a real filter target.
+  const readonlySeed = join(home, 'readonly-seed')
+  await mkdir(readonlySeed, { recursive: true })
+  await writeFile(join(readonlySeed, 'SKILL.md'), '---\nname: readonly-ui-check\ndescription: Owned linked sample skill used to verify the read-only filter.\n---\n# Read-only UI check\n')
+  await symlink(readonlySeed, join(home, 'agents', 'skills', 'readonly-ui-check'), 'dir')
   await writeFile(join(owned, '.owned-by-skills-manager'), owner, { flag: 'wx', mode: 0o600 })
   await run('create-profile', cli, ['--profile', profile, '--from-default-profile', 'web', '--dump-config'])
   checks.push('profile-created')
@@ -190,7 +196,7 @@ try {
         const evaluate = cdp.evaluate
         const bundleLabels = ['技能管理', 'Skills Manager']
         const sectionLabels = ['技能管理', 'Skills Manager']
-        const legacySectionLabels = ['技能', 'Skills']
+        const legacySectionLabels = ['技能', 'Skills', '技能管理', 'Skills Manager']
         const text = () => evaluate('document.body ? document.body.innerText : ""')
         const buttonQuery = `[...document.querySelectorAll('button')]`
         const click = expression => evaluate(`(() => { const element = ${expression}; if (!element) return false; element.click(); return true })()`)
@@ -297,23 +303,34 @@ try {
 
         const tiles = () => evaluate(`JSON.stringify([...document.querySelectorAll('.skm-tile')].map(tile => ({ tag: tile.tagName, pressed: tile.getAttribute('aria-pressed') })))`)
         const cardTitles = () => evaluate(`JSON.stringify([...document.querySelectorAll('.skm-card-title')].map(node => (node.textContent || '').trim()))`)
+        const sortedTitles = async () => JSON.parse(await cardTitles()).sort()
+        const tabState = () => evaluate(`JSON.stringify({ selected: [...document.querySelectorAll('.skm-tab')].filter(tab => tab.getAttribute('aria-selected') === 'true').map(tab => (tab.textContent || '').trim()), panel: !!document.querySelector('[role=tabpanel]') })`)
         const overview = JSON.parse(await tiles())
         assert.equal(overview.length, 3, 'the overview must show three number cards')
         overview.forEach(tile => assert.equal(tile.tag, 'BUTTON', 'every overview number card must be a real button'))
         assert.ok(overview.some(tile => tile.pressed === 'true'), 'the overview must mark the active filter')
-        assert.deepEqual(JSON.parse(await cardTitles()), ['ui-check'], 'the seeded skill must render as a Settings card')
+        assert.deepEqual(await sortedTitles(), ['readonly-ui-check', 'ui-check'], 'both seeded skills must render as Settings cards')
         const evidenceDir = join(repo, 'docs/verification')
         await mkdir(evidenceDir, { recursive: true })
         await writeFile(join(evidenceDir, `settings-ui-${manifest.version}.png`), Buffer.from((await cdp.send('Page.captureScreenshot', { format: 'png' })).data, 'base64'))
-        // Clicking a number card filters the list; the chip clears the filter.
+        // Clicking the read-only number card must actually change the list.
         assert.equal(await click(`document.querySelectorAll('.skm-tile')[2]`), true, 'the read-only number card must be clickable')
         await waitFor(async () => (await evaluate(`document.querySelectorAll('.skm-chip').length`)) === 1 ? true : undefined, 15000, 'read-only filter chip')
         const filtered = JSON.parse(await tiles())
         assert.equal(filtered[2].pressed, 'true', 'the read-only number card must become the active filter')
+        assert.deepEqual(JSON.parse(await cardTitles()), ['readonly-ui-check'], 'the read-only card must filter the list to the linked entry only')
         await writeFile(join(evidenceDir, `settings-ui-filter-${manifest.version}.png`), Buffer.from((await cdp.send('Page.captureScreenshot', { format: 'png' })).data, 'base64'))
         assert.equal(await click(`document.querySelector('.skm-chip')`), true, 'the filter chip must clear the number-card filter')
         await waitFor(async () => (await evaluate(`document.querySelectorAll('.skm-chip').length`)) === 0 ? true : undefined, 15000, 'read-only filter cleared')
-        assert.deepEqual(JSON.parse(await cardTitles()), ['ui-check'], 'clearing the filter must restore the installed card')
+        assert.deepEqual(await sortedTitles(), ['readonly-ui-check', 'ui-check'], 'clearing the filter must restore the full installed list')
+        // The updates card opens the updates view; the first card restores the list view.
+        assert.equal(await click(`document.querySelectorAll('.skm-tile')[1]`), true, 'the updates number card must be clickable')
+        await waitFor(async () => JSON.parse(await tabState()).selected.includes('可用更新') || JSON.parse(await tabState()).selected.includes('Updates') ? true : undefined, 15000, 'updates view from the number card')
+        const updatesState = JSON.parse(await tiles())
+        assert.equal(updatesState[1].pressed, 'true', 'the updates number card must become the active filter')
+        assert.equal(await click(`document.querySelectorAll('.skm-tile')[0]`), true, 'the installed number card must be clickable')
+        await waitFor(async () => !!(JSON.parse(await tabState()).selected.includes('本地技能') || JSON.parse(await tabState()).selected.includes('Installed')) ? true : undefined, 15000, 'installed view from the number card')
+        assert.deepEqual(await sortedTitles(), ['readonly-ui-check', 'ui-check'], 'the installed card must restore the full list')
         checks.push('web-ui-overview-tiles')
         checks.push('web-ui-settings-screenshot')
 

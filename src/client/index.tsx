@@ -129,7 +129,7 @@ export function SkillsPage({ api, localeService, t }: PageProps): React.JSX.Elem
   function resetView(): void { setFilter(''); setLocation('all'); setOverview('all') }
   function showOverview(next: Overview): void {
     if (!catalog) return
-    if (next === 'updates') { setOverview('all'); setFilter(''); setTab('updates'); return }
+    if (next === 'updates') { setOverview('all'); setFilter(''); setLocation('all'); setTab('updates'); return }
     if (next === 'readonly') { setOverview('readonly'); setFilter(''); setLocation('all'); setTab('local'); return }
     resetView()
     setTab('local')

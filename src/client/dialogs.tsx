@@ -100,7 +100,7 @@ export function InstallDialog({ initialSource, preferredName, preferredSkillId, 
       const result = await api.call<MutationResult>({ action: 'install', rootId, source: preview.repository, ref: preview.ref, commit: preview.commit, skillPath: preview.skill.skillPath, ...rename, ...scope(workspaceId) }, life.current.signal)
       props.onMutated(result)
     } catch (error) { const message = errorText(error); if (alive.current) setError(message); props.onError(message) }
-    finally { if (alive.current) setBusy(''); props.onBusy(false) }
+    finally { if (alive.current) setBusy(''); props.onBusy(false); props.onSettled() }
   }
   async function updateInstalled(existing: LocalSkill): Promise<void> {
     if (!preview || busy) return
