@@ -4,7 +4,7 @@
 
 由用户在 DSH **Plugins / 插件管理** 中打开「技能管理」并选择关闭或卸载。不要用 CLI 的 `--profile desktop` 代替 Electron 管理界面。
 
-卸载会撤销本插件的精确 `POST /api/skillre-skills-manager/execute` Fetch route、模型工具、Client Slot、语言字典与相关请求；**不移除 DSH API Gateway 的共享 interceptor，不删除用户技能、来源记录或备份**。本轮未在用户日常 profile 安装或代卸载插件。
+卸载会撤销本插件的精确 `POST /api/skillre-skills-manager/execute` Fetch route、模型工具、Client 设置页 Slot（含导航图标）、语言字典与相关请求；**不移除 DSH API Gateway 的共享 interceptor，不删除用户技能、来源记录或备份**。本轮未在用户日常 profile 安装或代卸载插件。
 
 ## 恢复已删除技能 / 回滚技能更新
 

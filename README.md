@@ -1,10 +1,10 @@
 # DSH 技能管理 · Skills Manager
 
-> `@skillre/dsh-plugin-skills-manager` · `0.2.1` · experimental
+> `@skillre/dsh-plugin-skills-manager` · `0.3.0` · experimental
 
 [English](<README.en.md>)
 
-为 DSH 提供一个左侧栏「**技能**」入口，以原生 React 页面管理技能，不使用 iframe 或独立网页。
+在 DSH **设置**侧栏中提供一个「**技能**」管理页（不再占用左侧栏面板入口），以原生 React 页面管理技能，不使用 iframe 或独立网页。
 
 ## 功能
 
@@ -12,8 +12,9 @@
 - **更新检查**：按已记录的 GitHub 提交或 well-known 市场摘要检查目录版本，区分可更新、已是最新、无来源、只读和检查失败；摘要包含「已是最新」数量，无来源不会被误报为最新。
 - **外部来源识别**：识别 Skills CLI 记录的 GitHub 与 well-known（如 `open.feishu.cn`）来源；well-known 技能用其目录摘要检查并更新，其他第三方来源显示真实来源标签但仍标记为不可自动更新。
 - **技能更新**：固定到所选提交、验证完整文件哈希；检查本地修改及确认时的文件指纹，更新前保存旧版本。
-- **技能检索**：搜索公共 [skills.sh](https://skills.sh) 目录，或直接检查一个公共 GitHub 仓库。
-- **技能安装**：先选择和查看技能，再确认信任与安装位置；不会覆盖既有目录，不执行下载的脚本。
+- **技能检索**：搜索公共 [skills.sh](https://skills.sh) 目录，或直接检查一个公共 GitHub 仓库。检索结果会直接进入来源仓库中对应技能的**完整审阅**（自动定位所选技能、展示 `SKILL.md`、资源清单与安装位置），不需要再手动点一次「检查仓库」。
+- **技能安装**：三步流程「选择来源 → 选择技能 → 查看并安装」，安装前必须勾选信任；不会覆盖既有目录，不执行下载的脚本。若该位置已有同名技能：同来源时提示并可直接更新，其他来源时说明 DSH 同名只生效一个并给出已安装技能入口，仅目录名冲突时可换一个目录名安装。安装成功后自动切到「本地技能」并筛选到新技能，装完立刻能看到。
+- **检索/安装的抗限流**：GitHub 未认证 API 每小时仅 60 次。发现流程会短期复用仓库解析结果、按 commit 复用不可变树；额度耗尽时直接给出重置时间与配置建议。API 被限流或不可达时，列表改用 `github.com` 引用广告 + codeload 归档重建真实 Git blob/tree 哈希，检索→审阅→安装仍可完成。
 - **技能删除与恢复**：将入口移至完整备份，支持恢复；恢复不覆盖已存在的技能。
 - **批量操作**：可一次更新全部已检查技能；逐项重新校验来源、保留备份，本地修改默认跳过（可显式允许覆盖），结果按成功/跳过/失败汇总。
 - **备份管理**：备份记录显示大小与文件数，支持单条删除，以及「保留最新 N 份」的清理；默认不自动清理。
@@ -22,7 +23,7 @@
 - **更新前文件对比**：更新对话框展示新增/删除/修改/未变的文件列表。
 - **扩展安装来源**：支持本地 `.tar.gz`/`.tgz`/`.zip` 归档（内存严格解析、不执行脚本）、well-known HTTPS 目录安装，以及把备份恢复到其他可写位置。
 - **模型工具**：提供 `skills_manager`，与界面调用同一核心服务；写操作必须取得本次用户批准，不接受授权布尔参数。
-- **热启停**：在 Plugins 中关闭再重新启用插件时，Client 侧栏入口与主面板随插件 Fiber 正确卸载和重挂载；0.2.1 修复了此前重新启用后入口消失、必须刷新页面的问题。
+- **热启停**：在 Plugins 中关闭再重新启用插件时，设置侧栏中的「技能」条目与其页面随插件 Fiber 正确卸载和重挂载；0.3.0 起不再注册左侧栏面板入口。
 - 中英文文案、DSH 主题颜色、响应式布局、加载与失败状态、对话框焦点管理。
 
 ## 0.1.0 启动故障与升级
@@ -45,12 +46,12 @@ https://github.com/skillre/dsh-plugin-skills-manager
 
 仓库已提交构建产物（`lib/`），pnpm 不需要执行构建脚本，因此不受 `allowBuilds` 供应链限制；安装后重启 Desktop 即可。该方式跟随 `main` 最新提交，适合持续获取最新版。
 
-**方式 B：Release tarball（固定版本）** —— 从 [GitHub Release v0.2.1](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.2.1) 下载 [`skillre-dsh-plugin-skills-manager-0.2.1.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.2.1/skillre-dsh-plugin-skills-manager-0.2.1.tgz)，在 **Add plugin** 中输入它的**完整本地绝对路径**。
+**方式 B：Release tarball（固定版本）** —— 从 [GitHub Release v0.3.0](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.3.0) 下载 [`skillre-dsh-plugin-skills-manager-0.3.0.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.3.0/skillre-dsh-plugin-skills-manager-0.3.0.tgz)，在 **Add plugin** 中输入它的**完整本地绝对路径**。
 
 1. 打开 DSH 左侧 **Plugins / 插件**。
 2. 选择 **Add plugin / 添加插件**。
 3. 粘贴 Git 仓库地址或 tarball 的本地绝对路径，查看信任提示并自行确认安装。
-4. 启用后，从左侧栏「**技能 / Skills**」进入。
+4. 启用后，打开 **设置**（左侧栏底部「更多 / More」→ 设置，或快捷键 ⌘,），在设置侧栏中选择「**技能 / Skills**」。左侧栏不会新增技能按钮。
 
 最终安装由用户发起。不要输入尚未发布的 npm 包名或源码目录；若要固定版本，请使用方式 B 的 Release 资产（该文件经过精确验证）。
 
@@ -63,7 +64,7 @@ https://github.com/skillre/dsh-plugin-skills-manager
 - 「更新」与「全部更新」都会转入后台任务：确认后立即返回，自动切到「更新任务」标签页；页头「更新任务」按钮会显示运行中任务的总体进度，任何时候都能回到进度视图。Host 运行期间任务历史保留（最多 20 条）；Host 重启后任务记录清空，但技能更新事务有日志保护，不会留下半更新状态。
 - 单个技能进度按阶段显示：解析来源 → 下载（真实字节/文件比例）→ 校验 → 备份旧版本 → 安装新版本，并给出大致百分比。批量任务额外显示整体进度和每个技能的状态（未更新 / 正在更新 / 更新完成 / 更新失败 / 已跳过 / 已取消）、时间、备份 ID、提交与失败原因。
 - 同一时间只允许一个更新任务在运行，期间「检查更新」和更新入口暂时禁用；可「停止剩余更新」（当前技能会完整完成，剩余项标记为已取消），失败项可一键重试。任务结束后自动刷新技能列表与可用更新状态。
-- 「技能检索」输入任务或技术关键词；「查看并安装」先检查来源，安装前必须勾选信任确认。
+- 「技能检索」输入任务或技术关键词；点「查看并安装」会直接检查来源并定位该技能，进入审阅步骤，安装前必须勾选信任确认。「从仓库安装」可手动输入仓库地址与分支/标签，并自行选择仓库中的技能。
 - 「从仓库安装」支持 `owner/repo` 或 `https://github.com/owner/repo`；分支/标签选填，默认 `HEAD`。
 - 删除和更新会生成「备份记录」。备份持续保留，不自动清除；恢复时原位置必须空闲。
 - DSH 本地技能扫描器观察到文件变化后更新其目录。已有对话里的已加载指令不会被追溯重写；必要时重新加载技能或开启新会话。
@@ -131,6 +132,7 @@ https://github.com/skillre/dsh-plugin-skills-manager
     maxBundleFiles: 20000
     maxRepositoryEntries: 30000
     checkConcurrency: 3
+    githubTokenEnv: ''
 ```
 
 覆盖 `config` 会整块替换，但本插件 schema 会补齐省略的默认字段。目录必须为绝对路径。
@@ -152,11 +154,12 @@ https://github.com/skillre/dsh-plugin-skills-manager
 | `maxBundleFiles` | `20000` | 技能文件数上限；配置上限 50000，适合模板/素材型技能 |
 | `maxRepositoryEntries` | `30000` | GitHub 完整树条目上限；截断树不用于判定更新 |
 | `checkConcurrency` | `3` | 网络检查/下载并发，1–6 |
+| `githubTokenEnv` | `''` | 可选：一个**环境变量名**（如 `GITHUB_TOKEN`），插件仅在请求 `api.github.com` 时读取并附带它，用于提高每小时额度；默认空表示绝不读取任何凭据。填 token 值本身会被拒绝 |
 
 ## 权限、网络与安全
 
 - Host 插件以宿主权限访问配置的技能目录；界面 RPC 仅接受经过 DSH Connection 验证的 live owner，拒绝其他 Peer。
-- 只向 `skills.sh`、`api.github.com`、`raw.githubusercontent.com` 以及已记录来源的公共 HTTPS well-known 目录发起请求；well-known 归档必须与 catalog 同源，校验 `sha256` 摘要并在内存中严格解析 tar.gz。不读取 GitHub token、浏览器凭据、Git 登录或执行 `npx`/Git/下载脚本。
+- 只向 `skills.sh`、`api.github.com`、`raw.githubusercontent.com`、`codeload.github.com`、`github.com`（Git 引用广告，仅用于 API 限流时的兜底）以及已记录来源的公共 HTTPS well-known 目录发起请求；well-known 归档必须与 catalog 同源，校验 `sha256` 摘要并在内存中严格解析 tar.gz。默认**不读取任何凭据**；只有显式配置 `githubTokenEnv` 时，才会把该环境变量中的 token 仅附加到 `api.github.com` 请求上——不会发往 raw/codeload/skills.sh，也不会写入日志或错误信息。不执行 `npx`/Git/下载脚本。
 - 下载固定到提交，校验每个 Git blob 和完整选中目录的 Git tree；拒绝远程链接、子模块、越界路径、大小写/Unicode 路径冲突及超限资源。
 - 变更时重新校验本地指纹，使用每根目录磁盘锁、同文件系统事务日志和备份。状态文件限 4 MiB，无法验证的状态/未完成事务失败闭合。
 - **变更期间不要用其他安装器/编辑器修改同一根目录。** 防护覆盖静态链接/路径穿越和合作式并发；可移植 Node I/O 不提供抵御同 OS 用户恶意祖先路径交换的 dirfd 隔离。
@@ -165,11 +168,11 @@ https://github.com/skillre/dsh-plugin-skills-manager
 
 ## 验证与限制
 
-已在 **2026-11-06** 重新 Inspect 并实挂当前 DSH **0.2.2-rc.1**（cordis 4.1.0）。本地类型检查、构建、publint、打包检查和 **73 项自动化测试**通过（含 **20 项真实 ConnectionRegistry 运输层回归**、**7 项 well-known/归档回归**、**9 项批量/备份/移动/安装/对比回归**、**1 项大技能 commit tarball 下载回归**、**5 项后台更新任务/进度/取消回归**、**1 项 Client 生命周期/热重载回归**）。自有临时非 Desktop profile 的预最终包验证了全部 **37 个 packed 文件**的字节、真实 Gateway `settings/describe` 与 Desktop welcome 实际调用 `llm/listConfigurableProviders`、插件 list/detail/check/remove/restore 的实际文件与指纹、仍安装插件时真实 Host 重启后的欢迎方法与 fixture 保留、卸载后依赖/选择/组合/插件路径缺失，以及再次启动后两个 Gateway 方法继续成功。10 个自有 CLI 进程真实关闭并核实组 `ESRCH` 后，确认 owner/UID/规范路径才删除测试 root，最终核实 `ENOENT`。另在真实 DSH Web 页面（自有临时非 Desktop profile + 真实 Chrome/CDP）验证热启停：关闭再启用插件两轮，侧栏入口与主面板都正常恢复，控制台无错误。旧版只测插件自身 RPC 的记录不是本版本兼容证明。
+已在 **2026-11-08** 重新 Inspect 并实挂当前 DSH **0.2.2-rc.1**（cordis 4.1.0），并改为设置页入口。本地类型检查、构建、publint、打包检查和 **88 项自动化测试**通过（含 **20 项真实 ConnectionRegistry 运输层回归**、**14 项 GitHub 来源/限流/归档兜底回归**、**7 项 well-known/归档回归**、**10 项批量/备份/移动/安装/对比回归**、**5 项检索命中与安装冲突决策回归**、**3 项 Client 设置页注册/生命周期回归**等）。自有临时非 Desktop profile 的预最终包逐字节核对了全部 **37 个 packed 文件**，并验证真实 Gateway `settings/describe` 与 Desktop welcome 实际调用 `llm/listConfigurableProviders`、插件 list/detail/check/remove/restore 的实际文件与指纹、仍安装插件时真实 Host 重启后的欢迎方法与 fixture 保留、卸载后依赖/选择/组合/插件路径缺失，以及再次启动后两个 Gateway 方法继续成功；所有自有 CLI 进程真实关闭并核实组 `ESRCH` 后，才按 owner/UID/规范路径删除测试 root 并核实 `ENOENT`。另在真实 DSH Web 页面（自有临时非 Desktop profile + 真实 Chrome/CDP）验证：左侧栏**不存在**技能入口；设置侧栏出现「技能」并提供图标与管理页；「技能检索」→「查看并安装」一步进入完整审阅（自动解析仓库、展示 `SKILL.md`、资源与安装位置）；关闭再启用插件两轮后设置条目与页面都恢复，控制台无错误。旧版只测插件自身 RPC 的记录不是本版本兼容证明。
 
-安装包中的 [兼容记录](<compatibility.json>) 只引用本版本 [已通过的预最终实挂证据](<docs/verification/pre-final-mount-0.2.1-gateway.json>)。补入文档/兼容元数据后必须重新打包并安装**精确最终文件**；全部 packed payload、SHA256、Gateway/插件检查与清理结果以 [最终实挂记录](<docs/verification/isolated-mount-0.2.1.json>)、[日志](<docs/verification/isolated-mount-0.2.1.log>) 和 [最终文件摘要](<docs/verification/final-artifact-0.2.1.json>) 为准。精确 tarball 哈希保留在外部证据中，避免安装包自引用自己的哈希。
+安装包中的 [兼容记录](<compatibility.json>) 只引用本版本[已通过的预最终实挂证据](<docs/verification/pre-final-mount-0.3.0-gateway.json>)。补入兼容元数据后必须重新打包并安装**精确最终文件**；全部 packed payload、SHA256、Gateway/插件检查与清理结果以 [最终实挂记录](<docs/verification/isolated-mount-0.3.0.json>)、[日志](<docs/verification/isolated-mount-0.3.0.log>) 和 [最终文件摘要](<docs/verification/final-artifact-0.3.0.json>) 为准。真实 Web UI 检查的证据在 [浏览器验证记录](<docs/verification/browser-hot-reenable-0.3.0.json>)。精确 tarball 哈希保留在外部证据中，避免安装包自引用自己的哈希。
 
-**Electron Desktop 视觉/交互与用户日常 Desktop 重启验收仍由用户完成**：隔离 CLI/Web Host 的真实重启、认证 RPC 与 Client 资源可加载不等于 Electron 窗口、主题或交互验收。0.2.1 的 Client 热启停已在真实 DSH Web 页面验证，并作为 `web-ui-hot-reenable` 记录在兼容证据中。
+**Electron Desktop 视觉/交互与用户日常 Desktop 重启验收仍由用户完成**：隔离 CLI/Web Host 的真实重启、认证 RPC 与 Client 资源可加载不等于 Electron 窗口、主题或交互验收。0.3.0 的 Settings 入口、检索→审阅流程与热启停已在真实 DSH Web 页面验证，并分别作为 `web-ui-settings-section`、`web-ui-discover-review`、`web-ui-hot-reenable` 记录在兼容证据中。Desktop Electron 窗口内的同流程视觉验收仍待用户完成。
 
 该路由使用 `buffered` 请求体；上限属于 DSH Connection HTTP 承载层的 `maxRequestBodyBytes`（当前默认 300 MiB），不是本插件 adapter 或直接 `shared.fetch` 的独立 cap。本轮未新增 carrier overflow 测试。
 

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "package": "@skillre/dsh-plugin-skills-manager",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "withdrawnVersions": [
     {
       "version": "0.1.0",
@@ -11,6 +11,47 @@
     }
   ],
   "verified": [
+    {
+      "dsh": "0.2.2-rc.1",
+      "verifiedAt": "2026-11-08",
+      "result": "passed",
+      "checks": [
+        "profile-tarball-install",
+        "dump-config",
+        "packed-package-identity",
+        "packed-payload-bytes",
+        "full-packed-payload-bytes",
+        "packed-display-resources",
+        "unauthenticated-request-refused",
+        "gateway-settings-describe",
+        "gateway-llm-list-configurable-providers",
+        "authenticated-rpc-lifecycle",
+        "bounded-startup",
+        "client-bundle-delivery",
+        "gateway-welcome-apis-after-plugin-restart",
+        "packed-plugin-restart",
+        "profile-uninstall-absence",
+        "gateway-welcome-apis-after-uninstall",
+        "uninstalled-plugin-route-absent",
+        "owned-process-and-profile-cleanup",
+        "tarball-unchanged",
+        "web-ui-settings-section",
+        "web-ui-discover-review",
+        "web-ui-hot-reenable"
+      ],
+      "cleanupVerified": true,
+      "ui": "web-ui-settings-section-verified",
+      "evidence": "docs/verification/pre-final-mount-0.3.0-gateway.json",
+      "finalArtifactEvidence": "docs/verification/isolated-mount-0.3.0.json",
+      "notes": [
+        "This record consumes the successful frozen pre-final packed test on DSH 0.2.2-rc.1 (cordis 4.1.0) built from the Settings-section delivery and the search-to-install repair. Its complete payload and SHA256 remain in external evidence to avoid a self-referential hash.",
+        "The Client half no longer registers a sidebar panel entry or a keyed main panel. It registers one settings.section row (id skillre-skills-manager, order 25) plus the matching settings.section.icon, so DSH's own Settings seat owns navigation and the plugin owns only the page.",
+        "The target UI was verified in a real DSH Web page: an owned temporary non-Desktop web profile booted the packed tarball, a real Chrome connected through CDP, and 19 checks passed. The left rail had no skills entry, the Settings sidebar showed the Skills row and opened the manager page, a real skills.sh search hit resolved into the full repository review (SKILL.md, resources, target) in one action, and two off/on cycles restored the Settings row and page with a clean console. This is not an Electron Desktop visual acceptance check.",
+        "Mount checks match the 0.2.1 record: real Gateway settings/describe and Desktop welcome llm/listConfigurableProviders, plugin list/detail/check/remove/restore with actual filesystem/fingerprint checks, a real owned Host restart while installed, dependency/selection/composition/plugin-route absence after uninstall, and owned-process/profile cleanup verification.",
+        "88 automated tests pass, covering the new search-hit resolution and install-conflict decisions, the install directory override, optional token scoping, GitHub rate-limit messaging, discovery ref caching and the zero-API archive fallback, plus the existing transport, archive, batch/backup and lifecycle regressions.",
+        "Only current DSH 0.2.2-rc.1 on the macOS isolated non-Desktop CLI/Web carrier was mounted. Desktop shell exact-Fetch dispatch is supported by the inspected SDK and real registry tests, not a live Electron acceptance check. The user's daily profile and Desktop restart remain user-verified."
+      ]
+    },
     {
       "dsh": "0.2.2-rc.1",
       "verifiedAt": "2026-11-06",

@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 // Packed-package UI verification ONLY: never point this runner at a user profile.
 // Boots an owned, disposable non-Desktop DSH Web profile from the given tarball,
-// drives a local Chrome through CDP, and asserts that switching the bundle off
-// and back on mounts the Client sidebar entry and main panel again.
+// drives a local Chrome through CDP, and asserts that the manager lives in the
+// Settings sidebar (never as a sidebar panel), that Discover resolves a search
+// hit into a full review without extra clicks, and that switching the bundle
+// off and back on mounts the Settings section again.
 import assert from 'node:assert/strict'
 import { spawn, spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
@@ -112,7 +114,7 @@ async function cdpConnect(webSocketUrl) {
   }
   const evaluate = async (expression) => {
     const result = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true })
-    if (result.exceptionDetails !== undefined) throw new Error(`page evaluation failed: ${result.exceptionDetails.text}`)
+    if (result.exceptionDetails !== undefined) throw new Error(`page evaluation failed: ${result.exceptionDetails.exception?.description ?? result.exceptionDetails.text}`)
     return result.result?.value
   }
   return { ws, send, evaluate, events }
@@ -180,52 +182,147 @@ try {
         await cdp.send('Log.enable')
         await cdp.send('Page.enable')
         const evaluate = cdp.evaluate
-        const sidebarLabels = ['技能', 'Skills']
         const bundleLabels = ['技能管理', 'Skills Manager']
-        const sidebar = () => evaluate(`JSON.stringify([...document.querySelectorAll('button')].map(button => button.getAttribute('aria-label') || '').filter(label => ${JSON.stringify(sidebarLabels)}.includes(label)))`)
-        const click = (expression) => evaluate(`(() => { const element = ${expression}; if (!element) return false; element.click(); return true })()`)
-        const openPluginManager = () => click(`[...document.querySelectorAll('button')].find(button => ['插件', 'Plugins'].includes(button.getAttribute('aria-label') || '') || ['插件', 'Plugins'].includes(button.textContent.trim()))`)
-        const openBundle = () => click(`[...document.querySelectorAll('button')].find(button => ${JSON.stringify(bundleLabels)}.includes(button.textContent.trim()))`)
+        const sectionLabels = ['技能', 'Skills']
+        const text = () => evaluate('document.body ? document.body.innerText : ""')
+        const buttonQuery = `[...document.querySelectorAll('button')]`
+        const click = expression => evaluate(`(() => { const element = ${expression}; if (!element) return false; element.click(); return true })()`)
+        const labelled = labels => `${buttonQuery}.find(button => ${JSON.stringify(labels)}.includes((button.textContent || '').trim()) || ${JSON.stringify(labels)}.includes(button.getAttribute('aria-label') || '') || ${JSON.stringify(labels)}.includes(button.getAttribute('title') || ''))`
+        const clickLabels = labels => click(labelled(labels))
+        const buttonsDump = () => evaluate(`JSON.stringify(${buttonQuery}.map(button => ({ text: (button.textContent || '').trim().slice(0, 24), aria: button.getAttribute('aria-label') || '', cls: String(button.className).slice(0, 48) })).filter(item => item.text || item.aria || item.cls).slice(0, 80))`)
+        const settingsLabels = ['设置', 'Settings', '設定']
+        // Smallest-first: a launcher label, then the account menu that DSH 0.2.2
+        // uses for Settings, then a menu row, then the keyboard shortcut.
+        const clickSettingsLauncher = () => evaluate(`(() => {
+          const labels = ${JSON.stringify(settingsLabels)}
+          const target = ${buttonQuery}.find(button => labels.includes(button.getAttribute('aria-label') || '') || labels.includes(button.getAttribute('title') || '') || labels.includes((button.textContent || '').trim()))
+          if (!target) return false
+          target.click(); return true
+        })()`)
+        // Menu rows may append a shortcut hint, so match the label as a prefix.
+        const clickMenuItem = labels => evaluate(`(() => {
+          const labels = ${JSON.stringify(labels)}
+          const nodes = [...document.querySelectorAll('[role=menuitem], [role=option], [role=menu] button, button')]
+          const target = nodes.find(node => {
+            const value = (node.textContent || '').trim()
+            return labels.some(label => value === label || value.startsWith(label))
+          })
+          if (!target) return false
+          target.click(); return true
+        })()`)
+        // The Settings shell is the only surface with a nav title element.
+        const settingsOpen = () => evaluate(`!!document.querySelector('[class*="_navTitle"]')`)
+        let lastSettingsDebug = ''
+        const debugSettings = () => evaluate(`JSON.stringify({ menus: document.querySelectorAll('[role=menu]').length, items: [...document.querySelectorAll('[role=menuitem], [role=option]')].map(node => (node.textContent || '').trim()).slice(0, 12), expanded: [...document.querySelectorAll('button[aria-haspopup=menu]')].map(button => button.getAttribute('aria-expanded')), nav: !!document.querySelector('[class*="_navTitle"]') })`)
+        const ensureSettingsOpen = async () => {
+          if (await settingsOpen()) return true
+          for (let attempt = 0; attempt < 3; attempt++) {
+            if (await clickSettingsLauncher()) { await delay(350); if (await settingsOpen()) return true }
+            // DSH 0.2.2 opens Settings from the account menu at the sidebar foot.
+            if (await clickLabels(['账号菜单', 'Account menu'])) {
+              try {
+                await waitFor(async () => (await clickMenuItem(settingsLabels)) ? true : undefined, 4000, 'settings menu row')
+              } catch { /* retry the whole open sequence */ }
+              if (await settingsOpen()) return true
+            }
+            lastSettingsDebug = await debugSettings()
+            await evaluate(`document.dispatchEvent(new KeyboardEvent('keydown', { key: ',', code: 'Comma', keyCode: 188, metaKey: true, ctrlKey: true, bubbles: true }))`)
+            await delay(500)
+            if (await settingsOpen()) return true
+          }
+          return false
+        }
+        const closeSettings = () => click(`document.querySelector('[class*="_panel"] [class*="_close"]')`)
+        const sidebarEntryCount = () => evaluate(`(() => { const labels = ${JSON.stringify(sectionLabels)}; return [...document.querySelectorAll('button')].filter(button => labels.includes(button.getAttribute('aria-label') || '')).length })()`)
+        const sectionNavCount = () => evaluate(`(() => { const labels = ${JSON.stringify(sectionLabels)}; return [...document.querySelectorAll('button')].filter(button => labels.includes((button.textContent || '').trim())).length })()`)
+        const openSection = () => clickLabels(sectionLabels)
+        const openPluginManager = () => clickLabels(['插件', 'Plugins'])
+        const openBundle = () => click(`${buttonQuery}.find(button => ${JSON.stringify(bundleLabels)}.includes(button.textContent.trim()))`)
         const bundleSwitch = () => evaluate(`(() => { const switches = [...document.querySelectorAll('[role=switch]')]; if (switches.length === 0) return null; const first = switches[0]; return JSON.stringify({ checked: first.getAttribute('aria-checked'), disabled: first.disabled }) })()`)
         const clickBundleSwitch = () => click(`(() => { const switches = [...document.querySelectorAll('[role=switch]')]; return switches.length ? switches[0] : null })()`)
+        const setSearch = value => evaluate(`(() => { const target = document.querySelector('.skm-search-form input') || [...document.querySelectorAll('input')].find(input => input.getAttribute('maxlength') === '200'); if (!target) return false; const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set; setter.call(target, ${JSON.stringify(value)}); target.dispatchEvent(new Event('input', { bubbles: true })); return true })()`)
+        const reviewOpen = () => evaluate(`document.querySelectorAll('.skm-code').length > 0 && (document.querySelector('.skm-code')?.textContent || '').length > 80`)
+        const closeReview = () => click(`document.querySelector('.skm-modal-header button')`)
 
-        const bootSidebar = JSON.parse(await waitFor(async () => {
-          const value = await sidebar()
-          return value.includes('技能') || value.includes('Skills') ? value : undefined
-        }, 60000, 'Client boot sidebar entry'))
-        assert.ok(bootSidebar.length > 0, 'the Client boot graph must mount the sidebar entry')
+        // A headless window defaults to 800x600, which slides the sidebar out of
+        // the viewport; drive the shell at a desktop size.
+        await cdp.send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
+        await delay(600)
+        await waitFor(async () => (await text()).length > 20 ? true : undefined, 60000, 'application shell')
+        // A fresh profile opens a one-time preview notice whose modal makes the
+        // shell inert; acknowledge it before driving the menu.
+        let dismissed = false
+        try {
+          await waitFor(async () => (await clickLabels(['继续', 'Continue', '知道了', 'Got it'])) ? true : undefined, 30000, 'preview notice')
+          dismissed = true
+          await waitFor(async () => (await evaluate(`!document.body.innerText.includes('预览版说明')`)) ? true : undefined, 15000, 'preview notice dismissed')
+        } catch { /* no notice in this build */ }
+        const noticeGone = await evaluate(`!document.body.innerText.includes('预览版说明')`)
+        try {
+          await waitFor(async () => (await ensureSettingsOpen()) ? true : undefined, 60000, 'Settings trigger')
+        } catch (error) {
+          throw new Error(`${error.message}; dismissed=${dismissed} noticeGone=${noticeGone} debug: ${await debugSettings()}; buttons: ${await buttonsDump()}; body: ${(await text()).slice(0, 500).replace(/\n/g, ' | ')}`)
+        }
+        try {
+          await waitFor(async () => (await sectionNavCount()) > 0 ? true : undefined, 45000, 'Settings section navigation')
+        } catch (error) {
+          throw new Error(`${error.message}; nav: ${await evaluate(`JSON.stringify(${buttonQuery}.map(button => (button.textContent || '').trim()).filter(Boolean).slice(0, 40))`)}`)
+        }
         checks.push('web-ui-boot')
+        // The old sidebar panel entry must be gone for good, not merely hidden.
+        assert.equal(await sidebarEntryCount(), 0, 'the sidebar must not carry a skills panel entry any more')
+        checks.push('web-ui-no-sidebar-entry')
+        assert.equal(await openSection(), true, 'the manager must open from the Settings sidebar')
+        await waitFor(async () => { const body = await text(); return body.includes(bundleLabels[0]) || body.includes(bundleLabels[1]) ? body : undefined }, 45000, 'settings page content')
+        checks.push('web-ui-settings-page')
 
-        assert.equal(await openPluginManager(), true, 'Plugins sidebar navigation must exist')
-        await waitFor(async () => { const switches = await bundleSwitch(); return switches !== null }, 30000, 'Plugins page')
-        await waitFor(async () => bundleSwitch().then(value => value !== null), 30000, 'Plugins page switches')
-        await waitFor(async () => (await evaluate(`document.body.innerText`)).includes(bundleLabels[0]) || (await evaluate(`document.body.innerText`)).includes(bundleLabels[1]), 30000, 'installed bundle list')
+        // Discover → search → review: the reported "cannot install / cannot see the
+        // detail of a skill I want to install" path, driven read-only (no writes).
+        assert.equal(await clickLabels(['技能检索', 'Discover']), true, 'the Discover tab must exist')
+        await waitFor(async () => evaluate(`document.querySelectorAll('.skm-search-form input').length > 0`) ? true : undefined, 20000, 'discover tab')
+        assert.equal(await setSearch('browser'), true, 'the search field must accept input')
+        assert.equal(await clickLabels(['搜索', 'Search']), true, 'the search button must exist')
+        await waitFor(async () => (await text()).includes('查看并安装') || (await text()).includes('Review & install') ? true : undefined, 60000, 'search results')
+        checks.push('web-ui-discover-results')
+        assert.equal(await clickLabels(['查看并安装', 'Review & install']), true, 'a result must offer a review action')
+        // Opening a hit must resolve and preview the repository skill on its own.
+        await waitFor(reviewOpen, 150000, 'automatic repository review')
+        const reviewText = await text()
+        assert.ok((reviewText.includes('选择来源') || reviewText.includes('Source')) && (reviewText.includes('查看并安装') || reviewText.includes('Review & install')), 'the review dialog must show its flow steps')
+        checks.push('web-ui-discover-review')
+        assert.equal(await closeReview(), true, 'the review dialog must close')
+        await waitFor(async () => !(await reviewOpen()) ? true : undefined, 15000, 'review dialog closed')
+
+        assert.equal(await openPluginManager(), true, 'Plugins navigation must exist')
+        await waitFor(async () => (await bundleSwitch()) !== null ? true : undefined, 30000, 'Plugins page')
+        await waitFor(async () => (await text()).includes(bundleLabels[0]) || (await text()).includes(bundleLabels[1]), 30000, 'installed bundle list')
         assert.equal(await openBundle(), true, 'the bundle card must open')
-        await waitFor(async () => { const value = await bundleSwitch(); return value !== null && JSON.parse(value).disabled === false }, 30000, 'bundle detail switch')
+        await waitFor(async () => { const value = await bundleSwitch(); return value !== null && JSON.parse(value).disabled === false ? true : undefined }, 30000, 'bundle detail switch')
 
         for (const cycle of [1, 2]) {
+          await closeSettings()
+          await delay(400)
           await clickBundleSwitch()
-          await waitFor(async () => { const value = JSON.parse(await bundleSwitch()); return value.checked === 'false' && value.disabled === false }, 30000, `bundle switched off (cycle ${cycle})`)
-          await waitFor(async () => { const value = await sidebar(); return !value.includes('技能') && !value.includes('Skills') ? true : undefined }, 30000, `sidebar entry removed (cycle ${cycle})`)
+          await waitFor(async () => { const value = JSON.parse(await bundleSwitch()); return value.checked === 'false' && value.disabled === false ? true : undefined }, 30000, `bundle switched off (cycle ${cycle})`)
+          await ensureSettingsOpen()
+          await waitFor(async () => { if (!(await settingsOpen())) return undefined; return (await sectionNavCount()) === 0 ? true : undefined }, 30000, `settings section removed (cycle ${cycle})`)
+          assert.equal(await sidebarEntryCount(), 0, 'no sidebar entry may appear while the bundle is disabled')
           checks.push(`web-ui-hot-disable-${cycle}`)
+          await closeSettings()
+          await delay(400)
           await clickBundleSwitch()
-          await waitFor(async () => { const value = JSON.parse(await bundleSwitch()); return value.checked === 'true' && value.disabled === false }, 30000, `bundle switched on (cycle ${cycle})`)
-          await waitFor(async () => { const value = await sidebar(); return value.includes('技能') || value.includes('Skills') ? true : undefined }, 45000, `sidebar entry restored (cycle ${cycle})`)
+          await waitFor(async () => { const value = JSON.parse(await bundleSwitch()); return value.checked === 'true' && value.disabled === false ? true : undefined }, 30000, `bundle switched on (cycle ${cycle})`)
+          await waitFor(async () => (await ensureSettingsOpen()) ? true : undefined, 30000, `settings reopened (cycle ${cycle})`)
+          await waitFor(async () => (await sectionNavCount()) > 0 ? true : undefined, 45000, `settings section restored (cycle ${cycle})`)
+          assert.equal(await openSection(), true, `the restored settings section must be clickable (cycle ${cycle})`)
+          await waitFor(async () => { const body = await text(); return body.includes(bundleLabels[0]) || body.includes(bundleLabels[1]) ? body : undefined }, 30000, `restored settings page (cycle ${cycle})`)
           checks.push(`web-ui-hot-enable-${cycle}`)
         }
         checks.push('web-ui-hot-reenable')
 
-        const sidebarEntry = await evaluate(`(() => { const button = [...document.querySelectorAll('button')].find(button => ['技能', 'Skills'].includes(button.getAttribute('aria-label') || '')); return button ? true : false })()`)
-        assert.equal(sidebarEntry, true, 'the restored sidebar entry must be clickable')
-        await click(`[...document.querySelectorAll('button')].find(button => ['技能', 'Skills'].includes(button.getAttribute('aria-label') || ''))`)
-        const panelText = await waitFor(async () => {
-          const text = await evaluate(`document.body.innerText`)
-          return text.includes(bundleLabels[0]) || text.includes(bundleLabels[1]) ? text : undefined
-        }, 30000, 'restored main panel')
-        assert.ok(panelText.length > 0)
-        checks.push('web-ui-panel-opens')
-
         await delay(1000)
+        consoleErrors = cdp.events
+        consoleErrors = cdp.events
         consoleErrors = cdp.events
           .filter(event => event.method === 'Runtime.exceptionThrown' || (event.method === 'Runtime.consoleAPICalled' && event.params.type === 'error') || (event.method === 'Log.entryAdded' && event.params.entry.level === 'error'))
           .map(event => event.method === 'Runtime.exceptionThrown'

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "repo": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager",
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.3.0",
+  "result": "passed",
+  "artifact": {
+    "filename": "skillre-dsh-plugin-skills-manager-0.3.0.tgz",
+    "sha256": "332da6798cf83befa60ff017c27524ac4d32846945e693e568e2b9c8e82e17a4",
+    "sizeBytes": 101066,
+    "entryCount": 37
+  },
+  "publication": {
+    "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
+    "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.3.0",
+    "asset": "https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.3.0/skillre-dsh-plugin-skills-manager-0.3.0.tgz",
+    "npmPublished": false
+  },
+  "evidence": {
+    "preFinalMount": "docs/verification/pre-final-mount-0.3.0-gateway.json",
+    "finalMount": "docs/verification/isolated-mount-0.3.0.json",
+    "browser": "docs/verification/browser-hot-reenable-0.3.0.json",
+    "finalArtifact": "docs/verification/final-artifact-0.3.0.json",
+    "checkLog": "docs/verification/check-0.3.0.log"
+  },
+  "userActions": [
+    "Update the plugin from Plugins/Discover (market entry pinned to the v0.3.0 commit), then refresh the page once.",
+    "Open Settings (sidebar-foot account menu -> Settings, or Command+,) and choose the new Skills section; the left rail no longer has a skills button.",
+    "In Discover, search a skill and confirm that Review & install opens the full repository review directly."
+  ],
+  "residue": []
+}

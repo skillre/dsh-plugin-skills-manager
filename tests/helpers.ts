@@ -20,6 +20,17 @@ export function versionFiles(version: string): BundleFile[] {
 }
 export function fakeGitHub(initial = 1) {
   let latest = initial
+  let apiFailure: number | undefined
+  let rateLimitReset: number | undefined
+  const archives = new Map<string, Buffer>()
+  const archiveFor = (variant: { files: BundleFile[]; commit: string }): Buffer => {
+    let archive = archives.get(variant.commit)
+    if (!archive) {
+      archive = tarGz(variant.files.map(file => ({ path: `skills-${variant.commit}/demo/${file.path}`, bytes: file.bytes, executable: file.executable })))
+      archives.set(variant.commit, archive)
+    }
+    return archive
+  }
   const variants = [1, 2].map(number => {
     const files = versionFiles(number === 1 ? 'one' : 'two')
     const commit = createHash('sha1').update(`fixture-commit-${number}`).digest('hex')
@@ -35,6 +46,11 @@ export function fakeGitHub(initial = 1) {
     const url = new URL(input)
     if (url.hostname === 'skills.sh') return Response.json({ skills: [{ id: 'test/skills/demo', name: 'demo', source: 'test/skills', installs: 123 }] })
     if (url.hostname === 'api.github.com') {
+      if (apiFailure !== undefined) {
+        const headers: Record<string, string> = { 'x-ratelimit-remaining': '0' }
+        if (rateLimitReset !== undefined) headers['x-ratelimit-reset'] = String(rateLimitReset)
+        return new Response('api unavailable', { status: apiFailure, headers })
+      }
       const value = url.pathname.split('/').pop()!
       if (url.pathname.includes('/commits/')) {
         const version = value === 'HEAD' || value === 'main' ? variants[latest - 1]! : variants.find(item => item.commit === value)
@@ -42,6 +58,17 @@ export function fakeGitHub(initial = 1) {
       }
       const version = variants.find(item => item.rootHash === value)
       return version ? Response.json({ sha: version.rootHash, tree: version.nodes, truncated: false }) : new Response('missing', { status: 404 })
+    }
+    if (url.hostname === 'github.com') {
+      const segments = url.pathname.split('/')
+      if (segments[1] !== 'test' || segments[2] !== 'skills' || segments[3] !== 'info' || segments[4] !== 'refs' || url.searchParams.get('service') !== 'git-upload-pack') throw new Error(`Unexpected test network request: ${input}`)
+      const version = variants[latest - 1]!
+      return new Response(new Uint8Array(refAdvertisement({ 'refs/heads/main': version.commit })), { headers: { 'content-type': 'application/x-git-upload-pack-advertisement' } })
+    }
+    if (url.hostname === 'codeload.github.com') {
+      const match = /^\/test\/skills\/tar\.gz\/([0-9a-f]{40})$/.exec(url.pathname)
+      const version = match ? variants.find(item => item.commit === match[1]) : undefined
+      return version ? new Response(new Uint8Array(archiveFor(version)), { headers: { 'content-type': 'application/gzip' } }) : new Response('missing', { status: 404 })
     }
     if (url.hostname === 'raw.githubusercontent.com') {
       const [, , , commit, ...path] = url.pathname.split('/')
@@ -51,7 +78,12 @@ export function fakeGitHub(initial = 1) {
     }
     throw new Error(`Unexpected test network request: ${input}`)
   }
-  return { fetcher, variants, calls, setLatest(number: number) { latest = number } }
+  return {
+    fetcher, variants, calls,
+    setLatest(number: number) { latest = number },
+    setApiFailure(status: number | undefined) { apiFailure = status },
+    setRateLimit(status: number, resetEpochSeconds?: number) { apiFailure = status; rateLimitReset = resetEpochSeconds },
+  }
 }
 export type TarEntry = { path: string; bytes?: Uint8Array; executable?: boolean; type?: 'file' | 'dir' | 'symlink'; linkname?: string; prefix?: string }
 function tarHeader(entry: TarEntry): Buffer {
@@ -210,4 +242,16 @@ export async function writeBundle(path: string, files = versionFiles('one')): Pr
     await writeFile(target, file.bytes)
     await chmod(target, file.executable ? 0o755 : 0o644)
   }
+}
+
+/** Encode one git smart-HTTP pkt-line including its four-byte hexadecimal length prefix. */
+export function pktLine(value: string): Buffer {
+  const payload = Buffer.from(value, 'utf8')
+  return Buffer.concat([Buffer.from((payload.length + 4).toString(16).padStart(4, '0'), 'ascii'), payload])
+}
+
+/** Build a git-upload-pack ref advertisement with a HEAD symref capability on the first ref. */
+export function refAdvertisement(refs: Record<string, string>, symref = 'refs/heads/main'): Buffer {
+  const lines = Object.entries(refs).map(([name, commit], index) => pktLine(`${commit} ${name}${index === 0 ? `\0multi_ack thin-pack symref=HEAD:${symref}` : ''}\n`))
+  return Buffer.concat([pktLine('# service=git-upload-pack\n'), Buffer.from('0000'), ...lines, Buffer.from('0000')])
 }

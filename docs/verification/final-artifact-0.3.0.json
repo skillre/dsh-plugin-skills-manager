@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.3.0",
+  "dsh": "0.2.2-rc.1",
+  "verifiedAt": "2026-11-08",
+  "result": "passed",
+  "publication": {
+    "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
+    "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.3.0",
+    "asset": "https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.3.0/skillre-dsh-plugin-skills-manager-0.3.0.tgz",
+    "npmPublished": false
+  },
+  "artifact": {
+    "path": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/release-artifact/skillre-dsh-plugin-skills-manager-0.3.0.tgz",
+    "filename": "skillre-dsh-plugin-skills-manager-0.3.0.tgz",
+    "sha256": "332da6798cf83befa60ff017c27524ac4d32846945e693e568e2b9c8e82e17a4",
+    "sha1": "86b45fcfb9aa7a3a769edf648702eff68bacacbe",
+    "integrity": "sha512-vy6XupXAKH9k9WXaLT/TcM8iakSVzkGOMqEnkmIkQSt5KlxE4IdTZlhLd6CWSWGoZeH1xuxxQ8Gj0kzJG/wszw==",
+    "sizeBytes": 101066,
+    "packedPayloadBytes": 456944,
+    "entryCount": 37
+  },
+  "tests": {
+    "command": "npm run check",
+    "log": "docs/verification/check-0.3.0.log",
+    "exitCode": 0,
+    "testFiles": 10,
+    "testsPassed": 88,
+    "breakdown": {
+      "transport": 20,
+      "githubSource": 14,
+      "management": 10,
+      "wellKnown": 7,
+      "manager": 15,
+      "lifecycle": 7,
+      "boundaries": 6,
+      "clientLifecycle": 3,
+      "clientChoices": 5,
+      "plugin": 1
+    },
+    "typecheck": "passed",
+    "build": "passed",
+    "publint": "passed",
+    "packDryRun": "passed",
+    "finalPackedMount": "passed"
+  },
+  "verification": {
+    "report": "docs/verification/isolated-mount-0.3.0.json",
+    "log": "docs/verification/isolated-mount-0.3.0.log",
+    "result": "passed",
+    "checks": 19,
+    "cleanupVerified": true,
+    "tarballSha256": "332da6798cf83befa60ff017c27524ac4d32846945e693e568e2b9c8e82e17a4",
+    "packedClientSha256": "347c972cc384182bca6e23d86244377449dacfb244f7af9303e36ef7fc6fb279",
+    "clientDelivery": {
+      "status": 200,
+      "containsPackedClient": true
+    },
+    "browser": {
+      "report": "docs/verification/browser-hot-reenable-0.3.0.json",
+      "log": "docs/verification/browser-hot-reenable-0.3.0.log",
+      "result": "passed",
+      "checks": [
+        "profile-created",
+        "profile-tarball-install",
+        "dump-config",
+        "bounded-host-startup",
+        "browser-launched",
+        "web-ui-boot",
+        "web-ui-no-sidebar-entry",
+        "web-ui-settings-page",
+        "web-ui-discover-results",
+        "web-ui-discover-review",
+        "web-ui-hot-disable-1",
+        "web-ui-hot-enable-1",
+        "web-ui-hot-disable-2",
+        "web-ui-hot-enable-2",
+        "web-ui-hot-reenable",
+        "web-ui-console-clean",
+        "tarball-unchanged",
+        "owned-processes-stopped",
+        "owned-process-and-profile-cleanup"
+      ],
+      "consoleErrors": 0,
+      "cleanupVerified": true,
+      "method": "owned disposable non-Desktop DSH Web profile from the exact release tarball + real Google Chrome via CDP: no sidebar entry, Settings section opens the manager page, a real skills.sh search hit resolves into the full repository review, and two bundle off/on cycles restore the settings row and page with a clean console"
+    }
+  }
+}

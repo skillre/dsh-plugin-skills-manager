@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { apply } from '../src/client/index.js'
-import { LOCALE_NAMESPACE } from '../src/types.js'
+import { LOCALE_NAMESPACE, PANEL_ID } from '../src/types.js'
 
 /**
  * The Client Loader mounts, unmounts and remounts one plugin Fiber when the
@@ -14,7 +14,7 @@ import { LOCALE_NAMESPACE } from '../src/types.js'
 function createClientHarness() {
   const dictionaries = new Map<string, Map<string, Record<string, string>>>()
   const effects: Array<() => void> = []
-  const registrations: Array<{ name: string; id?: string; key?: string }> = []
+  const registrations: Array<{ name: string; id?: string; key?: string; label?: string | (() => string); order?: number }> = []
   const locale = {
     register(namespace: string, localeOrDicts: string | Record<string, Record<string, string>>, dict?: Record<string, string>): () => void {
       const pairs: Array<[string, Record<string, string>]> = typeof localeOrDicts === 'string'
@@ -38,8 +38,8 @@ function createClientHarness() {
     inject(_key: string, callback: () => () => void): () => void {
       return callback()
     },
-    register(options: { name: string; id?: string; key?: string }): () => void {
-      const registration = { name: options.name, ...options.id === undefined ? {} : { id: options.id }, ...options.key === undefined ? {} : { key: options.key } }
+    register(options: { name: string; id?: string; key?: string; label?: string | (() => string); order?: number }): () => void {
+      const registration = { name: options.name, ...options.id === undefined ? {} : { id: options.id }, ...options.key === undefined ? {} : { key: options.key }, ...options.label === undefined ? {} : { label: options.label }, ...options.order === undefined ? {} : { order: options.order } }
       registrations.push(registration)
       return () => {
         const index = registrations.indexOf(registration)
@@ -66,9 +66,23 @@ describe('client plugin lifecycle', () => {
     const harness = createClientHarness()
     apply(harness.ctx as never)
     expect([...harness.dictionaries.get(LOCALE_NAMESPACE)?.keys() ?? []]).toEqual(['en', 'zh'])
-    expect(harness.registrations.map(item => item.name)).toEqual(['sidebar.panellist', 'main'])
+    expect(harness.registrations.map(item => item.name)).toEqual(['settings.section', 'settings.section.icon'])
+    // The manager is a Settings section: DSH's sidebar keeps its own entries.
+    expect(harness.registrations.map(item => item.id)).toEqual([PANEL_ID, PANEL_ID])
     harness.unmount()
     expect([...harness.dictionaries.get(LOCALE_NAMESPACE)?.keys() ?? []]).toEqual([])
+    expect(harness.registrations).toEqual([])
+  })
+
+  it('registers one localized Settings section that unmounts with the Fiber', () => {
+    const harness = createClientHarness()
+    apply(harness.ctx as never)
+    const [entry] = harness.registrations
+    expect(entry).toMatchObject({ name: 'settings.section', id: PANEL_ID, order: 25 })
+    // A thunk keeps the nav label following the active locale without a re-registration.
+    expect(typeof entry?.label).toBe('function')
+    expect((entry?.label as () => string)()).toBe('nav')
+    harness.unmount()
     expect(harness.registrations).toEqual([])
   })
 
@@ -78,7 +92,9 @@ describe('client plugin lifecycle', () => {
     harness.unmount()
     expect(() => apply(harness.ctx as never)).not.toThrow()
     expect([...harness.dictionaries.get(LOCALE_NAMESPACE)?.keys() ?? []].sort()).toEqual(['en', 'zh'])
-    expect(harness.registrations.map(item => item.name)).toEqual(['sidebar.panellist', 'main'])
+    expect(harness.registrations.map(item => item.name)).toEqual(['settings.section', 'settings.section.icon'])
+    // The manager is a Settings section: DSH's sidebar keeps its own entries.
+    expect(harness.registrations.map(item => item.id)).toEqual([PANEL_ID, PANEL_ID])
     harness.unmount()
     expect(() => apply(harness.ctx as never)).not.toThrow()
   })

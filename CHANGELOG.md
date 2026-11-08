@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.3.0 — Settings section and a search-to-install flow that finishes (local build)
+
+- **The manager moved into Settings.** The DSH left rail no longer gains a「技能」panel icon and there is no `main` panel entry any more: the plugin registers one `settings.section` row (with its own `settings.section.icon`) so every skill operation lives behind the Settings seat that DSH already owns. The page keeps all five tabs, the workspace/location scope, filters, dialogs, job polling and backup management.
+- **Search results become a full review in one step.** Choosing a hit in Discover now inspects the repository and opens the matching skill's review automatically — resolved by declared name, upstream skill id or skill folder — instead of leaving the user on an empty "Inspect repository" form. The review dialog shows the three-step flow (source → skill → review & install), filters long repository lists, and names the missing skill when the repository does not contain it.
+- **Installation no longer dead-ends on a name collision.** The review step compares the target location with the installed catalog: the same source offers a one-click update of the installed skill (refusing to silently replace local modifications), another source explains that DSH resolves one skill per name and links to the installed entry, and a directory-only collision offers an explicit directory name that the Host now accepts on `install`.
+- **A finished install is immediately visible**: after install, the page switches to the Installed tab and filters to the new skill name, so a successful install can never look like a no-op.
+- **Rate limits stop blocking discovery and installation.** Repository resolution and trees are now reused briefly for discovery, immutable trees are cached by commit, and an exhausted GitHub budget reports the reset clock time plus the `githubTokenEnv` remedy instead of a dead end. Update checks and updates still always re-resolve the named ref, so a moved branch is observed.
+- **Zero-API archive fallback.** When the GitHub API is rate-limited or unreachable, repository listing falls back to `github.com` ref advertisement plus the codeload tarball, reconstructing real Git blob/tree hashes so review and installation keep working with identical folder hashes and file bytes.
+- **Optional token, credential-free by default.** New `githubTokenEnv` config accepts only an environment-variable name (a pasted token value is rejected) and is attached only to `api.github.com` requests; with the default empty value the plugin still reads no credentials.
+- Discover results show their canonical skills.sh link, long skill descriptions are clamped in the review dialog, and the Discover toolbar no longer duplicates the header's install action.
+- Add regression tests for search-hit resolution, install-collision decisions and the new `install` directory override, plus GitHub token scoping, rate-limit messaging, ref caching and archive-fallback equivalence (**88 tests total**). Rebuild the committed `lib/`.
+
+No npm publication or user-profile change is included; the GitHub source repository and Release asset are updated in the same user-authorized GitHub flow.
+
 ## 0.2.1 — hot re-enable fix (local build)
 
 - Fix **hot re-enable**: turning the plugin off and back on left the sidebar entry and main panel missing until the page reloaded. The Client half registered its zh/en dictionaries without owning the registration, so the next activation failed on the locale service's duplicate-dictionary check before it reached the sidebar/main slot registrations.

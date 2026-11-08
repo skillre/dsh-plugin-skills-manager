@@ -352,12 +352,15 @@ export class SkillsManager {
       case 'install': {
         const root = await this.writableRoot(request.rootId, request.workspaceId)
         const downloaded = await this.source.download(request.source, request.ref, request.commit, request.skillPath, signal)
-        const name = safeEntry(downloaded.skill.name)
+        // The skill keeps the name its SKILL.md declares; only the directory may
+        // differ when the caller resolved an install-name collision explicitly.
+        const name = downloaded.skill.name
+        const entry = safeEntry(request.entry ?? name)
         const now = new Date().toISOString()
         const source: Provenance = { kind: 'github', repository: downloaded.tree.repository, ref: downloaded.tree.ref, skillPath: downloaded.skill.skillPath, commit: downloaded.tree.commit, treeHash: downloaded.skill.treeHash, fingerprint: bundleFingerprint(downloaded.files), installedAt: now, updatedAt: now }
-        await withRootWrite(root, store => installEntry(store, name, downloaded.files, source, signal), signal)
-        this.rememberLatest(entryId(root.id, name), source, name)
-        return { action: 'install', name, rootId: root.id, path: join(root.path, name), ...(source.commit ? { commit: source.commit } : {}) } satisfies MutationResult
+        await withRootWrite(root, store => installEntry(store, entry, downloaded.files, source, signal), signal)
+        this.rememberLatest(entryId(root.id, entry), source, name)
+        return { action: 'install', name, rootId: root.id, path: join(root.path, entry), ...(source.commit ? { commit: source.commit } : {}) } satisfies MutationResult
       }
       case 'update': {
         const detail = await this.detail(request.id, request.workspaceId, signal)

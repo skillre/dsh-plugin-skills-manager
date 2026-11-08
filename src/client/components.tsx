@@ -35,6 +35,9 @@ export function Empty({ title, body, icon = 'book', children }: { title: string;
 export function Notice({ text, kind = 'info', onClose }: { text: string; kind?: string; onClose?: () => void }): React.JSX.Element {
   return <div className={`skm-notice skm-notice-${kind}`} role={kind === 'error' ? 'alert' : 'status'}><Icon name={kind === 'success' ? 'check' : kind === 'error' || kind === 'warning' ? 'warning' : 'lock'} size={16}/><span className="skm-notice-message">{text}</span>{onClose && <button className="skm-close" type="button" aria-label="×" onClick={onClose}><Icon name="close" size={14}/></button>}</div>
 }
+export function Steps({ steps, active }: { steps: string[]; active: number }): React.JSX.Element {
+  return <ol className="skm-steps" aria-label={steps.join(' · ')}>{steps.map((label, index) => <li key={`${index}-${label}`} className={`skm-step${index === active ? ' skm-step-active' : index < active ? ' skm-step-done' : ''}`} aria-current={index === active ? 'step' : undefined}><span className="skm-step-index">{index < active ? <Icon name="check" size={11}/> : index + 1}</span><span className="skm-step-label">{label}</span></li>)}</ol>
+}
 export function StatusBadge({ skill, t }: { skill: LocalSkill; t: Translate }): React.JSX.Element {
   const status = !skill.valid ? 'invalid' : !skill.writable ? 'protected' : skill.check?.status ?? (skill.source ? 'unchecked' : 'untracked')
   const labels: Record<string, string> = { invalid: 'invalid', protected: 'protected', update: 'update', latest: 'latest', error: 'checkError', untracked: 'untracked', unchecked: 'unchecked' }

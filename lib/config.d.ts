@@ -17,6 +17,12 @@ export interface ManagerConfig {
     maxBundleFiles: number;
     maxRepositoryEntries: number;
     checkConcurrency: number;
+    /**
+     * Name of an environment variable holding an optional GitHub token. Empty by
+     * default: the plugin then never reads any credential. When set, only
+     * api.github.com requests carry it, which raises the 60/hour public limit.
+     */
+    githubTokenEnv: string;
 }
 export declare const Config: Schema<ManagerConfig>;
 export declare function resolveConfig(raw?: unknown): ManagerConfig;
@@ -60,6 +66,7 @@ export declare const RequestSchema: z.ZodDiscriminatedUnion<[z.ZodObject<{
     ref: z.ZodOptional<z.ZodString>;
     commit: z.ZodString;
     skillPath: z.ZodString;
+    entry: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>, z.ZodObject<{
     workspaceId: z.ZodOptional<z.ZodString>;
     action: z.ZodLiteral<"install-local">;

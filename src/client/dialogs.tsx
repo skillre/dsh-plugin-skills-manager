@@ -2,7 +2,9 @@ import React, { useEffect, useRef, useState } from 'react'
 import type { Backup, Catalog, LocalSkill, MutationResult, RemotePreview, RepositoryInfo, RepositorySkill, SkillDetail, SkillDiff, StartJobResult, UpdateCheck, WellKnownInspect, WellKnownSkillEntry } from '../types.js'
 import type { ClientApi } from './contracts.js'
 import type { Translate } from './messages.js'
-import { bytes, Dialog, errorText, Icon, Loader, Notice, rootLabel, StatusBadge, time } from './components.js'
+import { bytes, Dialog, errorText, Icon, Loader, Notice, rootLabel, StatusBadge, Steps, time } from './components.js'
+import { chooseRepositorySkill, installConflict, installStep, suggestEntryName } from './choices.js'
+import type { InstallConflictKind } from './choices.js'
 
 interface CommonProps {
   api: ClientApi
@@ -17,59 +19,121 @@ interface CommonProps {
   onError(message: string): void
   onSettled(): void
   onJobStarted?(): void
+  onOpenInstalled?(skill: LocalSkill): void
 }
 const scope = (workspaceId: string) => workspaceId ? { workspaceId } : {}
 function SourceLink({ repository, revision, t }: { repository: string; revision?: string | undefined; t: Translate }): React.JSX.Element {
   if (!revision) return <></>
   return <a className="skm-source-link" href={`https://github.com/${repository}/tree/${encodeURIComponent(revision)}`} target="_blank" rel="noopener noreferrer">{t('sourceLink')} ↗</a>
 }
-export function InstallDialog({ initialSource, preferredName, ...props }: CommonProps & { initialSource: string; preferredName: string }): React.JSX.Element {
+export function InstallDialog({ initialSource, preferredName, preferredSkillId, ...props }: CommonProps & { initialSource: string; preferredName: string; preferredSkillId?: string | undefined }): React.JSX.Element {
   const { api, t, catalog, workspaceId } = props
+  const roots = catalog.roots.filter(root => root.writable)
   const [source, setSource] = useState(initialSource)
   const [ref, setRef] = useState('')
   const [repository, setRepository] = useState<RepositoryInfo | null>(null)
   const [preview, setPreview] = useState<RemotePreview | null>(null)
-  const roots = catalog.roots.filter(root => root.writable)
+  const [picked, setPicked] = useState<RepositorySkill | null>(null)
+  const [skillFilter, setSkillFilter] = useState('')
   const [rootId, setRootId] = useState(roots.find(root => root.source === 'user-agents')?.id ?? roots[0]?.id ?? '')
+  const [renaming, setRenaming] = useState(false)
+  const [entry, setEntry] = useState('')
   const [trusted, setTrusted] = useState(false)
   const [busy, setBusy] = useState('')
   const [error, setError] = useState('')
   const life = useRef(new AbortController())
   const alive = useRef(true)
-  useEffect(() => { alive.current = true; if (life.current.signal.aborted) life.current = new AbortController(); return () => { alive.current = false; life.current.abort() } }, [])
+  const autoStarted = useRef(false)
+  const pending = useRef<{ info: RepositoryInfo; skill: RepositorySkill } | null>(null)
+  const targetSource = { repository: preview?.repository ?? '', skillPath: preview?.skill.skillPath ?? '' }
+  const occupied = preview ? installConflict(catalog, rootId, preview.skill.name, undefined, targetSource) : { kind: 'none' as InstallConflictKind }
+  const effective = preview ? installConflict(catalog, rootId, preview.skill.name, renaming ? entry.trim() || preview.skill.name : undefined, targetSource) : { kind: 'none' as InstallConflictKind }
+  const canRename = occupied.kind === 'other-source' && !!occupied.entryOwner && !occupied.nameOwner
+  const step = installStep({ source: !!source.trim(), repository: !!repository, preview: !!preview })
+  useEffect(() => {
+    alive.current = true
+    if (life.current.signal.aborted) life.current = new AbortController()
+    if (!autoStarted.current && initialSource.trim()) { autoStarted.current = true; void inspect(initialSource.trim()) }
+    return () => { alive.current = false; life.current.abort() }
+  }, [])
+  useEffect(() => {
+    const item = pending.current
+    if (!item || busy) return
+    pending.current = null
+    void open(item.info, item.skill)
+  }, [repository, busy])
   function close(): void { life.current.abort(); props.onClose() }
-  async function inspect(): Promise<void> {
-    if (!source.trim() || busy) return
-    setBusy('inspecting'); setError(''); setTrusted(false); setPreview(null)
+  function back(): void {
+    if (busy) return
+    if (preview) { setPreview(null); setPicked(null); setTrusted(false); setRenaming(false); setEntry(''); setError('') }
+    else if (repository) { setRepository(null); setError('') }
+    else close()
+  }
+  async function inspect(value = source.trim()): Promise<void> {
+    if (!value || busy) return
+    setBusy('inspecting'); setError(''); setTrusted(false); setPreview(null); setPicked(null); setRepository(null); setRenaming(false); setEntry('')
     try {
-      const value = await api.call<RepositoryInfo>({ action: 'inspect', source: source.trim(), ...(ref.trim() ? { ref: ref.trim() } : {}), ...scope(workspaceId) }, life.current.signal)
-      if (alive.current) setRepository(value)
+      const info = await api.call<RepositoryInfo>({ action: 'inspect', source: value, ...(ref.trim() ? { ref: ref.trim() } : {}), ...scope(workspaceId) }, life.current.signal)
+      if (!alive.current) return
+      setRepository(info)
+      const matched = chooseRepositorySkill(info.skills, { name: preferredName, skillId: preferredSkillId })
+      // A search hit already names the skill it saw: open that review directly
+      // instead of asking the user to find it again among the repository list.
+      if (matched) pending.current = { info, skill: matched }
     } catch (error) { if (alive.current) setError(errorText(error)) }
     finally { if (alive.current) setBusy('') }
   }
-  async function select(skill: RepositorySkill): Promise<void> {
-    if (!repository || busy) return
-    setBusy('loading'); setError(''); setTrusted(false)
+  async function open(info: RepositoryInfo, skill: RepositorySkill): Promise<void> {
+    if (busy) return
+    setBusy('loading'); setError(''); setTrusted(false); setRenaming(false); setEntry('')
     try {
-      const value = await api.call<RemotePreview>({ action: 'preview', source: repository.repository, ref: repository.ref, commit: repository.commit, skillPath: skill.skillPath, ...scope(workspaceId) }, life.current.signal)
-      if (alive.current) setPreview(value)
+      const value = await api.call<RemotePreview>({ action: 'preview', source: info.repository, ref: info.ref, commit: info.commit, skillPath: skill.skillPath, ...scope(workspaceId) }, life.current.signal)
+      if (alive.current) { setPreview(value); setPicked(skill) }
     } catch (error) { if (alive.current) setError(errorText(error)) }
     finally { if (alive.current) setBusy('') }
   }
   async function install(): Promise<void> {
-    if (!preview || !trusted || !rootId || busy) return
+    if (!preview || !trusted || !rootId || busy || effective.kind !== 'none') return
+    const rename = renaming && entry.trim() && entry.trim() !== preview.skill.name ? { entry: entry.trim() } : {}
     setBusy('installing'); setError(''); props.onBusy(true, t('installing'))
     try {
-      const result = await api.call<MutationResult>({ action: 'install', rootId, source: preview.repository, ref: preview.ref, commit: preview.commit, skillPath: preview.skill.skillPath, ...scope(workspaceId) }, life.current.signal)
+      const result = await api.call<MutationResult>({ action: 'install', rootId, source: preview.repository, ref: preview.ref, commit: preview.commit, skillPath: preview.skill.skillPath, ...rename, ...scope(workspaceId) }, life.current.signal)
       props.onMutated(result)
     } catch (error) { const message = errorText(error); if (alive.current) setError(message); props.onError(message) }
-    finally { if (alive.current) setBusy(''); props.onBusy(false); props.onSettled() }
+    finally { if (alive.current) setBusy(''); props.onBusy(false) }
   }
+  async function updateInstalled(existing: LocalSkill): Promise<void> {
+    if (!preview || busy) return
+    setBusy('updating'); setError(''); props.onBusy(true, t('updating'))
+    try {
+      const detail = await api.call<SkillDetail>({ action: 'detail', id: existing.id, ...scope(workspaceId) }, life.current.signal)
+      if (detail.locallyModified) throw new Error(`${t('modified')} · ${t('modifiedBody')}`)
+      await api.call<StartJobResult>({ action: 'update-start', id: existing.id, expectedFingerprint: detail.fingerprint, commit: preview.commit, ...scope(workspaceId) }, life.current.signal)
+      if (alive.current) props.onJobStarted?.()
+    } catch (error) { const message = errorText(error); if (alive.current) setError(message); props.onError(message) }
+    finally { if (alive.current) setBusy(''); props.onBusy(false) }
+  }
+  function startRename(): void {
+    if (!preview) return
+    setRenaming(true)
+    setEntry(suggestEntryName(catalog, rootId, preview.skill.name, preview.repository))
+  }
+  const filtered = repository ? repository.skills.filter(skill => `${skill.name} ${skill.description} ${skill.skillPath}`.toLowerCase().includes(skillFilter.toLowerCase().trim())) : []
+  const missingPreferred = !!repository && !!preferredName && !repository.skills.some(skill => skill.name.toLowerCase() === preferredName.toLowerCase() || skill.skillPath.split('/').slice(-2)[0]?.toLowerCase() === preferredName.toLowerCase())
+  const sameSourceOwner = occupied.kind === 'same-source' ? occupied.entryOwner : undefined
+  const primary = preview
+    ? sameSourceOwner && !renaming
+      ? { label: t('updateInstead'), icon: 'up', run: () => void updateInstalled(sameSourceOwner), disabled: !!busy }
+      : { label: t(busy === 'installing' ? 'installing' : 'install'), icon: busy === 'installing' ? 'refresh' : 'down', run: () => void install(), disabled: !!busy || !trusted || !rootId || effective.kind !== 'none' }
+    : !repository
+      ? { label: t(busy === 'inspecting' ? 'inspecting' : 'inspect'), icon: busy === 'inspecting' ? 'refresh' : 'search', run: () => void inspect(), disabled: !source.trim() || !!busy }
+      : null
   return <Dialog title={preview ? `${t('install')} · ${preview.skill.name}` : t('fromRepo')} t={t} onClose={close} footer={<>
-    <button type="button" className="skm-button skm-button-quiet" onClick={() => { if (preview && !busy) { setPreview(null); setTrusted(false) } else if (repository && !busy) setRepository(null); else close() }}>{preview || repository ? t('back') : t('cancel')}</button>
-    {preview ? <button type="button" className="skm-button skm-button-primary" onClick={() => void install()} disabled={!trusted || !rootId || !!busy}><Icon name={busy === 'installing' ? 'refresh' : 'down'} spin={busy === 'installing'}/>{busy === 'installing' ? t('installing') : t('install')}</button> : !repository ? <button type="button" className="skm-button skm-button-primary" onClick={() => void inspect()} disabled={!source.trim() || !!busy}><Icon name={busy ? 'refresh' : 'search'} spin={!!busy}/>{busy ? t('inspecting') : t('inspect')}</button> : null}
+    <button type="button" className="skm-button skm-button-quiet" data-autofocus onClick={back} disabled={busy === 'installing' || busy === 'updating'}>{preview || repository ? t('back') : t('cancel')}</button>
+    {primary && <button type="button" className={occupied.kind === 'same-source' && !renaming && preview ? 'skm-button skm-button-primary' : 'skm-button skm-button-primary'} disabled={primary.disabled} onClick={primary.run}><Icon name={primary.icon} spin={!!busy}/>{primary.label}</button>}
   </>}>
-    {error && <Notice text={error} kind="error"/>}
+    <Steps steps={[t('stepSource'), t('stepChoose'), t('stepReview')]} active={step}/>
+    {error && <><Notice text={error} kind="error"/><button type="button" className="skm-button" disabled={!!busy} onClick={() => { setError(''); if (repository && picked) void open(repository, picked); else void inspect() }}>{t('inspectRetry')}</button></>}
     {!repository && !preview && <form className="skm-form-grid" onSubmit={event => { event.preventDefault(); void inspect() }}>
       <label className="skm-field skm-full"><span className="skm-field-label">{t('repository')}</span><input className="skm-input" value={source} onChange={event => setSource(event.target.value)} placeholder={t('repoPlaceholder')} autoComplete="off" spellCheck={false} disabled={!!busy} data-autofocus maxLength={400}/></label>
       <label className="skm-field skm-full"><span className="skm-field-label">{t('branch')}</span><input className="skm-input" value={ref} onChange={event => setRef(event.target.value)} placeholder="HEAD" autoComplete="off" spellCheck={false} disabled={!!busy} maxLength={200}/><span className="skm-hint">{t('refHint')}</span></label>
@@ -77,23 +141,33 @@ export function InstallDialog({ initialSource, preferredName, ...props }: Common
     </form>}
     {repository && !preview && <>
       <div className="skm-meta"><span className="skm-mono">{repository.repository}</span><span>{repository.ref}</span><span className="skm-mono">{repository.commit.slice(0, 12)}</span></div>
-      <div className="skm-section-title">{t('chooseSkill')}<span className="skm-count">{repository.skills.length}</span></div>
-      {busy && <Loader text={t('loading')}/>}
-      {!busy && <div className="skm-skill-options">{[...repository.skills].sort((a, b) => Number(b.name === preferredName) - Number(a.name === preferredName)).map(skill => <button type="button" className="skm-skill-option" key={skill.skillPath} disabled={!!busy} onClick={() => void select(skill)}><Icon name="book"/><span className="skm-skill-option-main"><strong>{skill.name}</strong><span className="skm-description">{skill.description}</span><span className="skm-mono skm-hint">{skill.skillPath}</span></span><Icon name="arrow" size={16}/></button>)}</div>}
-      {!repository.skills.length && <Notice text={t('noRepoSkills')} kind="warning"/>}
-      {repository.truncated && <Notice text={t('truncated')} kind="warning"/>}
-      {repository.warnings.length > 0 && <details className="skm-hint"><summary>{t('warningTitle')}</summary><ul className="skm-warning-list">{repository.warnings.map((item, index) => <li key={index}>{item}</li>)}</ul></details>}
+      {busy ? <Loader text={t(busy === 'loading' ? 'loading' : 'autoInspecting')}/> : <>
+        {missingPreferred && <Notice text={t('preferredMissing', { name: preferredName })}/>}
+        <div className="skm-section-title">{t('chooseSkill')}<span className="skm-count">{repository.skills.length}</span></div>
+        {repository.skills.length > 5 && <input className="skm-input" value={skillFilter} onChange={event => setSkillFilter(event.target.value)} placeholder={t('searchSkillsInRepo')} aria-label={t('searchSkillsInRepo')} disabled={!!busy} maxLength={120}/>}
+        {!busy && <div className="skm-skill-options">{filtered.map(skill => <button type="button" className="skm-skill-option" key={skill.skillPath} disabled={!!busy} onClick={() => void open(repository, skill)}><Icon name="book"/><span className="skm-skill-option-main"><strong>{skill.name}</strong><span className="skm-description">{skill.description}</span><span className="skm-mono skm-hint">{skill.skillPath}</span></span><Icon name="arrow" size={16}/></button>)}</div>}
+        {!repository.skills.length && <Notice text={t('noRepoSkills')} kind="warning"/>}
+        {repository.truncated && <Notice text={t('truncated')} kind="warning"/>}
+        {repository.warnings.length > 0 && <details className="skm-hint"><summary>{t('warningTitle')}</summary><ul className="skm-warning-list">{repository.warnings.map((item, index) => <li key={index}>{item}</li>)}</ul></details>}
+      </>}
     </>}
     {preview && <>
-      <p className="skm-plain-text">{preview.skill.description}</p>
+      <p className="skm-plain-text skm-summary-clamp">{preview.skill.description}</p>
       <div className="skm-meta"><span className="skm-mono">{preview.repository}</span><span>{preview.ref}</span><span className="skm-mono">{preview.commit.slice(0, 12)}</span><SourceLink repository={preview.repository} revision={preview.commit} t={t}/></div>
+      {occupied.kind === 'same-source' && occupied.entryOwner && !renaming && <Notice text={t('sameSourceInstalled', { name: preview.skill.name })}/>}
+      {occupied.kind === 'other-source' && occupied.nameOwner && <><Notice text={t('nameTakenByOther', { name: preview.skill.name, source: occupied.nameOwner.source?.repository ?? t('externalSource') })} kind="warning"/>{props.onOpenInstalled && <button type="button" className="skm-button" onClick={() => props.onOpenInstalled?.(occupied.nameOwner!)} disabled={!!busy}><Icon name="info" size={14}/>{t('openInstalled')}</button>}</>}
+      {occupied.kind === 'other-source' && occupied.entryOwner && !occupied.nameOwner && !renaming && <><Notice text={t('entryCollision', { entry: occupied.entryOwner.entry })} kind="warning"/><p className="skm-hint">{t('duplicateHint')}</p></>}
+      {canRename && !renaming && <button type="button" className="skm-button" onClick={startRename} disabled={!!busy}><Icon name="move" size={14}/>{t('renameInstall')}</button>}
+      <label className="skm-field" style={{ marginTop: 15 }}><span className="skm-field-label">{t('target')}</span><select className="skm-select" value={rootId} onChange={event => { setRootId(event.target.value); setRenaming(false); setEntry('') }} disabled={!!busy}>{!roots.length && <option value="">{t('selectLocation')}</option>}{roots.map(root => <option value={root.id} key={root.id}>{rootLabel(root, t)} · {root.path}</option>)}</select></label>
+      {!roots.length && <Notice text={t('noWritable')} kind="warning"/>}
+      {renaming && <label className="skm-field"><span className="skm-field-label">{t('entryName')}</span><input className="skm-input" value={entry} onChange={event => setEntry(event.target.value)} disabled={!!busy} maxLength={200}/><span className="skm-hint">{t('entryHint')}</span></label>}
+      {renaming && effective.kind !== 'none' && <Notice text={t('entryCollision', { entry: entry.trim() || preview.skill.name })} kind="warning"/>}
       <div className="skm-section-title">{t('instructions')}</div><pre className="skm-code">{preview.content}</pre>
       <div className="skm-section-title">{t('resources')}<span className="skm-hint">{t('files', { count: preview.files.length })} · {bytes(preview.totalBytes)}</span></div>
       <ul className="skm-file-list">{preview.files.map(file => <li key={file.path}><span className="skm-mono">{file.path}</span><span>{bytes(file.bytes)}</span></li>)}</ul>
-      <label className="skm-field" style={{ marginTop: 18 }}><span className="skm-field-label">{t('target')}</span><select className="skm-select" value={rootId} onChange={event => setRootId(event.target.value)} disabled={!!busy}>{!roots.length && <option value="">{t('selectLocation')}</option>}{roots.map(root => <option value={root.id} key={root.id}>{rootLabel(root, t)} · {root.path}</option>)}</select></label>
-      {!roots.length && <Notice text={t('noWritable')} kind="warning"/>}
       <label className="skm-checkbox"><input type="checkbox" checked={trusted} onChange={event => setTrusted(event.target.checked)} disabled={!!busy}/><span>{t('trust')}<span className="skm-checkbox-hint">{t('trustHint')}</span></span></label>
     </>}
+    {!preview && <p className="skm-hint">{t('installStepHint')}</p>}
   </Dialog>
 }
 export function SkillDialog({ skill, initialAction, onMove, ...props }: CommonProps & { skill: LocalSkill; initialAction: 'detail' | 'update' | 'remove'; onMove?: (skill: LocalSkill) => void }): React.JSX.Element {

@@ -118,6 +118,22 @@ describe('move, local install and restore-to', () => {
       await expect(f.manager.execute({ action: 'move', id: current.id, rootId: 'user-dsh', entry: 'occupied' })).rejects.toMatchObject({ code: 'already-exists' })
     } finally { await f.cleanup() }
   })
+  it('resolves a name collision with an explicit directory name instead of dead-ending', async () => {
+    const f = await fixture()
+    try {
+      const first = await install(f, 'user-agents')
+      const repo = await f.manager.execute({ action: 'inspect', source: 'test/skills' }) as RepositoryInfo
+      await expect(f.manager.execute({ action: 'install', rootId: 'user-agents', source: repo.repository, commit: repo.commit, skillPath: 'demo/SKILL.md' })).rejects.toMatchObject({ code: 'already-exists' })
+      const renamed = await f.manager.execute({ action: 'install', rootId: 'user-agents', source: repo.repository, commit: repo.commit, skillPath: 'demo/SKILL.md', entry: 'demo-copy' }) as MutationResult
+      expect(renamed).toMatchObject({ action: 'install', name: 'demo', path: join(first.path, '..', 'demo-copy') })
+      expect(await readFile(join(renamed.path, 'SKILL.md'), 'utf8')).toBe(skillText('one'))
+      const skills = (await list(f)).skills.filter(skill => skill.rootId === 'user-agents')
+      expect(skills.map(skill => skill.entry).sort()).toEqual(['demo', 'demo-copy'])
+      expect(skills.every(skill => skill.name === 'demo' && skill.source?.repository === 'test/skills')).toBe(true)
+      await expect(f.manager.execute({ action: 'install', rootId: 'user-agents', source: repo.repository, commit: repo.commit, skillPath: 'demo/SKILL.md', entry: '../escape' })).rejects.toMatchObject({ code: 'unsafe-path' })
+    } finally { await f.cleanup() }
+  })
+
   it('installs trusted local tar.gz and zip archives without overwriting', async () => {
     const f = await fixture()
     try {

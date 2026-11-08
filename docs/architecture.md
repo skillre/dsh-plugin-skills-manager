@@ -1,16 +1,16 @@
 # Skills Manager — implementation contract
 
-Observed: **2026-11-02**, live Desktop DSH **0.2.1-rc.5**. Runtime versions in the package are rendered from the fleet toolchain snapshot.
+Observed: **2026-11-08**, live DSH **0.2.2-rc.1**. Runtime versions in the package are rendered from the fleet toolchain snapshot.
 
 ## Product boundary
 
-One native Host + React Client bundle; a new `skillre-skills-manager` sidebar icon and the same keyed `main` panel. No replacement shell, iframe, standalone preview, preset overrides, remote publishing, or automatic user-profile installation.
+One native Host + React Client bundle; one `settings.section` row (id `skillre-skills-manager`) with its matching `settings.section.icon`, and **no** sidebar panel entry and **no** keyed `main` panel. No replacement shell, iframe, standalone preview, preset overrides, remote publishing, or automatic user-profile installation.
 
 The Host owns local skill files, provenance, bounded public GitHub downloads and reversible changes. The Client owns filter/tab state and explicit confirmations. Network requests happen only after a search, source inspection, or update-check action. Downloaded scripts are **never executed**.
 
 ## Minimum discovered DSH contracts
 
-- Client `Slots.listSubTree`: `sidebar.panellist` is a root list, registered with unique `id`, `order`, and localized `label`; its component receives `{size, active}` and the sidebar owns navigation. `main` is root keyed, registered with the matching key, with no Session binding. Both contributions use `ctx.slots.inject` / `register` and belong to their Fiber.
+- Client `Slots.listSubTree`: `settings.section` is a root list owned by the Settings shell; the plugin registers one row with a unique `id`, `order: 25` and a localized `label` thunk (the shell re-projects labels on ledger and locale-revision changes). `settings.section.icon` is a root list addressed by the matching section id, receives `{size, active}` and is optional. Both contributions use `ctx.slots.inject` / `register` and belong to their Fiber. The Settings seat itself is opened by DSH (sidebar-foot account menu → Settings, or the platform shortcut); the plugin adds no launcher and no left-rail entry.
 - Client `locale`: `register(namespace, locale, dict)`, `bind(namespace)`, `getSnapshot`, `subscribe`; scoped dictionary disposers and React external-store subscription drive locale changes.
 - Theme: only the inspected `--dsw-alias-*` tokens are used for UI colors; literals exist only in the original icon.
 - Host `connection.fetch.register({ path: '/api/skillre-skills-manager/execute', methods: ['POST'], requestBody: 'buffered', fetch })`: exact Fetch routes dispatch before Gateway fallback, are owner-only, and are registered/disposed per Fiber. The shared `/api` RPC interceptor stays exclusively owned by DSH API Gateway. The Client still calls `ctx.connection.rpc.call('/api', 'skillre-skills-manager/execute', payload, signal)`; authentication, Host/Origin trust and Desktop shell-carrier dispatch remain Connection-owned.
@@ -18,6 +18,14 @@ The Host owns local skill files, provenance, bounded public GitHub downloads and
 - Host optional `workspaceRegistry.list()` exposes `{id,path,title}`; only registered workspace IDs may select project roots. The nearest `.git` ancestor matches the queried filesystem provider's project-root semantics.
 - Host optional `skills.list/get` supply read-only registry entries. Physical entries are listed independently so shadowed/invalid local skills remain manageable; registry-only and configured bundled/custom entries remain read-only.
 - Host optional `tools.register` exposes the SAME core operations to Agents. Mutations require an exact logged `approval.request` grant; no model parameter grants authority. Missing approval fails closed. All registrations and pending work drain on unload.
+
+## Discovery and installation resilience
+
+Search results come from the public skills.sh directory and carry the repository, the display name and (when the directory exposes it) the upstream skill id. Choosing a hit inspects the repository and resolves the intended skill by declared name, upstream id, then folder name, opening its review directly; a repository that does not contain the hit is reported by name instead of showing an empty list. The review dialog is the only install confirmation surface: three steps (source → skill → review & install), the complete `SKILL.md`, the resource inventory, the target root's absolute path and an explicit trust checkbox.
+
+A name collision is resolved before it becomes a failed write. The Client compares the target root with the installed catalog: the same source offers a one-click update (the Host still refuses to silently replace locally modified files), a different source explains that DSH resolves one skill per name and links to the installed entry, and a pure directory collision offers an explicit directory name through `install`'s optional `entry` parameter (the skill keeps the name its `SKILL.md` declares). A successful install switches the page to Installed and filters to the new name.
+
+Public GitHub discovery is rate-limited to 60 unauthenticated requests per hour. Resolved revisions and trees are reused briefly for discovery, immutable trees are cached by commit, and update checks/updates always re-resolve the named ref so a moved branch is observed. An exhausted budget fails with the reset clock time and the `githubTokenEnv` remedy. When an `api.github.com` request is rate-limited or the fetch fails, `tree()` falls back to the `github.com` Git ref advertisement (pkt-line) plus the codeload tarball and reconstructs the flattened tree with real Git blob/tree hashes, so inspection, preview and installation keep working with hashes and bytes identical to the API path. The optional `githubTokenEnv` names an environment variable whose token is attached to `api.github.com` requests only; the default empty value keeps the plugin credential-free and a pasted token value is rejected at configuration time.
 
 ## Filesystem and integrity boundaries
 

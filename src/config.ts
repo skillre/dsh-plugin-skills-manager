@@ -20,6 +20,12 @@ export interface ManagerConfig {
   maxBundleFiles: number
   maxRepositoryEntries: number
   checkConcurrency: number
+  /**
+   * Name of an environment variable holding an optional GitHub token. Empty by
+   * default: the plugin then never reads any credential. When set, only
+   * api.github.com requests carry it, which raises the 60/hour public limit.
+   */
+  githubTokenEnv: string
 }
 const home = homedir()
 export const Config: Schema<ManagerConfig> = Schema.object({
@@ -38,11 +44,18 @@ export const Config: Schema<ManagerConfig> = Schema.object({
   maxBundleFiles: Schema.number().min(1).max(50000).step(1).default(20000),
   maxRepositoryEntries: Schema.number().min(1).max(100000).step(1).default(30000),
   checkConcurrency: Schema.number().min(1).max(6).step(1).default(3),
+  githubTokenEnv: Schema.string().max(64).default(''),
 })
 export function resolveConfig(raw: unknown = {}): ManagerConfig {
   const config = Config(raw as ManagerConfig)
   for (const path of [config.dshHome, config.agentsHome, ...config.customSkillDirs, ...config.readOnlySkillDirs]) {
     if (!isAbsolute(path) || path.includes('\0')) throw new Error('Skill root configuration must use absolute paths.')
+  }
+  if (config.githubTokenEnv && !/^[A-Za-z_][A-Za-z0-9_]{0,63}$/.test(config.githubTokenEnv)) {
+    throw new Error('githubTokenEnv must be an environment variable name, never a token value.')
+  }
+  if (/^(?:gh[pousr]_|github_pat_|glpat-)/i.test(config.githubTokenEnv)) {
+    throw new Error('githubTokenEnv must be an environment variable name, but this value looks like a credential.')
   }
   return config
 }
@@ -66,7 +79,7 @@ export const RequestSchema = z.discriminatedUnion('action', [
   object({ action: z.literal('preview'), source, ref, commit, skillPath: id }),
   object({ action: z.literal('check'), id: id.optional() }),
   object({ action: z.literal('diff'), id }),
-  object({ action: z.literal('install'), rootId: id, source, ref, commit, skillPath: id }),
+  object({ action: z.literal('install'), rootId: id, source, ref, commit, skillPath: id, entry: entry.optional() }),
   object({ action: z.literal('install-local'), rootId, path: localPath }),
   object({ action: z.literal('well-known-inspect'), source }),
   object({ action: z.literal('well-known-install'), rootId, source, name: entry }),

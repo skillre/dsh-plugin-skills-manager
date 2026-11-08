@@ -1,6 +1,6 @@
 {
   "name": "@skillre/dsh-plugin-skills-manager",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "DSH 技能管理：检索、安装、本地更新检查、更新与安全删除",
   "icon": "./icon.svg",
   "type": "module",
@@ -63,8 +63,7 @@
       "inject": [
         "@deepseek-ai/dsh-client-connection",
         "@deepseek-ai/dsh-client-locale",
-        "@deepseek-ai/dsh-client-ui-layout",
-        "@deepseek-ai/dsh-client-ui-sidebar"
+        "@deepseek-ai/dsh-client-ui-layout"
       ]
     }
   },

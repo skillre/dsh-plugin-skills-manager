@@ -29,6 +29,13 @@ describe('strict authority and format boundaries', () => {
     expect(() => resolveConfig({ checkConcurrency: 1.2 })).toThrow()
     expect(() => resolveConfig({ maxBundleFiles: 0 })).toThrow()
   })
+  it('accepts only an environment variable name for the optional GitHub token', () => {
+    expect(resolveConfig({}).githubTokenEnv).toBe('')
+    expect(resolveConfig({ githubTokenEnv: 'GITHUB_TOKEN' }).githubTokenEnv).toBe('GITHUB_TOKEN')
+    // A pasted token value must never be accepted as configuration.
+    for (const value of ['ghp_secretvalue', 'github_pat_abc', 'gho_abc', 'glpat-abc', 'A-B', '1TOKEN', 'x'.repeat(65), 'TOKEN=VALUE', 'token value']) expect(() => resolveConfig({ githubTokenEnv: value })).toThrow()
+    expect(() => resolveConfig({ githubTokenEnv: 'MY_GITHUB_TOKEN' })).not.toThrow()
+  })
   it('parses multiline YAML descriptions and invocation policy while rejecting aliases and duplicate keys', () => {
     expect(parseSkill(skillText())).toMatchObject({ name: 'demo', modelInvocable: true, userInvocable: true })
     expect(parseSkill('---\nname: demo\ndescription: >\n  Multi line\n  description\ndisable-model-invocation: yes\nuser-invocable: off\n---\n')).toMatchObject({ description: 'Multi line description', modelInvocable: false, userInvocable: false })

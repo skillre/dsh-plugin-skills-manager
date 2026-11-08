@@ -1,10 +1,10 @@
 # DSH Skills Manager
 
-> `@skillre/dsh-plugin-skills-manager` · `0.2.1` · experimental
+> `@skillre/dsh-plugin-skills-manager` · `0.3.0` · experimental
 
 [中文](<README.md>)
 
-A native Host + React Client bundle with a **Skills** entry in the DSH sidebar. No iframe or replacement application shell.
+A native Host + React Client bundle that adds a **Skills** page to the DSH **Settings** sidebar. It no longer reserves a left-rail panel entry, and there is no iframe or replacement application shell.
 
 ## Features
 
@@ -12,8 +12,9 @@ A native Host + React Client bundle with a **Skills** entry in the DSH sidebar. 
 - Check provenance-tracked GitHub skill directories or well-known catalog digests for updates; the summary reports updates, up-to-date, untracked and failed counts, and untracked skills are never claimed as up to date.
 - Recognize Skills CLI GitHub and well-known provenance (`open.feishu.cn`-style sources): well-known archive skills are digest-checked and updated in place, while other external source types are labelled truthfully and remain untracked.
 - Update an inspected revision after complete file/tree integrity and local-fingerprint checks; preserve the previous entry as a backup.
-- Search the public [skills.sh](https://skills.sh) directory, or inspect a public GitHub repository directly.
-- Review and confirm third-party instructions before installing. Installation never overwrites an existing entry or executes downloaded scripts.
+- Search the public [skills.sh](https://skills.sh) directory, or inspect a public GitHub repository directly. A search hit opens the **complete review** of that skill in the repository: the plugin resolves the matching skill, shows its `SKILL.md`, resource inventory and install location, so there is no second, unexplained "Inspect repository" click.
+- Review and confirm third-party instructions before installing. Installation never overwrites an existing entry or executes downloaded scripts. The review is an explicit three-step flow (source → skill → review & install), and a name collision is resolved instead of dead-ending: the same source offers a one-click update, another source explains that DSH resolves one skill per name and links to the installed entry, and a directory-only collision offers an explicit directory name. After any install the page switches to Installed and filters to the new skill.
+- **Rate-limit resilience**: GitHub's unauthenticated API allows 60 requests/hour. Discovery reuses repository resolutions briefly and immutable trees per commit, and an exhausted budget reports the reset clock time plus the `githubTokenEnv` remedy. When the API is rate-limited or unreachable, listing falls back to the `github.com` ref advertisement plus the codeload archive and reconstructs real Git blob/tree hashes, so search → review → install still completes.
 - Remove an entry into a restorable backup; restore never overwrites an existing skill.
 - Batch-update every checked skill; each item is re-verified, the previous version is backed up, locally modified skills are skipped unless explicitly allowed, and the result reports updated/skipped/failed.
 - Manage backups: stored size/file counts, per-backup deletion, and cleanup that keeps the newest N. Nothing is auto-deleted by default.
@@ -22,7 +23,7 @@ A native Host + React Client bundle with a **Skills** entry in the DSH sidebar. 
 - File-level update diff: the update dialog shows added/removed/changed/unchanged files before confirmation.
 - Wider install sources: local `.tar.gz`/`.tgz`/`.zip` archives (strict in-memory parsing, never executed), well-known HTTPS catalogs and cross-root backup restore.
 - The `skills_manager` Agent tool uses the same core operations. Mutations require a logged, one-time user approval, not a model-supplied authorization flag.
-- **Hot enable/disable**: switching the bundle off and back on unmounts and remounts the Client sidebar entry and main panel with the plugin Fiber; 0.2.1 fixes the previous re-enable that lost the entry until the page reloaded.
+- **Hot enable/disable**: switching the bundle off and back on unmounts and remounts the Settings section (and its navigation glyph) with the plugin Fiber. 0.3.0 no longer registers a left-rail panel entry.
 - English/Chinese text, DSH theme colors, responsive layout, loading/error feedback and modal focus management.
 
 ## 0.1.0 startup failure and upgrade
@@ -45,11 +46,11 @@ https://github.com/skillre/dsh-plugin-skills-manager
 
 The repository commits its built output under `lib/`, so pnpm does not need to execute build scripts and the `allowBuilds` supply-chain policy does not block the install. Restart Desktop afterwards. This follows the latest `main` commit.
 
-**Option B: Release tarball (pinned version)** — download [`skillre-dsh-plugin-skills-manager-0.2.1.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.2.1/skillre-dsh-plugin-skills-manager-0.2.1.tgz) from the [GitHub Release v0.2.1](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.2.1) and enter its **full absolute local path** in **Add plugin**.
+**Option B: Release tarball (pinned version)** — download [`skillre-dsh-plugin-skills-manager-0.3.0.tgz`](https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.3.0/skillre-dsh-plugin-skills-manager-0.3.0.tgz) from the [GitHub Release v0.3.0](https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.3.0) and enter its **full absolute local path** in **Add plugin**.
 
 1. Open **Plugins → Add plugin** in DSH.
 2. Paste the Git URL or the tarball's absolute path, review the trust notice and initiate installation yourself.
-3. Enable it and open **Skills** in the sidebar.
+3. Enable it, open **Settings** (the sidebar-foot account menu → Settings, or ⌘, on macOS), and choose **Skills** in the Settings sidebar. The left rail gains no skills button.
 
 Final installation belongs to the user. Do not use an unpublished npm spec or source directory; use the Option B Release asset (the exact verified file) when pinning a version.
 
@@ -113,6 +114,7 @@ Use the user's own Cordis override layer, not edits to the installed package:
     maxBundleFiles: 20000
     maxRepositoryEntries: 30000
     checkConcurrency: 3
+    githubTokenEnv: ''
 ```
 
 Loader overrides replace the whole `config`, but this plugin supplies defaults for omitted fields. All roots must be absolute.
@@ -134,10 +136,11 @@ Loader overrides replace the whole `config`, but this plugin supplies defaults f
 | `maxBundleFiles` | `20000` | File count limit; schema maximum 50000, sized for asset-heavy skills |
 | `maxRepositoryEntries` | `30000` | Complete GitHub tree limit; truncated trees cannot establish update status |
 | `checkConcurrency` | `3` | Bounded network concurrency, 1–6 |
+| `githubTokenEnv` | `''` | Optional **environment variable name** (for example `GITHUB_TOKEN`). When set, its token is attached only to `api.github.com` requests to raise the hourly budget; the default empty value means no credential is ever read. A pasted token value is rejected |
 
 ## Permissions and safety
 
-Host code accesses configured skill directories with Host permissions. UI RPC requires a live authenticated owner through DSH Connection, and refuses other Peers. The plugin contacts only public `skills.sh`, `api.github.com`, `raw.githubusercontent.com` and recorded public HTTPS well-known catalogs. Well-known artifacts must stay on the catalog origin, are `sha256`-verified and strictly parsed as tar.gz in memory. It does not read GitHub/browser credentials, invoke Git or `npx`, or execute downloaded scripts.
+Host code accesses configured skill directories with Host permissions. UI RPC requires a live authenticated owner through DSH Connection, and refuses other Peers. The plugin contacts only public `skills.sh`, `api.github.com`, `raw.githubusercontent.com`, `codeload.github.com`, `github.com` (Git ref advertisement, used only as the rate-limit fallback) and recorded public HTTPS well-known catalogs. Well-known artifacts must stay on the catalog origin, are `sha256`-verified and strictly parsed as tar.gz in memory. By default it reads **no credentials**; only with an explicit `githubTokenEnv` does it read that environment variable and attach the token to `api.github.com` requests alone — never to raw/codeload/skills.sh, logs or error messages. It does not invoke Git or `npx`, or execute downloaded scripts.
 
 Downloads are commit-pinned and checked against every Git blob and the complete selected tree. Remote symlinks/submodules, path traversal, Windows device names, case/Unicode collisions and oversized resources are rejected. Mutations recheck complete local fingerprints and use root-local disk locks, journals, same-filesystem publication and backups. Metadata is validated and limited to 4 MiB; corrupt state and unfinished transactions fail closed.
 
@@ -145,11 +148,11 @@ Downloads are commit-pinned and checked against every Git blob and the complete 
 
 ## Verification and limits
 
-DSH **0.2.2-rc.1** (cordis 4.1.0) was re-inspected and mounted on **2026-11-06**. Type checking, build, publint, package checks and **73 automated tests** pass, including **20 real ConnectionRegistry transport regressions**, **7 well-known/archive regressions**, **9 batch/backup/move/install/diff regressions**, **1 large-skill commit-tarball download regression**, **5 background update job/progress/cancellation regressions** and **1 Client lifecycle/hot-reload regression**. The pre-final packed test in an owned temporary non-Desktop profile compared all **37 packed files** byte-for-byte and exercised real Gateway `settings/describe` and Desktop welcome `llm/listConfigurableProviders`, plugin list/detail/check/remove/restore with filesystem/fingerprint checks, a real Host restart while the plugin remained installed, dependency/selection/composition/plugin-route absence after uninstall, and both Gateway methods after another startup. Ten owned CLI processes closed and every recorded group returned `ESRCH` before canonical owner/UID-root removal and explicit `ENOENT`. Hot enable/disable was additionally verified in a real DSH Web page (owned temporary non-Desktop profile, real Chrome/CDP): two off/on cycles restored the sidebar entry and main panel with a clean console. The previous build's plugin-RPC-only checks are not this version's compatibility proof.
+DSH **0.2.2-rc.1** (cordis 4.1.0) was re-inspected and mounted on **2026-11-08**, with the Settings-section delivery. Type checking, build, publint, package checks and **88 automated tests** pass, including **20 real ConnectionRegistry transport regressions**, **14 GitHub source/rate-limit/archive-fallback regressions**, **7 well-known/archive regressions**, **10 batch/backup/move/install/diff regressions**, **5 search-hit and install-conflict decision regressions** and **3 Client Settings-registration/lifecycle regressions**. The pre-final packed test in an owned temporary non-Desktop profile compared all **37 packed files** byte-for-byte and exercised real Gateway `settings/describe` and Desktop welcome `llm/listConfigurableProviders`, plugin list/detail/check/remove/restore with filesystem/fingerprint checks, a real Host restart while the plugin remained installed, dependency/selection/composition/plugin-route absence after uninstall, and both Gateway methods after another startup. Every owned CLI process closed and every recorded group returned `ESRCH` before canonical owner/UID-root removal and explicit `ENOENT`. The target UI was verified in a real DSH Web page (owned temporary non-Desktop profile, real Chrome/CDP): the left rail carries **no** skills entry, the Settings sidebar shows the **Skills** row with its own glyph and opens the manager page, a search hit's "Review & install" resolves the repository and shows the full review in one step, and two off/on cycles of the bundle restored the Settings row and page with a clean console. The previous build's plugin-RPC-only checks are not this version's compatibility proof.
 
-The shipped [compatibility record](<compatibility.json>) references only this version's [passed pre-final mount evidence](<docs/verification/pre-final-mount-0.2.1-gateway.json>). After adding documentation/compatibility metadata, repack and reinstall the **exact final file**; every packed file, SHA256, Gateway/plugin checks and cleanup outcome are recorded in the external [final mount report](<docs/verification/isolated-mount-0.2.1.json>), [log](<docs/verification/isolated-mount-0.2.1.log>) and [artifact summary](<docs/verification/final-artifact-0.2.1.json>). Keeping the exact tarball hash outside the package avoids a self-referential hash.
+The shipped [compatibility record](<compatibility.json>) references only this version's [passed pre-final mount evidence](<docs/verification/pre-final-mount-0.3.0-gateway.json>). After adding compatibility metadata, repack and reinstall the **exact final file**; every packed file, SHA256, Gateway/plugin checks and cleanup outcome are recorded in the external [final mount report](<docs/verification/isolated-mount-0.3.0.json>), [log](<docs/verification/isolated-mount-0.3.0.log>) and [artifact summary](<docs/verification/final-artifact-0.3.0.json>). The real-UI evidence is the [browser verification report](<docs/verification/browser-hot-reenable-0.3.0.json>). Keeping the exact tarball hash outside the package avoids a self-referential hash.
 
-**Electron Desktop visual/interaction acceptance and the user's daily Desktop restart belong to the user.** A real isolated CLI/Web Host restart, authenticated RPC and Client asset delivery are not Electron-window, theme or interaction acceptance. The 0.2.1 Client hot enable/disable fix was verified in a real DSH Web page and recorded as the `web-ui-hot-reenable` compatibility check.
+**Electron Desktop visual/interaction acceptance and the user's daily Desktop restart belong to the user.** A real isolated CLI/Web Host restart, authenticated RPC and Client asset delivery are not Electron-window, theme or interaction acceptance. The 0.3.0 Settings entry, search-to-review flow and hot enable/disable were verified in a real DSH Web page and recorded as the `web-ui-settings-section`, `web-ui-discover-review` and `web-ui-hot-reenable` compatibility checks. The same flow inside the Electron Desktop window remains a user-side visual acceptance.
 
 The route uses a `buffered` body. Its limit belongs to DSH Connection's HTTP carrier `maxRequestBodyBytes` (current default 300 MiB), not an independent adapter/direct `shared.fetch` cap. No new carrier-overflow test is claimed.
 

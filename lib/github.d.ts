@@ -22,6 +22,7 @@ export interface RepositoryTree {
     commit: string;
     rootHash: string;
     tree: TreeNode[];
+    source?: 'api' | 'archive';
 }
 export interface DownloadedSkill {
     skill: RepositorySkill;
@@ -34,10 +35,26 @@ export declare class GitHubSource {
     private readonly config;
     private readonly doFetch;
     private readonly immutableTrees;
+    private readonly resolvedRefs;
     constructor(config: ManagerConfig, doFetch?: Fetcher);
     clear(): void;
+    private githubToken;
+    private failRateLimit;
     private bytes;
     private json;
+    private static fallbackAllowed;
+    private rememberRef;
+    private cacheTree;
+    private apiTree;
+    private commitFromRefs;
+    /** Reconstruct a repository tree from the codeload archive without any api.github.com request. */
+    private archiveTree;
+    private resolveTree;
+    /**
+     * Resolve a repository tree. A named ref is always resolved again so update
+     * checks and updates observe a moved branch; an omitted ref uses the
+     * short-lived discovery cache shared with inspect().
+     */
     tree(source: string, ref: string | undefined, signal: AbortSignal, pinnedCommit?: string): Promise<RepositoryTree>;
     private folderHash;
     folderHashFor(tree: RepositoryTree, skillPath: string): string;

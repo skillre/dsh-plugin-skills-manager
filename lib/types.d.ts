@@ -83,6 +83,8 @@ export interface SkillDetail {
 export interface SearchHit {
     id: string;
     name: string;
+    /** Upstream skill id inside the repository when the directory reports one; a resolution hint, never an install path. */
+    skillId?: string;
     repository: string;
     installs: number;
     url: string;
@@ -253,6 +255,7 @@ export type ManagerRequest = RequestBase & ({
     ref?: string;
     commit: string;
     skillPath: string;
+    entry?: string;
 } | {
     action: 'update';
     id: string;
