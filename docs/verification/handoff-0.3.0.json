@@ -32,7 +32,13 @@
       "unpackedSize": 456944,
       "publishedAt": "2026-11-08T06:46:06.677Z",
       "verifiedAt": "2026-11-08T14:49:38+08:00",
-      "firstPublish": true
+      "firstPublish": true,
+      "registryArtifact": {
+        "downloadedFrom": "https://registry.npmjs.org/@skillre/dsh-plugin-skills-manager/-/dsh-plugin-skills-manager-0.3.0.tgz",
+        "sha256": "332da6798cf83befa60ff017c27524ac4d32846945e693e568e2b9c8e82e17a4",
+        "identicalToReleaseAsset": true,
+        "mountCheck": "docs/verification/npm-registry-mount-0.3.0.json"
+      }
     }
   },
   "evidence": {
@@ -40,7 +46,8 @@
     "finalMount": "docs/verification/isolated-mount-0.3.0.json",
     "browser": "docs/verification/browser-hot-reenable-0.3.0.json",
     "finalArtifact": "docs/verification/final-artifact-0.3.0.json",
-    "checkLog": "docs/verification/check-0.3.0.log"
+    "checkLog": "docs/verification/check-0.3.0.log",
+    "npmRegistryMount": "docs/verification/npm-registry-mount-0.3.0.json"
   },
   "userActions": [
     "Update from Plugins (npm install shows the Versions section) or Discover, then refresh the page once.",
