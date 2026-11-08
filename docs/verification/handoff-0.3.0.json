@@ -14,7 +14,13 @@
     "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
     "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.3.0",
     "asset": "https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.3.0/skillre-dsh-plugin-skills-manager-0.3.0.tgz",
-    "npmPublished": false
+    "npmPublished": false,
+    "marketIndex": {
+      "hosted": "https://skillre.github.io/dsh-plugin-market/index.json",
+      "listed": false,
+      "reason": "The fleet market contract now lists npm-published versions only (tests/update-readiness-cli.test.mjs asserts no Git-source entries), and this package has never been published to npm. A commit-pinned Git entry was briefly pushed and then reverted to keep the catalog policy-compliant.",
+      "durablePath": "Publish the package to npm (first publish must be manual; then Trusted Publishing + market source npm), after which Discover can list and update it in place."
+    }
   },
   "evidence": {
     "preFinalMount": "docs/verification/pre-final-mount-0.3.0-gateway.json",
@@ -24,7 +30,7 @@
     "checkLog": "docs/verification/check-0.3.0.log"
   },
   "userActions": [
-    "Update the plugin from Plugins/Discover (market entry pinned to the v0.3.0 commit), then refresh the page once.",
+    "Update or reinstall from the GitHub source or the v0.3.0 Release tarball (Discover no longer lists this package because it is not on npm yet), then refresh the page once.",
     "Open Settings (sidebar-foot account menu -> Settings, or Command+,) and choose the new Skills section; the left rail no longer has a skills button.",
     "In Discover, search a skill and confirm that Review & install opens the full repository review directly."
   ],
