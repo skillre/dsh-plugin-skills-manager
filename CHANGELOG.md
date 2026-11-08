@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0 — the detail page is a picture (display contract)
+
+- **The plugin detail page is now one preview image, not a manual.** `locale/en.json` and `locale/zh.json` gained `meta.detail` pointing at `docs/DETAIL.md` / `docs/DETAIL.zh.md`, and each DETAIL document contains exactly one image reference. DSH no longer falls back to the README for the detail page; the README stays the full developer document (install, configuration, permissions, rollback, evidence).
+- **Bilingual 640×300 preview banners** (`docs/preview.svg`, `docs/preview.zh.svg`) show the real product moment: the Skills page inside DSH Settings with its tabs, discovered/updates/read-only counts and installed-skill cards with latest/update badges, beside the search → review → install loop and the "Settings › Skills, no extra left-rail button" inset. They use one restrained accent palette, text as `<text>` (no outlined glyphs), no external references and only the SVG elements the Feishu whiteboard parser keeps editable.
+- **`docs/PREVIEW.md` records the whiteboard workflow** (one board per language) and `scripts/preview.mjs` provides the offline `check` plus `push`/`pull` round-trip. `npm run check` now starts with `npm run preview:check`, which validates the 640×300 ratio, the allowed element set, alt text and the `meta.detail` target; the current banners are hand-authored until the boards exist.
+- **`package.json#files` now ships `docs`**, so the image and DETAIL documents reach the installed package — without them the detail page is blank with no error anywhere.
+- Verified: preview check with 0 warnings, the full 88-test suite, an isolated packed mount of the final tarball and a real DSH Web page check that opens the plugin detail page and asserts the shipped banner renders at the 640×300 ratio (`web-ui-detail-preview-image`). Bump to 0.4.0.
+
 ## 0.3.0 — Settings section and a search-to-install flow that finishes (local build)
 
 - **The manager moved into Settings.** The DSH left rail no longer gains a「技能」panel icon and there is no `main` panel entry any more: the plugin registers one `settings.section` row (with its own `settings.section.icon`) so every skill operation lives behind the Settings seat that DSH already owns. The page keeps all five tabs, the workspace/location scope, filters, dialogs, job polling and backup management.

@@ -1,6 +1,6 @@
 {
   "name": "@skillre/dsh-plugin-skills-manager",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "DSH 技能管理：检索、安装、本地更新检查、更新与安全删除",
   "icon": "./icon.svg",
   "type": "module",
@@ -31,6 +31,11 @@
     "compatibility.json",
     "locale/*.json",
     "icon.svg",
+    "docs/DETAIL.md",
+    "docs/DETAIL.zh.md",
+    "docs/PREVIEW.md",
+    "docs/preview.svg",
+    "docs/preview.zh.svg",
     "README.md",
     "README.en.md",
     "UNINSTALL.md",
@@ -73,13 +78,14 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "pack:check": "npm run build && publint && npm pack --dry-run --json --ignore-scripts",
-    "check": "npm run typecheck && npm test && npm run pack:check && git diff --exit-code -- lib",
+    "check": "npm run preview:check && npm run typecheck && npm test && npm run pack:check && git diff --exit-code -- lib",
     "changeset": "changeset",
     "version": "changeset version",
     "release:prepare": "node scripts/prepare-release.mjs",
     "prepack": "npm run build",
     "test:integration": "node scripts/verify-isolated.mjs",
-    "test:hot-reenable": "node scripts/verify-hot-reenable.mjs"
+    "test:hot-reenable": "node scripts/verify-hot-reenable.mjs",
+    "preview:check": "node scripts/preview.mjs check"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "~4.1.0",

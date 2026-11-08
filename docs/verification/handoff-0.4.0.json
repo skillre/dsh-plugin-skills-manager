@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "repo": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager",
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.4.0",
+  "result": "passed",
+  "artifact": {
+    "filename": "skillre-dsh-plugin-skills-manager-0.4.0.tgz",
+    "sha256": "bdc3ed50b36f0aac780cd73daa856d3db231ee8fbe0a08c0e73ccfb3fae2739a",
+    "sizeBytes": 106812,
+    "entryCount": 42
+  },
+  "publication": {
+    "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
+    "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.4.0",
+    "asset": "https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.4.0/skillre-dsh-plugin-skills-manager-0.4.0.tgz",
+    "npmPublished": false,
+    "note": "Published through the reviewed OIDC workflow after this evidence was recorded; GitHub tag/Release are created by the workflow after the registry publish."
+  },
+  "display": {
+    "detailDocuments": [
+      "docs/DETAIL.md",
+      "docs/DETAIL.zh.md"
+    ],
+    "previewImages": [
+      "docs/preview.svg",
+      "docs/preview.zh.svg"
+    ],
+    "cardMeta": {
+      "en": {
+        "title": "Skills Manager",
+        "description": "Discover, install, check and update DSH skills, with safe removal and restorable backups.",
+        "detail": "docs/DETAIL.md"
+      },
+      "zh": {
+        "title": "\u6280\u80fd\u7ba1\u7406",
+        "description": "\u68c0\u7d22\u3001\u5b89\u88c5\u3001\u68c0\u67e5\u548c\u66f4\u65b0 DSH \u6280\u80fd\uff0c\u652f\u6301\u5b89\u5168\u5220\u9664\u4e0e\u5907\u4efd\u6062\u590d\u3002",
+        "detail": "docs/DETAIL.zh.md"
+      }
+    },
+    "previewCheck": "preview: OK (0 warning(s))",
+    "packed": true
+  },
+  "evidence": {
+    "preFinalMount": "docs/verification/pre-final-mount-0.4.0-gateway.json",
+    "finalMount": "docs/verification/isolated-mount-0.4.0.json",
+    "browser": "docs/verification/browser-hot-reenable-0.4.0.json",
+    "finalArtifact": "docs/verification/final-artifact-0.4.0.json",
+    "checkLog": "docs/verification/check-0.4.0.log"
+  },
+  "userActions": [
+    "Approve the npm-publish environment for the dispatched Release workflow; the publish job then runs the verified tarball through OIDC and creates the v0.4.0 tag/Release.",
+    "Update from Plugins once 0.4.0 is on npm (the Versions section appears for npm installs), then refresh the page once.",
+    "Open any plugin's detail page: it is now the preview banner instead of the README text."
+  ],
+  "residue": []
+}

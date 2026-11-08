@@ -298,6 +298,13 @@ try {
         await waitFor(async () => (await text()).includes(bundleLabels[0]) || (await text()).includes(bundleLabels[1]), 30000, 'installed bundle list')
         assert.equal(await openBundle(), true, 'the bundle card must open')
         await waitFor(async () => { const value = await bundleSwitch(); return value !== null && JSON.parse(value).disabled === false ? true : undefined }, 30000, 'bundle detail switch')
+        // The detail page must be carried by the preview image (locale meta.detail
+        // -> docs/DETAIL*.md), not by the README manual.
+        const readPreviewImage = () => evaluate(`(() => { const image = [...document.querySelectorAll('img')].find(node => (node.getAttribute('src') || '').includes('detail-file')); return image ? JSON.stringify({ w: image.naturalWidth, h: image.naturalHeight, complete: image.complete, src: image.getAttribute('src') }) : null })()`)
+        await waitFor(async () => { const raw = await readPreviewImage(); if (!raw) return undefined; const value = JSON.parse(raw); return value.complete && value.w > 0 ? true : undefined }, 45000, 'plugin detail preview image')
+        const previewImage = JSON.parse(await readPreviewImage())
+        assert.ok(previewImage.w / previewImage.h > 2.0 && previewImage.w / previewImage.h < 2.27, `detail preview must keep the 640x300 banner ratio, got ${previewImage.w}x${previewImage.h}`)
+        checks.push('web-ui-detail-preview-image')
 
         for (const cycle of [1, 2]) {
           await closeSettings()

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.4.0",
+  "dsh": "0.2.2-rc.1",
+  "verifiedAt": "2026-11-08",
+  "result": "passed",
+  "publication": {
+    "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
+    "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.4.0",
+    "asset": "https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.4.0/skillre-dsh-plugin-skills-manager-0.4.0.tgz",
+    "npmPublished": false,
+    "note": "Published through the reviewed OIDC workflow after this evidence was recorded; GitHub tag/Release are created by the workflow after the registry publish."
+  },
+  "artifact": {
+    "path": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/release-artifact/skillre-dsh-plugin-skills-manager-0.4.0.tgz",
+    "filename": "skillre-dsh-plugin-skills-manager-0.4.0.tgz",
+    "sha256": "bdc3ed50b36f0aac780cd73daa856d3db231ee8fbe0a08c0e73ccfb3fae2739a",
+    "sha1": "5249b0d864f14dddb2eaf5088f122e6a8bb18cf7",
+    "integrity": "sha512-y1qw+swl7ppHlei/sq2GtReBuXejbpO1pHC4L4K+RMvrijSL84vCoBJyNbt8uBKUKYZzFuq1Tq4g/2dsW3Vb+w==",
+    "sizeBytes": 106812,
+    "packedPayloadBytes": 481623,
+    "entryCount": 42
+  },
+  "display": {
+    "detailDocuments": [
+      "docs/DETAIL.md",
+      "docs/DETAIL.zh.md"
+    ],
+    "previewImages": [
+      "docs/preview.svg",
+      "docs/preview.zh.svg"
+    ],
+    "cardMeta": {
+      "en": {
+        "title": "Skills Manager",
+        "description": "Discover, install, check and update DSH skills, with safe removal and restorable backups.",
+        "detail": "docs/DETAIL.md"
+      },
+      "zh": {
+        "title": "\u6280\u80fd\u7ba1\u7406",
+        "description": "\u68c0\u7d22\u3001\u5b89\u88c5\u3001\u68c0\u67e5\u548c\u66f4\u65b0 DSH \u6280\u80fd\uff0c\u652f\u6301\u5b89\u5168\u5220\u9664\u4e0e\u5907\u4efd\u6062\u590d\u3002",
+        "detail": "docs/DETAIL.zh.md"
+      }
+    },
+    "previewCheck": "preview: OK (0 warning(s))",
+    "packed": true
+  },
+  "tests": {
+    "command": "npm run check",
+    "log": "docs/verification/check-0.4.0.log",
+    "exitCode": 0,
+    "testFiles": 10,
+    "testsPassed": 88,
+    "displayContractCheck": "passed",
+    "typecheck": "passed",
+    "build": "passed",
+    "publint": "passed",
+    "packDryRun": "passed",
+    "finalPackedMount": "passed"
+  },
+  "verification": {
+    "report": "docs/verification/isolated-mount-0.4.0.json",
+    "log": "docs/verification/isolated-mount-0.4.0.log",
+    "result": "passed",
+    "checks": 19,
+    "cleanupVerified": true,
+    "tarballSha256": "bdc3ed50b36f0aac780cd73daa856d3db231ee8fbe0a08c0e73ccfb3fae2739a",
+    "packedClientSha256": "347c972cc384182bca6e23d86244377449dacfb244f7af9303e36ef7fc6fb279",
+    "clientDelivery": {
+      "status": 200,
+      "containsPackedClient": true
+    },
+    "browser": {
+      "report": "docs/verification/browser-hot-reenable-0.4.0.json",
+      "log": "docs/verification/browser-hot-reenable-0.4.0.log",
+      "result": "passed",
+      "checks": [
+        "profile-created",
+        "profile-tarball-install",
+        "dump-config",
+        "bounded-host-startup",
+        "browser-launched",
+        "web-ui-boot",
+        "web-ui-no-sidebar-entry",
+        "web-ui-settings-page",
+        "web-ui-discover-results",
+        "web-ui-discover-review",
+        "web-ui-detail-preview-image",
+        "web-ui-hot-disable-1",
+        "web-ui-hot-enable-1",
+        "web-ui-hot-disable-2",
+        "web-ui-hot-enable-2",
+        "web-ui-hot-reenable",
+        "web-ui-console-clean",
+        "tarball-unchanged",
+        "owned-processes-stopped",
+        "owned-process-and-profile-cleanup"
+      ],
+      "consoleErrors": 0,
+      "cleanupVerified": true,
+      "method": "owned disposable non-Desktop DSH Web profile from the exact release tarball + real Google Chrome via CDP: no sidebar entry, Settings section opens the manager page, a real skills.sh hit resolves into the full repository review, the plugin detail page renders the shipped 640x300 preview banner, two bundle off/on cycles restore the settings row and page, console clean"
+    }
+  }
+}

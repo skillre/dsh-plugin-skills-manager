@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "package": "@skillre/dsh-plugin-skills-manager",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "withdrawnVersions": [
     {
       "version": "0.1.0",
@@ -11,6 +11,48 @@
     }
   ],
   "verified": [
+    {
+      "dsh": "0.2.2-rc.1",
+      "verifiedAt": "2026-11-08",
+      "result": "passed",
+      "checks": [
+        "profile-tarball-install",
+        "dump-config",
+        "packed-package-identity",
+        "packed-payload-bytes",
+        "full-packed-payload-bytes",
+        "packed-display-resources",
+        "unauthenticated-request-refused",
+        "gateway-settings-describe",
+        "gateway-llm-list-configurable-providers",
+        "authenticated-rpc-lifecycle",
+        "bounded-startup",
+        "client-bundle-delivery",
+        "gateway-welcome-apis-after-plugin-restart",
+        "packed-plugin-restart",
+        "profile-uninstall-absence",
+        "gateway-welcome-apis-after-uninstall",
+        "uninstalled-plugin-route-absent",
+        "owned-process-and-profile-cleanup",
+        "tarball-unchanged",
+        "web-ui-settings-section",
+        "web-ui-discover-review",
+        "web-ui-hot-reenable",
+        "web-ui-detail-preview-image"
+      ],
+      "cleanupVerified": true,
+      "ui": "web-ui-detail-preview-verified",
+      "evidence": "docs/verification/pre-final-mount-0.4.0-gateway.json",
+      "finalArtifactEvidence": "docs/verification/isolated-mount-0.4.0.json",
+      "notes": [
+        "This record consumes the successful frozen pre-final packed test on DSH 0.2.2-rc.1 (cordis 4.1.0) built from the display-contract migration. Its complete payload and SHA256 remain in external evidence to avoid a self-referential hash.",
+        "The plugin now satisfies the fleet display contract: locale meta.detail points at docs/DETAIL.md (en) and docs/DETAIL.zh.md (zh), each DETAIL document carries exactly one preview-image reference, and the package ships docs/ (42 packed files).",
+        "The target UI was verified in a real DSH Web page with a real Chrome over CDP: the left rail has no skills entry, Settings hosts the Skills section, a real skills.sh hit resolves into the full repository review, the plugin detail page rendered the shipped preview banner at the 640x300 banner ratio (web-ui-detail-preview-image), two off/on cycles restored the Settings row and page, and the console stayed clean.",
+        "Mount checks match the 0.3.0 record: real Gateway settings/describe and Desktop welcome llm/listConfigurableProviders, plugin list/detail/check/remove/restore with actual filesystem/fingerprint checks, a real owned Host restart while installed, dependency/selection/composition/plugin-route absence after uninstall, and owned-process/profile cleanup verification.",
+        "88 automated tests plus the offline display-contract check pass; the current banners are hand-authored SVGs until the Feishu whiteboards recorded in docs/PREVIEW.md exist.",
+        "Only current DSH 0.2.2-rc.1 on the macOS isolated non-Desktop CLI/Web carrier was mounted. Electron Desktop visual acceptance remains user-side."
+      ]
+    },
     {
       "dsh": "0.2.2-rc.1",
       "verifiedAt": "2026-11-08",
