@@ -9,6 +9,8 @@
 - `package-lock.json` re-synced to 0.5.1; README evidence names now match the compatibility checks (`web-ui-settings-page`).
 - Verified on DSH 0.2.2-rc.1 (cordis 4.1.0): 88 tests, the display-contract check, an isolated packed mount and the extended real DSH Web page run (23 checks) including the stronger filter assertions. A manual repository-install run in the owned Web profile confirmed the installed skill appears immediately after the dialog closes. Bump to 0.5.1.
 
+0.5.1 is now published on npm as `@skillre/dsh-plugin-skills-manager@0.5.1` through the reviewed OIDC workflow (workflow run 42493309194; registry integrity `sha512-zp7W+a+131DZjCdTv9JnvfWkofb9EXeRpBR0AcPcyXnEwjnNRVS7DpjpqJRmvrKfqMZbwJBK8c0StZoEC0ScXA==`; the GitHub Release asset is byte-identical to the registry tarball; the market index lists 0.5.1 from npm).
+
 ## 0.5.0 — one Settings design language, and the count cards are real filters
 
 - **The page now speaks the host's Settings design language.** The custom surface (pill-shaped stat chips, bordered footer note, dashed empty box, ad-hoc buttons) is gone. The manager uses the running DSH build's own Settings tokens and metrics instead: `--dsw-alias-settings-card-fill/-stroke` cards with `--dsw-radius-xl`, an 18px/600 heading, 13px/20px tertiary intro, underline tabs on `--dsw-alias-border-l2`, native 36/28px buttons, 32px inputs with the inline search icon, the host focus ring, and dialogs that follow the host dialog contract (panel radius, layer-2 surface, prominent elevation, 16px/500 title, 24px gutters). The navigation label is now the page heading — **技能管理 / Skills Manager** in both places, where it used to say 技能 / Skills in the rail and 技能管理 / Skills Manager on the page.

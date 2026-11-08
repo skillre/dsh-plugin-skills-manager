@@ -9,8 +9,40 @@
     "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
     "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.5.1",
     "asset": "https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.5.1/skillre-dsh-plugin-skills-manager-0.5.1.tgz",
-    "npmPublished": false,
-    "note": "Recorded before the reviewed OIDC dispatch: the npm block, registry tarball sha256 and Release asset identity are filled in after the protected npm-publish environment approves the workflow."
+    "npmPublished": true,
+    "note": "Published through the reviewed OIDC workflow (run 42493309194) after this evidence was recorded; the GitHub tag/Release were created by the workflow after the registry publish. CI repacked the same committed sources, so the CI tarball differs from the locally verified tarball in tar metadata only; extracted file contents are identical (diff -r clean, 42 files).",
+    "npm": {
+      "package": "@skillre/dsh-plugin-skills-manager",
+      "version": "0.5.1",
+      "distTag": "latest",
+      "integrity": "sha512-zp7W+a+131DZjCdTv9JnvfWkofb9EXeRpBR0AcPcyXnEwjnNRVS7DpjpqJRmvrKfqMZbwJBK8c0StZoEC0ScXA==",
+      "shasum": "c3b803972b101fdeb278ddf4d2f7ca52ee045f49",
+      "registryTarballSha256": "51897f26900c8304b64f1d55266c69b9237750b0e6950feae8615f044c276baa",
+      "sizeBytes": 111670,
+      "attestations": "https://registry.npmjs.org/-/npm/v1/attestations/@skillre%2fdsh-plugin-skills-manager@0.5.1",
+      "publishedAt": "2026-11-08T16:00:20Z",
+      "channel": "GitHub Actions release.yml, npm Trusted Publishing (OIDC), protected npm-publish environment approved by the human reviewer",
+      "verifiedAt": "2026-11-09T00:02:00+08:00"
+    },
+    "releaseAsset": {
+      "name": "skillre-dsh-plugin-skills-manager-0.5.1.tgz",
+      "sha256": "51897f26900c8304b64f1d55266c69b9237750b0e6950feae8615f044c276baa",
+      "sizeBytes": 111670,
+      "identicalToRegistryTarball": true
+    },
+    "localVerifiedArtifact": {
+      "sha256": "b6de71c7758b8435ee634dd6c65404300c5f551add5c76997cc984b37c230928",
+      "integrity": "sha512-xeR2IWQlK5IQC3KOWo6k9gA3K8y4fVVVrn+NmM9gXRxQTubq9A6+4cKmo5m6WIymISU3FFInEXq1lGLehHRpnQ==",
+      "contentIdenticalToPublished": true
+    },
+    "registryMount": {
+      "report": "docs/verification/npm-registry-mount-0.5.1.json",
+      "log": "docs/verification/npm-registry-mount-0.5.1.log",
+      "result": "passed",
+      "checks": 19,
+      "cleanupVerified": true,
+      "tarballSha256": "51897f26900c8304b64f1d55266c69b9237750b0e6950feae8615f044c276baa"
+    }
   },
   "artifact": {
     "path": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/release-artifact/skillre-dsh-plugin-skills-manager-0.5.1.tgz",
