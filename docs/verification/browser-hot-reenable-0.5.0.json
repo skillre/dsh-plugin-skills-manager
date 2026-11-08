@@ -32,14 +32,14 @@
   ],
   "cleanupVerified": true,
   "cleanup": {
-    "ownedRoot": "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-browser-9eguEe",
-    "owner": "browser-0.5.0-51955-1794148926944",
-    "profile": "skills-manager-browser-48926944",
+    "ownedRoot": "/private/var/folders/k5/plnkf7qs5992_9713c_b34nc0000gn/T/dsh-skills-manager-browser-ostXSW",
+    "owner": "browser-0.5.0-54248-1794149035421",
+    "profile": "skills-manager-browser-49035421",
     "userProfileTouched": false,
     "processesStopped": true,
     "rootRemoved": true
   },
   "consoleErrors": [],
   "tarball": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/release-artifact/skillre-dsh-plugin-skills-manager-0.5.0.tgz",
-  "tarballSha256": "70c3fabe4862600545f0e0914a71083aa84cd79e18887310105972090a1f5eb2"
+  "tarballSha256": "d6ed075cfb51b80171986cfb7a402c8fee891a41443b0c86ba6242c3d9a74149"
 }
