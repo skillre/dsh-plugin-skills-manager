@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "repo": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager",
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.5.1",
+  "result": "passed",
+  "artifact": {
+    "filename": "skillre-dsh-plugin-skills-manager-0.5.1.tgz",
+    "sha256": "b6de71c7758b8435ee634dd6c65404300c5f551add5c76997cc984b37c230928",
+    "sizeBytes": 111676,
+    "entryCount": 42
+  },
+  "publication": {
+    "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
+    "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.5.1",
+    "asset": "https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.5.1/skillre-dsh-plugin-skills-manager-0.5.1.tgz",
+    "npmPublished": false,
+    "note": "Recorded before the reviewed OIDC dispatch: the npm block, registry tarball sha256 and Release asset identity are filled in after the protected npm-publish environment approves the workflow."
+  },
+  "display": {
+    "detailDocuments": [
+      "docs/DETAIL.md",
+      "docs/DETAIL.zh.md"
+    ],
+    "previewImages": [
+      "docs/preview.svg",
+      "docs/preview.zh.svg"
+    ],
+    "cardMeta": {
+      "en": {
+        "title": "Skills Manager",
+        "description": "Discover, install, check and update DSH skills, with safe removal and restorable backups.",
+        "detail": "docs/DETAIL.md"
+      },
+      "zh": {
+        "title": "技能管理",
+        "description": "检索、安装、检查和更新 DSH 技能，支持安全删除与备份恢复。",
+        "detail": "docs/DETAIL.zh.md"
+      }
+    },
+    "previewCheck": "preview: OK (0 warning(s))",
+    "packed": true
+  },
+  "evidence": {
+    "preFinalMount": "docs/verification/pre-final-mount-0.5.1-gateway.json",
+    "finalMount": "docs/verification/isolated-mount-0.5.1.json",
+    "browser": "docs/verification/browser-hot-reenable-0.5.1.json",
+    "installReveal": "docs/verification/install-reveal-0.5.1.json",
+    "finalArtifact": "docs/verification/final-artifact-0.5.1.json",
+    "checkLog": "docs/verification/check-0.5.1.log",
+    "npmRegistryMount": "docs/verification/npm-registry-mount-0.5.1.json",
+    "screenshots": [
+      "docs/verification/settings-ui-0.5.1.png",
+      "docs/verification/settings-ui-filter-0.5.1.png",
+      "docs/verification/install-reveal-0.5.1.png"
+    ]
+  },
+  "userActions": [
+    "Approve the npm-publish environment for the dispatched Release workflow; the publish job then runs the verified tarball through OIDC and creates the v0.5.1 tag/Release.",
+    "Update 技能管理 to 0.5.1 from Plugins (npm installs show the Versions section) or from Discover, then refresh the page once.",
+    "In 设置 → 技能管理 the three number cards are clickable filters and a repository install now reveals the installed skill immediately; Electron Desktop visual acceptance is still yours."
+  ],
+  "residue": []
+}

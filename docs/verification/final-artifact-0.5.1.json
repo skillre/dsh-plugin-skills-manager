@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "package": "@skillre/dsh-plugin-skills-manager",
+  "version": "0.5.1",
+  "dsh": "0.2.2-rc.1",
+  "verifiedAt": "2026-11-08",
+  "result": "passed",
+  "publication": {
+    "repository": "https://github.com/skillre/dsh-plugin-skills-manager",
+    "release": "https://github.com/skillre/dsh-plugin-skills-manager/releases/tag/v0.5.1",
+    "asset": "https://github.com/skillre/dsh-plugin-skills-manager/releases/download/v0.5.1/skillre-dsh-plugin-skills-manager-0.5.1.tgz",
+    "npmPublished": false,
+    "note": "Recorded before the reviewed OIDC dispatch: the npm block, registry tarball sha256 and Release asset identity are filled in after the protected npm-publish environment approves the workflow."
+  },
+  "artifact": {
+    "path": "/Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager/release-artifact/skillre-dsh-plugin-skills-manager-0.5.1.tgz",
+    "filename": "skillre-dsh-plugin-skills-manager-0.5.1.tgz",
+    "sha256": "b6de71c7758b8435ee634dd6c65404300c5f551add5c76997cc984b37c230928",
+    "sha1": "4fbd127471012f18279a432302c5c3aaf03aa8bb",
+    "integrity": "sha512-tVTah0RwidivNcWzRxcgajTwUo3LK1Vav3Kvbdrvq+eMvL6UTMDDqLfTrvS+bFziq/B/RJe4m0bYYBzN5CQKHg==",
+    "sizeBytes": 111676,
+    "packedPayloadBytes": 506846,
+    "entryCount": 42
+  },
+  "display": {
+    "detailDocuments": [
+      "docs/DETAIL.md",
+      "docs/DETAIL.zh.md"
+    ],
+    "previewImages": [
+      "docs/preview.svg",
+      "docs/preview.zh.svg"
+    ],
+    "cardMeta": {
+      "en": {
+        "title": "Skills Manager",
+        "description": "Discover, install, check and update DSH skills, with safe removal and restorable backups.",
+        "detail": "docs/DETAIL.md"
+      },
+      "zh": {
+        "title": "技能管理",
+        "description": "检索、安装、检查和更新 DSH 技能，支持安全删除与备份恢复。",
+        "detail": "docs/DETAIL.zh.md"
+      }
+    },
+    "previewCheck": "preview: OK (0 warning(s))",
+    "packed": true
+  },
+  "tests": {
+    "command": "npm run check",
+    "log": "docs/verification/check-0.5.1.log",
+    "exitCode": 0,
+    "testFiles": 10,
+    "testsPassed": 88,
+    "displayContractCheck": "passed",
+    "typecheck": "passed",
+    "build": "passed",
+    "publint": "passed",
+    "packDryRun": "passed",
+    "finalPackedMount": "passed"
+  },
+  "verification": {
+    "report": "docs/verification/isolated-mount-0.5.1.json",
+    "log": "docs/verification/isolated-mount-0.5.1.log",
+    "result": "passed",
+    "checks": 19,
+    "cleanupVerified": true,
+    "tarballSha256": "b6de71c7758b8435ee634dd6c65404300c5f551add5c76997cc984b37c230928",
+    "packedClientSha256": "ba478fcff448a2a9772ccb6a7a6818b6d69e133b1c84a91f8e41112665259385",
+    "clientDelivery": {
+      "status": 200,
+      "containsPackedClient": true
+    },
+    "browser": {
+      "report": "docs/verification/browser-hot-reenable-0.5.1.json",
+      "log": "docs/verification/browser-hot-reenable-0.5.1.log",
+      "result": "passed",
+      "checks": [
+        "profile-created",
+        "profile-tarball-install",
+        "dump-config",
+        "bounded-host-startup",
+        "browser-launched",
+        "web-ui-boot",
+        "web-ui-no-sidebar-entry",
+        "web-ui-settings-page",
+        "web-ui-settings-unified",
+        "web-ui-overview-tiles",
+        "web-ui-settings-screenshot",
+        "web-ui-discover-results",
+        "web-ui-discover-review",
+        "web-ui-detail-preview-image",
+        "web-ui-hot-disable-1",
+        "web-ui-hot-enable-1",
+        "web-ui-hot-disable-2",
+        "web-ui-hot-enable-2",
+        "web-ui-hot-reenable",
+        "web-ui-console-clean",
+        "tarball-unchanged",
+        "owned-processes-stopped",
+        "owned-process-and-profile-cleanup"
+      ],
+      "consoleErrors": 0,
+      "cleanupVerified": true,
+      "screenshots": [
+        "docs/verification/settings-ui-0.5.1.png",
+        "docs/verification/settings-ui-filter-0.5.1.png"
+      ],
+      "method": "Owned disposable non-Desktop DSH Web profile from the exact release tarball plus a real Google Chrome over CDP. The run seeds a writable skill and a linked read-only skill and asserts: rail label equals the page heading, host Settings typography/card radius/hairline border, three BUTTON overview cards with aria-pressed, the read-only card reduces the list to the linked entry and the chip restores both, updates/installed cards switch the tab and pressed state, a real skills.sh hit resolves into the full repository review, the plugin detail page renders the shipped 640x300 banner, two bundle off/on cycles restore the Settings row and page, and the console stays clean."
+    },
+    "installReveal": {
+      "report": "docs/verification/install-reveal-0.5.1.json",
+      "screenshot": "docs/verification/install-reveal-0.5.1.png",
+      "result": "passed",
+      "method": "Scripted manual CDP run in an owned disposable Web profile: Discover search → 查看并安装 (automatic review) → trust → 安装技能; the installed card was visible immediately with the notice, no empty state."
+    }
+  }
+}
