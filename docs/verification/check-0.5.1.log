@@ -18,26 +18,26 @@ preview: OK (0 warning(s)).
 
  RUN  v4.1.12 /Users/skillre/dsh-plugins/repos/dsh-plugin-skills-manager
 
- ✓ tests/client-choices.spec.ts (5 tests) 3ms
- ✓ tests/boundaries.spec.ts (6 tests) 23ms
- ✓ tests/client-lifecycle.spec.ts (3 tests) 10ms
- ✓ tests/github.spec.ts (14 tests) 92ms
+ ✓ tests/client-choices.spec.ts (5 tests) 4ms
+ ✓ tests/boundaries.spec.ts (6 tests) 21ms
+ ✓ tests/client-lifecycle.spec.ts (3 tests) 6ms
  ✓ tests/plugin.spec.ts (1 test) 2ms
- ✓ tests/wellknown.spec.ts (7 tests) 251ms
- ✓ tests/transport.spec.ts (20 tests) 357ms
- ✓ tests/management.spec.ts (10 tests) 1628ms
-     ✓ updates several checked skills with backups, skips latest and honours local-modification policy  453ms
- ✓ tests/manager.spec.ts (15 tests) 2119ms
-     ✓ installs verified resources, updates with a backup, removes and restores without overwriting  300ms
-     ✓ exposes live item progress while a job is running  352ms
- ✓ tests/lifecycle.spec.ts (7 tests) 2187ms
-     ✓ deadline preserves ordinary cancellation semantics  1005ms
-     ✓ deadline preserves recovery-required semantics  1001ms
+ ✓ tests/github.spec.ts (14 tests) 92ms
+ ✓ tests/wellknown.spec.ts (7 tests) 247ms
+ ✓ tests/transport.spec.ts (20 tests) 375ms
+ ✓ tests/management.spec.ts (10 tests) 1488ms
+     ✓ updates several checked skills with backups, skips latest and honours local-modification policy  440ms
+ ✓ tests/manager.spec.ts (15 tests) 1921ms
+     ✓ installs verified resources, updates with a backup, removes and restores without overwriting  313ms
+     ✓ exposes live item progress while a job is running  324ms
+ ✓ tests/lifecycle.spec.ts (7 tests) 2149ms
+     ✓ deadline preserves ordinary cancellation semantics  1008ms
+     ✓ deadline preserves recovery-required semantics  1002ms
 
  Test Files  10 passed (10)
       Tests  88 passed (88)
-   Start at  23:05:15
-   Duration  2.58s (transform 965ms, setup 0ms, import 2.24s, tests 6.67s, environment 1ms)
+   Start at  23:08:35
+   Duration  2.55s (transform 1.13s, setup 0ms, import 2.43s, tests 6.30s, environment 1ms)
 
 
 > @skillre/dsh-plugin-skills-manager@0.5.1 pack:check
@@ -60,10 +60,10 @@ All good!
     "id": "@skillre/dsh-plugin-skills-manager@0.5.1",
     "name": "@skillre/dsh-plugin-skills-manager",
     "version": "0.5.1",
-    "size": 111102,
-    "unpackedSize": 502531,
-    "shasum": "367180bb63ff32153881bb9a9232c0efea0497a3",
-    "integrity": "sha512-xeR2IWQlK5IQC3KOWo6k9gA3K8y4fVVVrn+NmM9gXRxQTubq9A6+4cKmo5m6WIymISU3FFInEXq1lGLehHRpnQ==",
+    "size": 111676,
+    "unpackedSize": 506846,
+    "shasum": "4fbd127471012f18279a432302c5c3aaf03aa8bb",
+    "integrity": "sha512-tVTah0RwidivNcWzRxcgajTwUo3LK1Vav3Kvbdrvq+eMvL6UTMDDqLfTrvS+bFziq/B/RJe4m0bYYBzN5CQKHg==",
     "filename": "skillre-dsh-plugin-skills-manager-0.5.1.tgz",
     "files": [
       {
@@ -88,7 +88,7 @@ All good!
       },
       {
         "path": "compatibility.json",
-        "size": 40092,
+        "size": 44407,
         "mode": 420
       },
       {
