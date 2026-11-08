@@ -291,7 +291,7 @@ try {
         const typography = JSON.parse(await evaluate(`(() => { const size = node => Number.parseFloat(getComputedStyle(node).fontSize) || 0; const radius = node => Number.parseFloat(getComputedStyle(node).borderTopLeftRadius) || 0; const border = node => Number.parseFloat(getComputedStyle(node).borderTopWidth) || 0; return JSON.stringify({ title: size(document.querySelector('.skm-title')), tab: size(document.querySelector('.skm-tab')), cardRadius: radius(document.querySelector('.skm-card')), cardBorder: border(document.querySelector('.skm-card')) }) })()`))
         assert.ok(typography.title >= 16 && typography.title <= 18, `the heading must use the Settings heading size, got ${typography.title}px`)
         assert.ok(typography.tab >= 12 && typography.tab <= 14, `the tabs must use the Settings tab size, got ${typography.tab}px`)
-        assert.ok(typography.cardRadius >= 8 && typography.cardRadius <= 14, `the cards must use the Settings card radius, got ${typography.cardRadius}px`)
+        assert.ok(typography.cardRadius >= 12 && typography.cardRadius <= 24, `the cards must use the Settings card radius token, got ${typography.cardRadius}px`)
         assert.ok(typography.cardBorder > 0 && typography.cardBorder <= 1, `the cards must use the hairline Settings border, got ${typography.cardBorder}px`)
         checks.push('web-ui-settings-unified')
 

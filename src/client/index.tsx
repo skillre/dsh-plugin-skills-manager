@@ -251,7 +251,7 @@ export function SkillsPage({ api, localeService, t }: PageProps): React.JSX.Elem
       {(tab === 'local' || tab === 'updates') && <>
         {loading && !catalog ? <Loader text={t('loading')}/> : !catalog ? <Empty title={t('requestFailed')} body={t('retry')}><button className="skm-button" type="button" onClick={() => void reload()}>{t('retry')}</button></Empty> : visible.length ? <div className="skm-list" aria-busy={loading || !!busy}>{visible.map(skill => <SkillCard key={skill.id} skill={skill} root={catalog.roots.find(root => root.id === skill.rootId)} t={t} disabled={disabled || modalOpen} jobActive={jobActive} onOpen={action => setSelected({ skill, action })}/>)}</div> : <div className="skm-empty">
           <p className="skm-empty-title">{t(filtered ? 'noMatches' : tab === 'updates' ? 'updatesEmpty' : 'empty')}</p>
-          <p className="skm-empty-body">{t(filtered ? 'noMatches' : tab === 'updates' ? 'updatesEmptyBody' : 'emptyBody')}</p>
+          <p className="skm-empty-body">{t(filtered ? 'noMatchesBody' : tab === 'updates' ? 'updatesEmptyBody' : 'emptyBody')}</p>
           {tab === 'local' && writable && !filter && location === 'all' && !readonlyOnly && <button className="skm-add-button" type="button" onClick={() => setInstall({ source: '', name: '' })}><Icon name="plus" size={16}/>{t('fromRepo')}</button>}
           {tab === 'updates' && <button className="skm-button" type="button" disabled={disabled || modalOpen || jobActive} onClick={() => void checkUpdates()}><Icon name="refresh" size={15} spin={checking}/>{t('check')}</button>}
           {readonlyOnly && <button className="skm-button" type="button" onClick={() => setOverview('all')}>{t('clearFilter')}</button>}
